@@ -1,0 +1,49 @@
+name: Reproducible npm dependency lock
+on:
+  push:
+    branches:
+      - feature/production-verification
+    paths:
+      - '.github/workflows/lockfile.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  lock-and-test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/production-verification
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Resolve pinned direct and transitive dependencies
+        run: |
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          npm ci --no-audit --no-fund
+          npm test
+          npm ls hyperframes gsap three --depth=0
+      - name: Commit verified npm lockfile to the feature branch only
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add package-lock.json
+          if git diff --cached --quiet; then
+            echo "Lockfile already matches dependency resolution."
+          else
+            git commit -m "build(lock): preserve verified reproducible npm dependency graph"
+            git push origin HEAD:feature/production-verification
+          fi
+      - name: Preserve generated lockfile evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudecreate-npm-lock
+          if-no-files-found: warn
+          retention-days: 7
+          path: package-lock.json
