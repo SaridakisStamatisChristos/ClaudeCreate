@@ -558,3 +558,18 @@ If you have uncommitted local changes, `git pull --ff-only` may refuse to procee
 **Development guide:** [CLAUDE.md](CLAUDE.md) · [STYLE.md](STYLE.md) · [docs/SCRIPT_SPEC.md](docs/SCRIPT_SPEC.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 **Repository:** https://github.com/SaridakisStamatisChristos/ClaudeCreate
+
+
+## Production verification (genuine models)
+
+To run the **real** Kokoro → Whisper → HyperFrames → FFmpeg test on Ubuntu/Linux Mint:
+
+~~~bash
+sudo apt-get install -y ffmpeg python3 espeak-ng
+npm install
+npm run test:real
+~~~
+
+This uses the short two-scene fixture in `examples/verification_short.json`, with no speech or video mocks. The machine may need to download local model weights on the first run. The test writes `reports/real-verification.json` and MP4 exports under `out/claudecreate-real-pipeline-verification-draft/`. Run `npm test`, `npm run test:integration` and `npm run test:hyperframes` separately for quick tests, mock FFmpeg integration, and real animation with synthetic captions respectively. **None of those three proves Kokoro or Whisper execution.**
+
+Read [the verification levels, evidence, GitHub Actions workflow and remaining production blockers](docs/VERIFICATION.md). Do not describe the application as production-ready until all Level 5 requirements are independently verified.
