@@ -10,6 +10,7 @@ on:
       - 'src/composition.mjs'
       - 'src/spec.mjs'
       - 'examples/directed_network.json'
+      - 'tests/directed.test.mjs'
   workflow_dispatch:
 
 permissions:
