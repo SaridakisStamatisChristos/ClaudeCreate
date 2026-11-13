@@ -28,3 +28,9 @@ The original CLI, Kokoro timing/alignment, GSAP/Three classic scene composition,
 **Test levels are distinct:** npm test covers validation/escaping/security and composition markup. tools/editorial_hyperframes_smoke.mjs creates a genuine 2-second local HyperFrames draft and frame samples. tools/editorial_draft_smoke.mjs creates an actual 8.4-second 540×960 HyperFrames draft using synthetic timing, then FFmpeg two-pass-measured audio tone, 960×540 export, ffprobe, still images and captions/credits. These do NOT prove end-to-end genuine Kokoro narration, word alignment, caption visual signoff, or fully disconnected offline operation. The existing tools/smoke_test.py is a synthetic FFmpeg integration test with a dummy renderer; do not misreport it as a Kokoro video render.
 
 Do not run tests longer than 10 seconds at 540×960 or merge into main without explicit approval. GitHub CI artifacts provide visual material for human review.
+
+## Correction to v0.2 creative direction — full-canvas illustration
+
+The owner clarified that the supplied screenshot represents the **finished video itself**, not a player embedded inside a second video. The previous inset-player design is superseded. In all four v2 editorial templates, artwork/typography occupies the full 1080×1920 scene. A lower legibility gradient supports text and synchronized captions over the illustration. There are **no fake playback controls, inset player frames, handles or footers**. The legacy video_card name remains for schema compatibility but its visual is full-frame. Optional player_chrome must be omitted or false; true now fails validation. The original six v1 templates are unchanged.
+
+See [full-canvas correction and testing](EDITORIAL_FULL_CANVAS_V0_2.md). Prior embedded-player screenshots and their visual audits are historical engineering evidence, not approval of the corrected design.
