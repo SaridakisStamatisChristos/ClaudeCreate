@@ -588,3 +588,17 @@ Read [the verification levels, evidence, GitHub Actions workflow and remaining p
 
 
 **Audit:** See [production completion technical audit](docs/PRODUCTION_AUDIT.md) for observed defects, fixes, evidence levels and remaining acceptance gates.
+
+
+## Experimental: script-directed visual scenes
+
+The `directed_scene` template adds deterministic, script-controlled SVG primitives (`circle`, `rect`, `line`, `text`), object IDs, normalized-time animations, and camera pan/zoom. Existing templates, TTS, word-level captions and FFmpeg exports are preserved. The generated JSON is **data, not executable JavaScript**.
+
+Start from [`examples/directed_network.json`](examples/directed_network.json), then run:
+
+```bash
+node bin/reel.mjs check examples/directed_network.json --target 15
+node bin/reel.mjs render examples/directed_network.json --draft --target 15
+```
+
+See [Directed Scenes guide](docs/DIRECTED_SCENES.md) for every supported property, validation rule and current limitations. This is a first graphics milestone, **not yet full artistic production readiness**. AetherMotion and other video repositories remain separate.
