@@ -1,0 +1,35 @@
+{
+  "title": "ClaudeCreate real pipeline verification",
+  "handle": "@demo",
+  "voice": "af_heart",
+  "accent": "#F8C95A",
+  "caption": "Local real-model video verification.",
+  "hashtags": [
+    "#verification"
+  ],
+  "scenes": [
+    {
+      "template": "caption_screen",
+      "say": "Small ideas can make a big difference.",
+      "highlight": "big difference",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "big_text": "IDEAS INTO MOTION"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "Together we can build something wonderful.",
+      "highlight": "wonderful",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 100,
+        "suffix": "%",
+        "label": "LOCAL PRODUCTION"
+      }
+    }
+  ]
+}
