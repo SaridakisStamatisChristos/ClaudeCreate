@@ -83,8 +83,9 @@ test('HTML safely escapes script titles and headlines',()=>{
   assert.match(html,/data-width="540"/);
   assert.match(html,/class="clip scene ed-scene"/);
   assert.match(html,/background:#EEE6D9/);
-  assert.match(html,/ed-player/);
-  assert.match(html,/font:600 102px/);
+  assert.match(html,/class="ed-artwork"/);
+  assert.match(html,/inset:0;display:block;width:1080px;height:1920px/);
+  assert.doesNotMatch(html,/ed-player|ed-progress-fill|ed-play-icon/);
   assert.match(html,/ed-headline/);
   assert.match(html,/&lt;img src=x/);
   assert.doesNotMatch(html,/<img src=x onerror=/);
