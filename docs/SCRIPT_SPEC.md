@@ -34,3 +34,28 @@ For each scene, also supply `say` (4–10 words recommended, max 16), `highlight
 Generate scripts using [the canonical Claude master prompt](../prompts/CLAUDE_REEL_MASTER.md). The prompt limits itself to 10 words per scene to avoid warnings, but the application retains the pre-existing hard limit of 16 words for backward compatibility.
 
 Run `npm run reel -- check script.json --target 15` (or `30` / `60`) before a render. The CLI prints both the chosen target and the estimated length.
+
+
+## Versioned editorial v2 (opt-in; v1 remains unchanged)
+
+Version selection is strict and never inferred. An unversioned JSON script is validated against the original v1 envelope and its six templates, with unchanged say limits, target warnings and original visual style. To select v2, provide BOTH these exact fields:
+
+~~~json
+{"schema_version":2,"mode":"editorial_illustrated"}
+~~~
+
+They accompany every original envelope field and the required per-scene fields (template, say, highlight, illustrative, sfx, props). An unsupported version, missing/wrong mode, or new props used without v2 are errors. The voice, caption, hashtags, accent, length warnings, CLI flags, default Kokoro voice and exact maximum 16 spoken words per scene remain unchanged.
+
+| Capability | Unversioned v1 | Explicit v2 editorial |
+| --- | --- | --- |
+| Six existing templates | Yes, unchanged | Yes |
+| editorial_split, editorial_text_card | Rejected | Yes |
+| illustration_motion, video_card | Rejected | Yes |
+| Local image and layer descriptors | Rejected | Yes (per template) |
+| MP4 media source | Rejected | Rejected pending reproducible frame seeking |
+| Default appearance | Original dark neutral | Warm paper, serif, one accent |
+| Kokoro timings, FFmpeg mixing/export | Existing pipeline | Same pipeline |
+
+New scene props: editorial_split requires media and 1–14-word text, optional kicker (≤4 words), exact emphasis substring and boolean player_chrome; editorial_text_card has kicker/text/emphasis; illustration_motion has media and optional label (≤5 words); video_card has image media, optional label (≤5 words) and player_chrome. Media uses kind=image or kind=layers (only in split and illustration_motion), fit=cover/contain, motion=none/zoom_in/zoom_out/pan_left/pan_right/parallax (parallax only with layers). Image formats: PNG/JPEG/WebP. Layers: 2–5 entries with finite depth [-1,1]. All sources must be existing, relative assets/... paths contained by the local repository asset root. Malformed or missing media produces a scene-indexed error.
+
+See [v2 specification](EDITORIAL_ILLUSTRATED_V0_2_SPEC.md), [complete example](../examples/editorial_v2.example.json), and [new prompt](../prompts/CLAUDE_EDITORIAL_REEL_MASTER.md). The [original v1 prompt](../prompts/CLAUDE_REEL_MASTER.md) is preserved.
