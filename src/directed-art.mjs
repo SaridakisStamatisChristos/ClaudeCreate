@@ -97,5 +97,5 @@ export function renderArtObject(o,index){
  if(o.type==='polygon')child='<polygon points="'+o.points.map(pt=>f(pt.x)+','+f(pt.y)).join(' ')+'" fill="'+fill+'"'+stroke+'/>';
  if(o.type==='path')child='<path d="'+pathD(o.commands)+'" fill="'+fill+'"'+stroke+'/>';
  if(o.type==='icon')child='<g transform="scale('+f(o.size/100)+') translate(-50 -50)" fill="none" stroke="'+o.stroke+'" stroke-width="'+f(o.strokeWidth??5)+'" stroke-linejoin="round" stroke-linecap="round">'+sym[o.name]+'</g>';
- return '<g id="'+id+'" transform="translate('+f(o.x)+' '+f(o.y)+')" style="'+style+'">'+child+'</g>';
+ return '<g transform="translate('+f(o.x)+' '+f(o.y)+')"><g id="'+id+'" style="'+style+'">'+child+'</g></g>';
 }
