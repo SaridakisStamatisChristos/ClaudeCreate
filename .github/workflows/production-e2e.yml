@@ -1,0 +1,53 @@
+name: Full-resolution 15-second production verification
+
+on:
+  push:
+    branches:
+      - feature/production-verification
+    paths:
+      - '.github/workflows/production-e2e.yml'
+      - 'tools/production_verify.mjs'
+      - 'examples/verification_15.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: claudecreate-production-15-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  full-resolution:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg python3 python3-venv espeak-ng
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+          npm install --no-audit --no-fund
+          echo "HYPERFRAMES_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+      - name: Genuine Kokoro Whisper full-resolution 15s production
+        shell: bash
+        run: |
+          set -o pipefail
+          node tools/production_verify.mjs 15 2>&1 | tee production-15.log
+      - name: Preserve full-resolution verification evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudecreate-production-15
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
+          path: |
+            production-15.log
+            reports/production-15.json
+            out/claudecreate-production-verification-15-seconds/**
