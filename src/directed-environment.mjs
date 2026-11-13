@@ -42,11 +42,16 @@ export function validateShadow(shadow,where,errors){
  valid(shadow.dy,-32,32,where+'.shadow.dy',errors);
  valid(shadow.opacity,.05,.8,where+'.shadow.opacity',errors);
 }
+const safeShadow=o=>{
+ const s=o?.shadow;
+ return s&&/^[A-Za-z][A-Za-z0-9_-]{0,39}$/.test(o.id)&&hex(s.color)&&
+ finite(s.blur,0,22)&&finite(s.dx,-32,32)&&finite(s.dy,-32,32)&&finite(s.opacity,.05,.8);
+};
 export function shadowRef(o,index){
- return o.shadow?' filter="url(#directed-shadow-'+index+'-'+o.id+')"':'';
+ return safeShadow(o)?' filter="url(#directed-shadow-'+index+'-'+o.id+')"':'';
 }
 export function renderShadowDefs(objects,index){
- return objects.filter(o=>o.shadow).map(o=>{
+ return objects.filter(safeShadow).map(o=>{
   const s=o.shadow;
   return '<filter id="directed-shadow-'+index+'-'+o.id+'" x="-65%" y="-65%" width="230%" height="230%" color-interpolation-filters="sRGB"><feDropShadow dx="'+f(s.dx)+'" dy="'+f(s.dy)+'" stdDeviation="'+f(s.blur)+'" flood-color="'+s.color+'" flood-opacity="'+f(s.opacity)+'"/></filter>';
  }).join('');
@@ -57,8 +62,12 @@ function generator(seed){
  return ()=>{s=(Math.imul(s,1664525)+1013904223)>>>0;return s/4294967296;};
 }
 export function renderEnvironment(environment,index){
- if(!environment?.particles)return {back:'',front:''};
- const p=environment.particles,rand=generator(p.seed),back=[],front=[];
+ const p=environment?.particles;
+ if(!rec(p)||!PARTICLE_TYPES.includes(p.type)||!Number.isInteger(p.count)||p.count<1||p.count>60||
+  !Number.isInteger(p.seed)||p.seed<0||p.seed>999999||!hex(p.color)||
+  !finite(p.opacity,.05,.8)||!finite(p.driftX,-160,160)||!finite(p.driftY,-160,160))
+  return {back:'',front:''};
+ const rand=generator(p.seed),back=[],front=[];
  for(let i=0;i<p.count;i++){
   const x=40+rand()*820,y=40+rand()*820,level=rand(),r=rand();
   const opacity=f(p.opacity*(.43+.57*level));
