@@ -40,3 +40,14 @@ test('video_card label text safely escapes HTML and disables player chrome',()=>
   const section=html.slice(html.indexOf('id="scene-0"'),html.indexOf('id="scene-1"'));
   assert.doesNotMatch(section,/ed-player-chrome/);
 });
+
+
+test('fit contain maps only to an allowlisted CSS class instead of ignored input',()=>{
+  const s=structuredClone(example);
+  s.scenes[0].props.media.fit='contain';
+  s.scenes[2].props.media.fit='contain';
+  const html=buildHTML(s,timing,{draft:true});
+  assert.match(html,/ed-fit-contain/);
+  assert.match(html,/\.ed-scene img\.ed-fit-contain\{object-fit:contain\}/);
+  assert.equal(checkScript(s).ok,true);
+});
