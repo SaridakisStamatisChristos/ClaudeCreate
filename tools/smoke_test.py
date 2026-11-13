@@ -55,6 +55,7 @@ def main():
         (root/'node_modules'/'.bin').mkdir(parents=True)
         (root/'node_modules'/'gsap'/'dist'/'gsap.min.js').write_text('')
         (root/'node_modules'/'three'/'build'/'three.module.js').write_text('')
+        (root/'node_modules'/'three'/'build'/'three.core.js').write_text('')
         mock = root/'node_modules'/'.bin'/'hyperframes'
         mock.write_text('''#!/usr/bin/env python3
 import subprocess,sys

@@ -88,7 +88,7 @@ window.__timelines=window.__timelines||{};window.__timelines.main=tl;
 export async function writeComposition(workDir,script,timeline,opts={}) {
   const vendors=join(workDir,'vendor');await mkdir(vendors,{recursive:true});
   const base=join(opts.baseDir || process.cwd(), 'node_modules');
-  for(const [from,to] of [['gsap/dist/gsap.min.js','gsap.min.js'],['three/build/three.module.js','three.module.js']]) {
+  for(const [from,to] of [['gsap/dist/gsap.min.js','gsap.min.js'],['three/build/three.module.js','three.module.js'],['three/build/three.core.js','three.core.js']]) {
     try { await copyFile(join(base,from),join(vendors,to)); }
     catch { throw new Error(`Missing local dependency ${from}. Run npm install first.`); }
   }
