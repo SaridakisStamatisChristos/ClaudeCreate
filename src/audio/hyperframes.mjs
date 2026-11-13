@@ -2,10 +2,10 @@
 // No Python Kokoro, faster-whisper, API calls, or guessed word timings.
 import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
-import { mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { mkdir, readFile, rename, rm, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-export const ADAPTER_VERSION='hyperframes-kokoro-transcribe-v1';
+export const ADAPTER_VERSION='hyperframes-kokoro-transcribe-v2';
 const LANGUAGES={a:'en',b:'en',e:'es',f:'fr',h:'hi',i:'it',j:'ja',p:'pt',z:'zh'};
 const clean=s=>String(s).normalize('NFKC').toLocaleLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
 export const cacheKey=(text,voice)=>createHash('sha256')
@@ -31,17 +31,17 @@ export function alignSpeech(text,transcript,duration) {
     if(actual[i].start+.015<actual[i-1].start)
       throw new Error('HyperFrames word timestamps are not in chronological order');
   }
-  const aligned=[];let i=0;
-  for(const word of expected){
+  // Exact one-to-one matching. Do not silently skip extra ASR words or
+  // substitute timestamps for words that Whisper omitted.
+  if(actual.length!==expected.length)
+    throw new Error('HyperFrames transcription word count differs from script: expected '+expected.length+', received '+actual.length);
+  const aligned=expected.map((word,i)=>{
     const target=clean(word);
     if(!target)throw new Error('Script contains a word with no spoken characters: '+word);
-    while(i<actual.length && clean(actual[i].word)!==target)i++;
-    if(i===actual.length)throw new Error('HyperFrames transcription does not match scripted word "'+word+'"; no captions were fabricated');
-    aligned.push({word,start:actual[i].start,end:actual[i].end});
-    i++;
-  }
-  if(aligned.length!==expected.length)
-    throw new Error('Narration word alignment incomplete');
+    if(clean(actual[i].word)!==target)
+      throw new Error('HyperFrames transcription does not match scripted word "'+word+'" at index '+i+'; no captions were fabricated');
+    return {word,start:actual[i].start,end:actual[i].end};
+  });
   return aligned;
 }
 
@@ -58,14 +58,20 @@ export async function synthesizeSpeech(text,voice,{root,cli,exec}){
   if(existsSync(wav)&&existsSync(json)){
     try {
       const cached=JSON.parse(await readFile(json,'utf8'));
-      if(cached.voice===voice&&Array.isArray(cached.words)&&
-        cached.words.length===text.trim().split(/\s+/).length &&
-        cached.duration>0 &&
-        cached.words.every((w,i)=>clean(w.word)===clean(text.trim().split(/\s+/)[i])&&
+      const actualHash=createHash('sha256').update(await readFile(wav)).digest('hex');
+      const scriptedWords=text.trim().split(/\s+/);
+      if(cached.voice===voice&&cached.adapterVersion===ADAPTER_VERSION&&
+        /^[a-f0-9]{64}$/.test(cached.wavSha256)&&cached.wavSha256===actualHash&&
+        Number.isInteger(cached.sampleRate)&&cached.sampleRate>=8000&&cached.sampleRate<=192000&&
+        Number.isInteger(cached.channels)&&cached.channels>=1&&cached.channels<=8&&
+        Array.isArray(cached.words)&&cached.words.length===scriptedWords.length&&
+        Number.isFinite(cached.duration)&&cached.duration>0&&
+        cached.words.every((w,i)=>clean(w.word)===clean(scriptedWords[i])&&
           Number.isFinite(w.start)&&Number.isFinite(w.end)&&w.end>=w.start&&w.start>=0&&w.end<=cached.duration+.25))
         return {wav,...cached};
-    }catch{}
+    }catch{} // Broken/truncated files are regenerated; a timing JSON alone is not proof of valid audio.
   }
+  await rm(json,{force:true});
   // Isolate each transcript.json in its own cache folder: no shared output or races across scenes.
   await rm(join(folder,'transcript.json'),{force:true});
   // A literal text file avoids argument parsing surprises for text beginning with '-'.
@@ -84,12 +90,27 @@ export async function synthesizeSpeech(text,voice,{root,cli,exec}){
   let transcript;
   try{transcript=JSON.parse(await readFile(transcriptPath,'utf8'));}
   catch{throw new Error('HyperFrames transcript.json is not valid JSON');}
-  const probe=await exec('ffprobe',['-v','error','-show_entries','format=duration','-of','json',wav]);
-  let duration;
-  try{duration=Number(JSON.parse(probe.out).format.duration);}
-  catch{throw new Error('Unable to read duration of HyperFrames narration.wav using ffprobe');}
+  const probe=await exec('ffprobe',['-v','error','-show_entries',
+    'format=duration:stream=codec_type,sample_rate,channels','-of','json',wav]);
+  let duration,sampleRate,channels;
+  try{
+    const result=JSON.parse(probe.out);
+    const audio=result.streams?.find(x=>x.codec_type==='audio');
+    duration=Number(result.format?.duration);
+    sampleRate=Number(audio?.sample_rate);
+    channels=Number(audio?.channels);
+  }catch{}
+  if(!(Number.isFinite(duration)&&duration>0&&
+    Number.isInteger(sampleRate)&&sampleRate>=8000&&sampleRate<=192000&&
+    Number.isInteger(channels)&&channels>=1&&channels<=8))
+    throw new Error('HyperFrames narration.wav failed ffprobe audio validation (duration, sample rate or channels)');
   const words=alignSpeech(text,transcript,duration);
-  const meta={duration:Math.round(duration*100000)/100000,words,voice,provider:'hyperframes-kokoro'};
-  await writeFile(json,JSON.stringify(meta)+'\n');
+  const wavSha256=createHash('sha256').update(await readFile(wav)).digest('hex');
+  const meta={duration:Math.round(duration*100000)/100000,words,voice,
+    provider:'hyperframes-kokoro',adapterVersion:ADAPTER_VERSION,
+    sampleRate,channels,wavSha256};
+  const temp=json+'.tmp-'+process.pid;
+  await writeFile(temp,JSON.stringify(meta)+'\n');
+  await rename(temp,json);
   return {wav,...meta};
 }
