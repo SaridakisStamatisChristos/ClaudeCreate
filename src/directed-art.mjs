@@ -37,8 +37,9 @@ export function validateArtObject(o,p,errors){
   path:['x','y','commands','fill','gradient','stroke','strokeWidth'],
   icon:['x','y','size','name','stroke','strokeWidth']
  }[o.type];
- allowed(o,['id','type','initial',...fields],p,errors);
- span(o.x,0,900,p+'.x',errors);span(o.y,0,900,p+'.y',errors);
+ allowed(o,['id','type','initial','parent','layer',...fields],p,errors);
+ const [min,max]=o.parent?[-450,450]:[0,900];
+ span(o.x,min,max,p+'.x',errors);span(o.y,min,max,p+'.y',errors);
  if(o.type==='icon'){
   if(!ICON_NAMES.includes(o.name))errors.push(p+'.name: unsupported icon');
   span(o.size,20,450,p+'.size',errors);
