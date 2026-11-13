@@ -1,6 +1,7 @@
 import { readFile } from 'node:fs/promises';
+import { validateDirectedProps } from './directed.mjs';
 
-export const TEMPLATES = Object.freeze(['caption_screen', 'counter', 'app_screen', 'callout', 'object_3d', 'compare']);
+export const TEMPLATES = Object.freeze(['caption_screen', 'counter', 'app_screen', 'callout', 'object_3d', 'compare', 'directed_scene']);
 export const SFX = Object.freeze(['whoosh', 'pop', 'tick', 'stamp', 'ding', 'swipe', 'none']);
 export const DEFAULTS = Object.freeze({ voice: 'af_heart', gap: 0.12, wordsPerMinute: 145, accent: '#F8C95A', background: '#111318', foreground: '#F6F6F3' });
 const isRecord = x => x !== null && typeof x === 'object' && !Array.isArray(x);
@@ -15,6 +16,7 @@ const optionalText = (v, path, errors) => {
 };
 function validateProps(scene, i, errors) {
   const p = `scenes[${i}].props`;
+  if (scene.template === 'directed_scene') return validateDirectedProps(scene.props, `scenes[${i}]`, errors);
   const v = scene.props;
   if (!isRecord(v)) { errors.push(`${p}: expected object`); return; }
   switch (scene.template) {
