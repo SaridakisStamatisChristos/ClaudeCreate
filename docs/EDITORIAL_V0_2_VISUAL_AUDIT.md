@@ -49,3 +49,9 @@ The separate real 2-second Stage B HyperFrames smoke checked draft dimensions an
 - Existing original test suite and CI success validate implementation regressions, not the artistic quality of every possible script.
 
 **Provisional visual verdict:** PASS for the sampled short draft layout and observable separation of key elements; **final publication acceptance remains OPEN**.
+
+## Correction to v0.2 creative direction — full-canvas illustration
+
+The owner clarified that the supplied screenshot represents the **finished video itself**, not a player embedded inside a second video. The previous inset-player design is superseded. In all four v2 editorial templates, artwork/typography occupies the full 1080×1920 scene. A lower legibility gradient supports text and synchronized captions over the illustration. There are **no fake playback controls, inset player frames, handles or footers**. The legacy video_card name remains for schema compatibility but its visual is full-frame. Optional player_chrome must be omitted or false; true now fails validation. The original six v1 templates are unchanged.
+
+See [full-canvas correction and testing](EDITORIAL_FULL_CANVAS_V0_2.md). Prior embedded-player screenshots and their visual audits are historical engineering evidence, not approval of the corrected design.
