@@ -1,16 +1,19 @@
 # Native HyperFrames Kokoro + transcription
 
-HyperFrames includes Kokoro-82M TTS and local Whisper transcription. ClaudeCreate uses those directly, eliminating the redundant Python kokoro and faster-whisper packages, tools/tts.py and requirements.txt.
+HyperFrames exposes local Kokoro-82M TTS and Whisper transcription through one CLI. Actual execution with HyperFrames 0.9.37 requires the Python `kokoro-onnx` and `soundfile` backend. The duplicate standalone `tools/tts.py`, separate `kokoro` synthesis stack and `faster-whisper` are not needed.
 
 ## Install
 
 ~~~bash
-sudo apt install -y ffmpeg python3 espeak-ng
+sudo apt install -y ffmpeg python3 python3-venv espeak-ng
+python3 -m venv .venv
+.venv/bin/python -m pip install kokoro-onnx soundfile
+export HYPERFRAMES_PYTHON="$PWD/.venv/bin/python"
 npm install
 npx hyperframes tts --list
 ~~~
 
-Python3 remains for stdlib sound-effect synthesis and mock CI only. No pip or venv.
+Python3 also runs HyperFrames' Kokoro ONNX backend. Keep this venv for the CLI; it does not reintroduce an independent TTS implementation in ClaudeCreate.
 
 ## Commands used by the app
 
