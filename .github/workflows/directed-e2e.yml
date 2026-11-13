@@ -1,0 +1,87 @@
+name: Real script-directed animation rendering
+
+on:
+  push:
+    branches: [feature/production-verification]
+    paths:
+      - '.github/workflows/directed-e2e.yml'
+      - 'src/directed.mjs'
+      - 'src/directed-runtime.mjs'
+      - 'src/composition.mjs'
+      - 'src/spec.mjs'
+      - 'examples/directed_network.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: claudecreate-directed-e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-real-directed:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install local render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg python3 python3-venv espeak-ng
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+          npm ci --no-audit --no-fund
+          echo "HYPERFRAMES_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+      - name: Validate scene JSON and run regression suite
+        run: |
+          npm test
+          node bin/reel.mjs check examples/directed_network.json --target 15
+      - name: Render real Kokoro/Whisper/HyperFrames animation
+        shell: bash
+        run: |
+          set -o pipefail
+          node bin/reel.mjs render examples/directed_network.json --draft --target 15 2>&1 | tee directed-render.log
+      - name: Inspect real MP4 properties and sample time-separated frames
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, subprocess, hashlib, pathlib
+          root=pathlib.Path('out/an-idea-becomes-a-network-draft')
+          files=[root/'instagram.mp4', root/'youtube.mp4']
+          for f in files:
+              if not f.exists(): raise SystemExit('Missing output: '+str(f))
+              p=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(f)]))
+              streams=p['streams']
+              video=next((x for x in streams if x['codec_type']=='video'),None)
+              audio=next((x for x in streams if x['codec_type']=='audio'),None)
+              if not video or not audio: raise SystemExit('Missing media stream '+str(f))
+              if audio.get('sample_rate')!='48000': raise SystemExit('Audio not 48kHz: '+str(f))
+              if float(p['format']['duration'])<=2: raise SystemExit('Invalid video duration')
+              if f.name=='instagram.mp4' and (video['width'],video['height'])!=(540,960): raise SystemExit('Portrait dimensions wrong')
+              if f.name=='youtube.mp4' and (video['width'],video['height'])!=(960,540): raise SystemExit('Landscape dimensions wrong')
+              print(str(f),video['codec_name'],audio['codec_name'],p['format']['duration'])
+              if f.name=='instagram.mp4':
+                  length=float(p['format']['duration'])
+                  hashes=[]
+                  for fraction in [.15,.30,.45,.60,.75,.90]:
+                      pic=subprocess.check_output(['ffmpeg','-v','error','-ss',str(length*fraction),'-i',str(f),'-frames:v','1','-f','image2pipe','-vcodec','png','pipe:1'])
+                      hashes.append(hashlib.sha256(pic).hexdigest())
+                  if len(set(hashes))<3: raise SystemExit('Insufficient visual frame variation')
+                  print('Distinct time-sampled frame hashes:',len(set(hashes)),'of',len(hashes))
+          PY
+      - name: Preserve genuine video and verification artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudecreate-script-directed-video
+          retention-days: 7
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: |
+            directed-render.log
+            out/an-idea-becomes-a-network-draft/**
+            .reel-work/an-idea-becomes-a-network-draft/index.html
