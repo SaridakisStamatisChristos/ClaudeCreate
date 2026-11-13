@@ -24,7 +24,7 @@
           "motion": "zoom_in"
         },
         "label": "The river remembers",
-        "player_chrome": true
+        "player_chrome": false
       }
     },
     {
@@ -43,7 +43,7 @@
         "kicker": "A VISUAL STUDY",
         "text": "A moving illustration and an editorial idea",
         "emphasis": "editorial idea",
-        "player_chrome": true
+        "player_chrome": false
       }
     },
     {
