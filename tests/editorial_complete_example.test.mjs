@@ -1,0 +1,31 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { spawnSync } from 'node:child_process';
+import { checkScript } from '../src/spec.mjs';
+import { buildHTML } from '../src/composition.mjs';
+const file=new URL('../examples/editorial_v2.example.json',import.meta.url);
+const example=JSON.parse(await readFile(file,'utf8'));
+test('complete target-15 JSON passes all hard checks and length warning gates',()=>{
+ const r=checkScript(example,undefined,{targetSeconds:15});
+ assert.equal(r.ok,true,r.errors.join('; '));
+ assert.deepEqual(r.warnings,[]);
+ assert.equal(example.scenes.length,8);
+ assert.equal(new Set(example.scenes.map(x=>x.template)).has('video_card'),true);
+ assert.equal(new Set(example.scenes.map(x=>x.template)).has('illustration_motion'),true);
+ const run=spawnSync(process.execPath,['bin/reel.mjs','check','examples/editorial_v2.example.json','--target=15'],{cwd:new URL('..',import.meta.url).pathname,encoding:'utf8'});
+ assert.equal(run.status,0,run.stderr);
+ assert.match(run.stdout,/TARGET: 15s/);
+ assert.match(run.stdout,/0 warnings/);
+});
+test('complete editorial example generates all scene containers and no remote media links',()=>{
+ const timeline=example.scenes.map((s,i)=>({start:i*1.9,duration:1.9,audioDuration:1.7,words:[]}));
+ const html=buildHTML(example,timeline,{draft:true});
+ assert.equal((html.match(/class="clip scene ed-scene"/g)||[]).length,8);
+ assert.match(html,/data-type="video_card"/);
+ assert.match(html,/data-type="illustration_motion"/);
+ assert.match(html,/data-type="compare"/);
+ assert.match(html,/data-type="callout"/);
+ assert.match(html,/class="ed-anim-asset"/);
+ assert.doesNotMatch(html,/https?:\/\/[^"' ]+\.(?:png|jpe?g|webp|mp4)/i);
+});
