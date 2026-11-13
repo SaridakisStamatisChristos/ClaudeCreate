@@ -50,7 +50,7 @@ Validated fields:
 - All generated video frame capture must be deterministic and reproducible at a given frame index; if browser video seeking fails, preprocess with local FFmpeg.
 
 ## 3. New scene templates
-These JSON examples are PROPOSED v2 shapes; current v1 validator will reject them until implementation. The images referenced below are original fixture paths that must be supplied during Stage A/B.
+These are implemented, explicit v2 JSON shapes. The unchanged unversioned v1 validator rejects them unless schema_version:2 and mode:editorial_illustrated are supplied. The images referenced below are original fixture paths that must be supplied during Stage A/B.
 
 ### editorial_split
 The primary composite image frame above text, all within **one timed scene**:
