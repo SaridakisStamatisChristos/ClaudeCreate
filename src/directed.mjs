@@ -1,5 +1,6 @@
 // Declarative SVG scene primitives. Model-authored scene data is never executable code.
-export const DIRECTED_TYPES = Object.freeze(['circle','rect','text','line']);
+import { ART_TYPES, validateArtObject, validateGradient, renderArtObject, gradientDefs, artFill } from './directed-art.mjs';
+export const DIRECTED_TYPES = Object.freeze(['circle','rect','text','line',...ART_TYPES]);
 export const DIRECTED_EASES = Object.freeze(['none','power1.out','power2.out','power2.inOut','back.out(1.4)']);
 const isObj = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const number = (x,min,max) => typeof x === 'number' && Number.isFinite(x) && x>=min && x<=max;
@@ -13,7 +14,7 @@ function state(s,p,errors,type) {
  if(!isObj(s)){errors.push(p+': expected object');return;}
  keys(s,['opacity','scale','x','y','rotation','draw'],p,errors);
  for(const [key,v] of Object.entries(s)){
-  if(key==='draw' && type!=='line') errors.push(p+'.draw: only lines support draw');
+  if(key==='draw' && !['line','path'].includes(type)) errors.push(p+'.draw: only lines or stroked paths support draw');
   const [min,max] = key==='opacity'||key==='draw'?[0,1]:key==='scale'?[0,4]:key==='rotation'?[-360,360]:[-900,900];
   span(v,min,max,p+'.'+key,errors);
  }
@@ -32,8 +33,14 @@ export function validateDirectedProps(p,scenePath,errors){
   else if(objects.has(o.id))errors.push(path+'.id: duplicate '+o.id);
   else objects.set(o.id,o);
   if(!DIRECTED_TYPES.includes(o.type)){errors.push(path+'.type: unknown primitive');return;}
+  if(ART_TYPES.includes(o.type)){
+   validateArtObject(o,path,errors);
+   if(o.initial!==undefined)state(o.initial,path+'.initial',errors,o.type);
+   return;
+  }
   const fields=o.type==='line'?['from','to','stroke','strokeWidth']:o.type==='circle'?['x','y','radius','fill']:o.type==='rect'?['x','y','width','height','radius','fill']:['x','y','text','fontSize','fill'];
-  keys(o,['id','type','initial',...fields],path,errors);
+  keys(o,['id','type','initial',...fields,...(['circle','rect'].includes(o.type)?['gradient']:[])],path,errors);
+  if(ART_TYPES.includes(o.type))return renderArtObject(o,index);
   if(o.type==='line'){
    if(typeof o.from!=='string'||typeof o.to!=='string')errors.push(path+': line endpoints must be IDs');
    if(!hex(o.stroke))errors.push(path+'.stroke: expected #RRGGBB');
@@ -41,6 +48,7 @@ export function validateDirectedProps(p,scenePath,errors){
   }else{
    span(o.x,0,900,path+'.x',errors);span(o.y,0,900,path+'.y',errors);
    if(!hex(o.fill))errors.push(path+'.fill: expected #RRGGBB');
+   if(['circle','rect'].includes(o.type))validateGradient(o,path,errors);
    if(o.type==='circle')span(o.radius,1,250,path+'.radius',errors);
    if(o.type==='rect'){
     span(o.width,1,900,path+'.width',errors);span(o.height,1,900,path+'.height',errors);
@@ -67,7 +75,7 @@ export function validateDirectedProps(p,scenePath,errors){
   const o=objects.get(a.target);
   if(a.target!=='camera'&&!o)errors.push(path+'.target: unknown '+a.target);
   if(!['opacity','scale','x','y','rotation','draw'].includes(a.property))errors.push(path+'.property: unsupported property');
-  if(a.property==='draw'&&o?.type!=='line')errors.push(path+'.property: draw requires line');
+  if(a.property==='draw'&&!(o?.type==='line'||(o?.type==='path'&&o.stroke)))errors.push(path+'.property: draw requires line or stroked path');
   span(a.at,0,1,path+'.at',errors);span(a.duration,.001,1,path+'.duration',errors);
   if(typeof a.at==='number'&&typeof a.duration==='number'&&a.at+a.duration>1.000001)errors.push(path+': exceeds scene duration');
   if(['opacity','scale','x','y','rotation','draw'].includes(a.property)){
@@ -85,6 +93,7 @@ export function validateDirectedProps(p,scenePath,errors){
 export function renderDirected(scene,index){
  const p=scene.props,byId=new Map(p.objects.map(o=>[o.id,o]));
  const list=[...p.objects.filter(o=>o.type==='line'),...p.objects.filter(o=>o.type!=='line')];
+ const defs=p.objects.map(o=>gradientDefs(o,index)).filter(Boolean).join('');
  const shapes=list.map(o=>{
   const name='directed-'+index+'-'+o.id,style='opacity:'+f(o.initial?.opacity??1);
   if(o.type==='line'){
@@ -92,10 +101,10 @@ export function renderDirected(scene,index){
    return '<g id="'+name+'" style="'+style+'"><line x1="'+f(a.x)+'" y1="'+f(a.y)+'" x2="'+f(b.x)+'" y2="'+f(b.y)+'" stroke="'+o.stroke+'" stroke-width="'+f(o.strokeWidth)+'" stroke-linecap="round" stroke-dasharray="'+f(length)+'" stroke-dashoffset="'+f(length*(1-(o.initial?.draw??1)))+'"/></g>';
   }
   let shape;
-  if(o.type==='circle')shape='<circle r="'+f(o.radius)+'" fill="'+o.fill+'"/>';
-  else if(o.type==='rect')shape='<rect x="'+f(-o.width/2)+'" y="'+f(-o.height/2)+'" width="'+f(o.width)+'" height="'+f(o.height)+'" rx="'+f(o.radius??0)+'" fill="'+o.fill+'"/>';
+  if(o.type==='circle')shape='<circle r="'+f(o.radius)+'" fill="'+artFill(o,index)+'"/>';
+  else if(o.type==='rect')shape='<rect x="'+f(-o.width/2)+'" y="'+f(-o.height/2)+'" width="'+f(o.width)+'" height="'+f(o.height)+'" rx="'+f(o.radius??0)+'" fill="'+artFill(o,index)+'"/>';
   else shape='<text x="0" y="0" font-size="'+f(o.fontSize)+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-weight="700" fill="'+o.fill+'">'+esc(o.text)+'</text>';
   return '<g id="'+name+'" transform="translate('+f(o.x)+' '+f(o.y)+')" style="'+style+'">'+shape+'</g>';
  }).join('');
- return '<svg class="directed-svg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(scene.say)+'"><rect width="900" height="900" fill="'+p.background+'"/><g id="directed-camera-'+index+'">'+shapes+'</g></svg>';
+ return '<svg class="directed-svg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(scene.say)+'"><rect width="900" height="900" fill="'+p.background+'"/><defs>'+defs+'</defs><g id="directed-camera-'+index+'">'+shapes+'</g></svg>';
 }
