@@ -1,0 +1,104 @@
+name: ClaudeCreate compound illustration E2E
+on:
+  push:
+    branches: [feature/production-verification]
+    paths:
+      - '.github/workflows/compound-e2e.yml'
+      - 'src/directed.mjs'
+      - 'src/directed-art.mjs'
+      - 'src/directed-layout.mjs'
+      - 'src/directed-runtime.mjs'
+      - 'src/composition.mjs'
+      - 'src/spec.mjs'
+      - 'examples/directed_compound_city.json'
+      - 'tests/directed_compound.test.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: claudecreate-compound-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  real-compound-video:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install local dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg python3 python3-venv espeak-ng
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+          npm ci --no-audit --no-fund
+          echo "HYPERFRAMES_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+      - name: Verify schema, compiler, and legacy regressions
+        run: |
+          node --check src/directed-layout.mjs
+          node --check src/directed.mjs
+          node --check src/directed-art.mjs
+          node --check src/directed-runtime.mjs
+          npm test
+          node bin/reel.mjs check examples/directed_compound_city.json --target 15
+      - name: Render actual compound video with Kokoro and HyperFrames
+        shell: bash
+        run: |
+          set -o pipefail
+          node bin/reel.mjs render examples/directed_compound_city.json --draft --target 15 2>&1 | tee compound-render.log
+      - name: Verify media, temporal variation and illustrations
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          import hashlib,json,subprocess
+          out=Path('out/a-city-in-motion-draft')
+          formats={'instagram.mp4':(540,960),'youtube.mp4':(960,540)}
+          durations=[]
+          for name, dims in formats.items():
+              file=out/name
+              if not file.is_file(): raise SystemExit('Missing '+str(file))
+              info=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_format','-show_streams','-of','json',str(file)]))
+              video=next((s for s in info['streams'] if s['codec_type']=='video'),None)
+              audio=next((s for s in info['streams'] if s['codec_type']=='audio'),None)
+              if not video or not audio: raise SystemExit('Missing video or audio stream')
+              if (video['width'],video['height'])!=dims: raise SystemExit('Incorrect dimensions '+name)
+              if video['codec_name']!='h264' or audio['codec_name']!='aac': raise SystemExit('Incorrect codec '+name)
+              if audio['sample_rate']!='48000': raise SystemExit('Incorrect audio rate '+name)
+              duration=float(info['format']['duration']);durations.append(duration)
+              if duration<5 or duration>10.5: raise SystemExit('Invalid draft duration '+str(duration))
+              print('VERIFIED',name,dims,'seconds',round(duration,3))
+          if abs(durations[0]-durations[1])>.06: raise SystemExit('Portrait/landscape durations differ')
+          sample=out/'instagram.mp4'
+          hashes=[];frames=[]
+          for frac in [.12,.24,.38,.53,.68,.84]:
+              raw=subprocess.check_output(['ffmpeg','-v','error','-ss',str(durations[0]*frac),'-i',str(sample),
+                 '-vf','scale=160:160','-frames:v','1','-f','rawvideo','-pix_fmt','rgb24','pipe:1'])
+              if len(raw)!=160*160*3:raise SystemExit('Malformed extracted frame')
+              hashes.append(hashlib.sha256(raw).hexdigest());frames.append(raw)
+          if len(set(hashes))<4:raise SystemExit('Animation not visually diverse enough to distinguish frames')
+          diffs=[sum(abs(a-b) for a,b in zip(frames[i],frames[i+1]))/len(frames[i]) for i in range(len(frames)-1)]
+          if sum(d>4 for d in diffs)<2:raise SystemExit('Insufficient major frame changes')
+          print('Distinct sampled frames',len(set(hashes)),'/ 6, adjacent per-channel pixel changes',[round(x,2) for x in diffs])
+          composition=Path('.reel-work/a-city-in-motion-draft/index.html').read_text()
+          for expected in ['directed-0-street','directed-1-powerPath','directed-2-district','directed-3-future']:
+              if expected not in composition:raise SystemExit('Missing compound object '+expected)
+          print('All four authored compound scenes present in composition')
+          PY
+      - name: Upload real illustrated video evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudecreate-compound-city-mp4
+          retention-days: 7
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: |
+            compound-render.log
+            out/a-city-in-motion-draft/**
+            .reel-work/a-city-in-motion-draft/index.html
