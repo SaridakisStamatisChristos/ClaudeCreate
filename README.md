@@ -602,3 +602,5 @@ node bin/reel.mjs render examples/directed_network.json --draft --target 15
 ```
 
 See [Directed Scenes guide](docs/DIRECTED_SCENES.md) for every supported property, validation rule and current limitations. This is a first graphics milestone, **not yet full artistic production readiness**. AetherMotion and other video repositories remain separate.
+
+For automated storyboarding with object-level motion instructions, use [`prompts/CLAUDE_REEL_DIRECTED_MASTER_v1.2.md`](prompts/CLAUDE_REEL_DIRECTED_MASTER_v1.2.md). The original `CLAUDE_REEL_MASTER.md` remains available for template-only workflows.
