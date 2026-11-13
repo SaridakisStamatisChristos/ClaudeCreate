@@ -1,0 +1,55 @@
+name: Full-resolution 30 and 60-second production verification
+
+on:
+  push:
+    branches:
+      - feature/production-verification
+    paths:
+      - '.github/workflows/production-long.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: claudecreate-production-long-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  long-production:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        seconds: [30, 60]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install native HyperFrames runtime
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg python3 python3-venv espeak-ng
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+          npm install --no-audit --no-fund
+          echo "HYPERFRAMES_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+      - name: Render real ${{ matrix.seconds }}s narrated portrait and landscape at 1080p
+        shell: bash
+        run: |
+          set -o pipefail
+          node tools/production_verify.mjs ${{ matrix.seconds }} 2>&1 | tee production-${{ matrix.seconds }}.log
+      - name: Upload inspection-ready media and test evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudecreate-production-${{ matrix.seconds }}
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
+          path: |
+            production-${{ matrix.seconds }}.log
+            reports/production-${{ matrix.seconds }}.json
+            out/claudecreate-production-verification-${{ matrix.seconds }}-seconds/**
