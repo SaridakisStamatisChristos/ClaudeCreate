@@ -21,12 +21,13 @@ test('video_card rejects unsupported MP4 and malformed props',()=>{
   assert.match(errors,/player_chrome: expected boolean/);
   assert.match(errors,/unknown property 'unexpected'/);
 });
-test('image-backed video_card renders no network URL and timeline-based progress',()=>{
+test('image-backed video_card renders full canvas without nested fake player',()=>{
   const html=buildHTML(example,timing,{draft:true});
   assert.match(html,/data-type="video_card"/);
   assert.match(html,/class="ed-video-label"/);
-  assert.match(html,/class="ed-progress-fill"/);
-  assert.match(html,/width:'100%',duration:dur,ease:'none'/);
+  assert.match(html,/class="ed-artwork"/);
+  assert.match(html,/width:1080px;height:1920px/);
+  assert.doesNotMatch(html,/ed-player|ed-progress-fill|ed-play-icon/);
   assert.match(html,/data-width="540"/);
   assert.doesNotMatch(html,/https?:\/\/(fonts\.googleapis|cdnjs|cdn\.)/);
 });
@@ -38,7 +39,7 @@ test('video_card label text safely escapes HTML and disables player chrome',()=>
   assert.match(html,/&lt;img src=x/);
   assert.doesNotMatch(html,/<img src=x onerror=/);
   const section=html.slice(html.indexOf('id="scene-0"'),html.indexOf('id="scene-1"'));
-  assert.doesNotMatch(section,/ed-player-chrome/);
+  assert.doesNotMatch(section,/ed-player-chrome|ed-player|ed-progress-fill/);
 });
 
 
@@ -48,6 +49,14 @@ test('fit contain maps only to an allowlisted CSS class instead of ignored input
   s.scenes[2].props.media.fit='contain';
   const html=buildHTML(s,timing,{draft:true});
   assert.match(html,/ed-fit-contain/);
-  assert.match(html,/\.ed-scene img\.ed-fit-contain\{object-fit:contain\}/);
+  assert.match(html,/\.ed-scene \.ed-artwork img\.ed-fit-contain\{object-fit:contain\}/);
   assert.equal(checkScript(s).ok,true);
+});
+
+test('deprecated embedded player UI explicitly fails v2 validation',()=>{
+  const bad=structuredClone(example);
+  bad.scenes[0].props.player_chrome=true;
+  const result=checkScript(bad);
+  assert.equal(result.ok,false);
+  assert.match(result.errors.join(' '),/player_chrome: embedded player controls are no longer supported/);
 });
