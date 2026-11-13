@@ -629,3 +629,16 @@ node bin/reel.mjs render examples/directed_compound_city.json --draft --target 1
 ```
 
 Read the [compound scene specification](docs/DIRECTED_COMPOUNDS.md) and use the [compound storyboard prompt](prompts/CLAUDE_REEL_COMPOUND_MASTER_v1.4.md) for more directed visual variety. The [A City in Motion JSON fixture](examples/directed_compound_city.json) combines layered buildings, a moving sun, a traveling energy particle, and connected neighborhoods. The dedicated [real compound render workflow](.github/workflows/compound-e2e.yml) tests actual local Kokoro/Whisper/HyperFrames MP4 production, not mocks. This is still 2D procedural illustration, not articulated character animation or photorealistic video.
+
+
+### Cinematic vector atmosphere (experimental v0.4)
+
+Script-directed animation now supports full-height two-colour sky gradients, deterministic environmental particles (stars, fireflies, mist, rain), and bounded native-SVG shadow/glow effects on individual shapes or compound groups. Environmental movement is bound to the same paused GSAP timeline as the visual objects, so all effects are reproducible by frame. It remains fully local; no AI image API, external assets, or new runtime package is required.
+
+```bash
+npm test
+node bin/reel.mjs check examples/directed_atmosphere_city.json --target 15
+node bin/reel.mjs render examples/directed_atmosphere_city.json --draft --target 15
+```
+
+The complete [atmosphere and depth guide](docs/DIRECTED_ENVIRONMENTS.md), [four-environment city demo](examples/directed_atmosphere_city.json), and [v1.5 scene-writing prompt](prompts/CLAUDE_REEL_ATMOSPHERE_MASTER_v1.5.md) explain how to create layered authored scenes. This is improved editorial illustration and stylized motion graphics, **not** character acting or photorealism. The demo runs shorter than a calibrated 15-second reel.
