@@ -45,3 +45,8 @@ The `directed_scene` JSON contract now includes hierarchical `group` objects, an
 A numeric Bézier `path` may serve as a motion track: animate a different object using `{ "target":"spark", "property":"pathProgress", "path":"wire", "at":0.1, "duration":0.75, "from":0, "to":1, "ease":"power2.inOut" }`. Both objects must share the same parent, and the traveler cannot also animate x/y. All timing remains measured-scene-relative and seekable. Only one pathProgress animation per traveler is supported. This feature does not execute model-generated SVG path code.
 
 See [compound semantics and limits](DIRECTED_COMPOUNDS.md), [the verified regression fixture](../examples/directed_compound_city.json), and [the v1.4 scene-generation prompt](../prompts/CLAUDE_REEL_COMPOUND_MASTER_v1.4.md).
+
+
+## Directed environment and depth — v0.4
+
+A `directed_scene` may optionally include `props.environment`, containing `sky: {top:"#RRGGBB",bottom:"#RRGGBB"}` and/or `particles: {type:"stars"|"fireflies"|"mist"|"rain",count:1..60,seed:0..999999,color:"#RRGGBB",opacity:0.05..0.8,driftX:-160..160,driftY:-160..160}`. The sky gradient fills the full portrait scene, not just the SVG artboard. Particle geometry is deterministically seeded at compile time and animated through the existing GSAP timeline. Individual basic/art objects and compound groups may optionally specify `shadow: {color:"#RRGGBB",blur:0..22,dx:-32..32,dy:-32..32,opacity:0.05..0.8}`. All values are strictly validated; unknown properties fail. No raw SVG/CSS injection, image requests or user-authored scripts are accepted. See [full guide](DIRECTED_ENVIRONMENTS.md) and [working JSON example](../examples/directed_atmosphere_city.json).
