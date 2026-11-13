@@ -26,6 +26,21 @@ export function setupDirected(timeline,scene,index,start,duration,gsap){
  const initialized=new Set();
  for(const a of [...props.animations].sort((a,b)=>a.at-b.at)){
   const id=a.target,key=a.property,token=id+':'+key,explicit=id==='camera'?props.camera:defs.get(id)?.initial;
+  if(key==='pathProgress'){
+   const pathDef=defs.get(a.path),shape=elements.get(a.path).querySelector('path');
+   const traveler=defs.get(id),el=target(id),length=shape.getTotalLength();
+   const frame={progress:a.from};
+   const drawPosition=()=>{
+    const point=shape.getPointAtLength(length*frame.progress);
+    gsap.set(el,{x:pathDef.x+point.x-traveler.x,y:pathDef.y+point.y-traveler.y});
+   };
+   drawPosition();
+   timeline.fromTo(frame,{progress:a.from},{
+    progress:a.to,duration:duration*a.duration,ease:a.ease,
+    onUpdate:drawPosition,onStart:drawPosition,immediateRender:false,overwrite:false
+   },start+duration*a.at);
+   continue;
+  }
   const el=key==='draw'?target(id).querySelector('line,path'):target(id);
   if(!initialized.has(token)&&!(explicit&&Object.hasOwn(explicit,key)))gsap.set(el,values(id,key,a.from));
   initialized.add(token);
