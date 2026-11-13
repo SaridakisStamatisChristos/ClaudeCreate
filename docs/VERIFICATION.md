@@ -16,7 +16,10 @@ Checkpoint: development branch `feature/production-verification`. Do not promote
 
 ~~~bash
 sudo apt-get update
-sudo apt-get install -y ffmpeg python3 espeak-ng
+sudo apt-get install -y ffmpeg python3 python3-venv espeak-ng
+python3 -m venv .venv
+.venv/bin/python -m pip install kokoro-onnx soundfile
+export HYPERFRAMES_PYTHON="$PWD/.venv/bin/python"
 # Install Node 22+ from an official Node distribution if not already installed
 node --version
 npm install
@@ -31,13 +34,15 @@ npm run test:real
 
 `npm run test:real` is **not** part of the lightweight default test suite. It may download Kokoro and the Whisper `small.en` model. Internet access is needed only for first-time package/model installation, not for inference. Some Linux installations also require Chromium or Playwright browser dependencies used by HyperFrames. Use `npx hyperframes doctor` to diagnose a broken installation; review its actual output before changing system packages.
 
+The first real CI attempt, [run 43407025515](https://github.com/SaridakisStamatisChristos/ClaudeCreate/actions/runs/43407025515), verified Level 1/2 and the real HyperFrames visual smoke test but failed to synthesize narration because `kokoro-onnx` was absent. This is an observed dependency, not an inferred one. The next CI iteration installs it before repeating the genuine test.
+
 The actual-model test uses `examples/verification_short.json`. It first loads a local Kokoro voice and invokes the real TTS plus Whisper CLI with no test doubles. It records WAV media properties, word-level timestamps, full MP4 stream metadata, and whether rerendering reuses cached WAV files. Captions are generated from those timestamps by the existing composition engine. If the real recognizer omits or adds words, the test **must fail**, rather than inventing alignment.
 
 A successful `npm run test:hyperframes` proves video rendering only with synthetic word timing; a successful `npm run test:integration` proves FFmpeg outputs only with mocked TTS and rendering. Only the independent `npm run test:real` can promote speech/video evidence to Level 3/4.
 
 ## GitHub Actions
 
-The standard `.github/workflows/validate.yml` is the fast validation suite. `.github/workflows/real-e2e.yml` runs on pushes to this feature branch or via manual dispatch. It installs FFmpeg and espeak-ng, runs the full model test, and uploads reports, transcripts, audio and MP4 evidence even if the test fails partway. A green Actions run with the exact commit identifies the successful runtime; the mere presence of the workflow is not proof it ran.
+The standard `.github/workflows/validate.yml` is the fast validation suite. `.github/workflows/real-e2e.yml` runs on pushes to this feature branch or via manual dispatch. It installs FFmpeg, espeak-ng and HyperFrames' required Python `kokoro-onnx` runtime, then runs the full model test, and uploads reports, transcripts, audio and MP4 evidence even if the test fails partway. A green Actions run with the exact commit identifies the successful runtime; the mere presence of the workflow is not proof it ran.
 
 Verify uploaded files by playing the actual MP4: spoken text, captions, scene progression and transitions must be visually/audibly inspected before Level 5 claims. FFprobe checks alone cannot prove speech intelligibility or visible scene continuity.
 
