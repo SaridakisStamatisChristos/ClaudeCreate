@@ -40,7 +40,6 @@ export function validateDirectedProps(p,scenePath,errors){
   }
   const fields=o.type==='line'?['from','to','stroke','strokeWidth']:o.type==='circle'?['x','y','radius','fill']:o.type==='rect'?['x','y','width','height','radius','fill']:['x','y','text','fontSize','fill'];
   keys(o,['id','type','initial',...fields,...(['circle','rect'].includes(o.type)?['gradient']:[])],path,errors);
-  if(ART_TYPES.includes(o.type))return renderArtObject(o,index);
   if(o.type==='line'){
    if(typeof o.from!=='string'||typeof o.to!=='string')errors.push(path+': line endpoints must be IDs');
    if(!hex(o.stroke))errors.push(path+'.stroke: expected #RRGGBB');
@@ -96,6 +95,7 @@ export function renderDirected(scene,index){
  const defs=p.objects.map(o=>gradientDefs(o,index)).filter(Boolean).join('');
  const shapes=list.map(o=>{
   const name='directed-'+index+'-'+o.id,style='opacity:'+f(o.initial?.opacity??1);
+  if(ART_TYPES.includes(o.type))return renderArtObject(o,index);
   if(o.type==='line'){
    const a=byId.get(o.from),b=byId.get(o.to),length=Math.hypot(a.x-b.x,a.y-b.y);
    return '<g id="'+name+'" style="'+style+'"><line x1="'+f(a.x)+'" y1="'+f(a.y)+'" x2="'+f(b.x)+'" y2="'+f(b.y)+'" stroke="'+o.stroke+'" stroke-width="'+f(o.strokeWidth)+'" stroke-linecap="round" stroke-dasharray="'+f(length)+'" stroke-dashoffset="'+f(length*(1-(o.initial?.draw??1)))+'"/></g>';
