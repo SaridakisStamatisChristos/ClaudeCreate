@@ -6,6 +6,8 @@ on:
       - feature/production-verification
     paths:
       - '.github/workflows/production-long.yml'
+      - 'examples/verification_30.json'
+      - 'examples/verification_60.json'
   workflow_dispatch:
 
 permissions:
