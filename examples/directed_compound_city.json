@@ -850,7 +850,7 @@
             "layer": 5
           },
           {
-            "id": "leaf",
+            "id": "treeLeft",
             "type": "icon",
             "x": -355,
             "y": 45,
@@ -861,7 +861,7 @@
             "parent": "future"
           },
           {
-            "id": "leaf",
+            "id": "treeRight",
             "type": "icon",
             "x": 325,
             "y": 20,
