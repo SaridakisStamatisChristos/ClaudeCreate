@@ -74,3 +74,9 @@ The checklist above is the target acceptance standard, not an assertion that eve
 | Full-length production render / merge main | NOT RUN | Intentionally prohibited without owner approval |
 
 The standalone tools/editorial_draft_smoke.mjs **does not use the production Kokoro voice pipeline** and its audio is a synthesized test tone. Its passing result must not be interpreted as a complete narrated reel. Branch must stay feature/editorial-illustrated-v0.2 until further review.
+
+## Correction to v0.2 creative direction — full-canvas illustration
+
+The owner clarified that the supplied screenshot represents the **finished video itself**, not a player embedded inside a second video. The previous inset-player design is superseded. In all four v2 editorial templates, artwork/typography occupies the full 1080×1920 scene. A lower legibility gradient supports text and synchronized captions over the illustration. There are **no fake playback controls, inset player frames, handles or footers**. The legacy video_card name remains for schema compatibility but its visual is full-frame. Optional player_chrome must be omitted or false; true now fails validation. The original six v1 templates are unchanged.
+
+See [full-canvas correction and testing](EDITORIAL_FULL_CANVAS_V0_2.md). Prior embedded-player screenshots and their visual audits are historical engineering evidence, not approval of the corrected design.
