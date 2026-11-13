@@ -38,6 +38,8 @@ function verifyVideo(name,info,width,height) {
   if(!video||video.width!==width||video.height!==height)
     throw Error(name+': wrong or absent video stream');
   if(!audio)throw Error(name+': no narration audio stream');
+  if(Number(audio.sample_rate)!==48000 || audio.channels!==2)
+    throw Error(name+': expected 48 kHz stereo AAC (actual '+audio.sample_rate+' Hz / '+audio.channels+' channels)');
   if(!(info.duration>0 && info.duration<=10.25))
     throw Error(name+': invalid short-draft duration '+info.duration);
 }
