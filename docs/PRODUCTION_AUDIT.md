@@ -13,7 +13,7 @@
 | Child processes lacked time bounds | No timeouts or group termination for CLI processes | Added bounded runtime and POSIX process-group termination | Static tests pass; timeout kill path not stress-tested |
 | Draft rendered <=10s but synthesized entire long script | `prepare` iterated all scenes before clipping video | Bound draft synthesis and composition to first <=10s worth of scenes | Existing integration tests and short real render pass |
 | Final AAC sample rate drifted | First real video had **96 kHz stereo AAC** despite 48 kHz processing | Force `-ar 48000 -ac 2` during AAC encoding; verify stream | Independent FFprobe inspection on corrected run: **48 kHz stereo AAC** |
-| Direct dependency versions floated | `package.json` used caret ranges | Pin direct `hyperframes=0.9.37`, `gsap=3.14.2`, `three=0.181.0` | `npm install` and CI passed; no committed transitive lockfile |
+| Direct dependency versions floated | `package.json` used caret ranges | Pin direct `hyperframes=0.9.37`, `gsap=3.14.2`, `three=0.181.0`; commit lockfile | `npm ci` and 17 tests passed with the resolved transitive graph |
 | First 15s full-resolution target overshot | Real 8-scene/40-word sample rendered **18.6s** | Calibrated reproducible fixture to 32 scripted words, preserving six original templates | Re-run underway; not yet a passing 15s claim |
 
 ## Confirmed tests
@@ -31,7 +31,7 @@ The verified Level 4 evidence is uploaded as [workflow artifact 14028801290](htt
 1. Production test fixtures use real measured duration. `--target` is presently an **estimate/validator hint**, not a duration-constraining render parameter; script calibration must respect measured voice speed.
 2. 15/30/60s full-resolution outputs and manual audiovisual inspection still need independent acceptance; CI metadata alone cannot prove visual or spoken quality.
 3. Concurrent same-cache-key synthesis, cold-download model error recovery, interrupted renders, large media, disk pressure and long-running memory use have not yet received dedicated adversarial verification.
-4. Transitive npm packages are not locked with a committed `package-lock.json`.
+4. The npm dependency graph is now pinned by a committed `package-lock.json` and was verified by the GitHub Actions lockfile job.
 5. Other voice languages are not verified; only English `af_heart` is demonstrated.
 
 ## Reproduction
@@ -41,7 +41,7 @@ sudo apt-get update
 sudo apt-get install -y ffmpeg python3 python3-venv espeak-ng
 python3 -m venv .venv
 .venv/bin/python -m pip install kokoro-onnx soundfile
-npm install
+npm ci
 npm test
 npm run test:integration
 npm run test:hyperframes
