@@ -36,3 +36,12 @@ For each scene, also supply `say` (4–10 words recommended, max 16), `highlight
 Generate scripts using [the canonical Claude master prompt](../prompts/CLAUDE_REEL_MASTER.md). The prompt limits itself to 10 words per scene to avoid warnings, but the application retains the pre-existing hard limit of 16 words for backward compatibility.
 
 Run `npm run reel -- check script.json --target 15` (or `30` / `60`) before a render. The CLI prints both the chosen target and the estimated length.
+
+
+## Compound illustration v0.3
+
+The `directed_scene` JSON contract now includes hierarchical `group` objects, an optional per-object `parent` string (referencing a group), and optional integer `layer` (-20…20) to determine drawing order among siblings. Child x/y values are local to their parent (-450…450), while root objects remain in stage coordinates (0…900). Group nesting is limited to four levels and the whole scene to 64 objects; parent cycles and cross-parent line connections are rejected.
+
+A numeric Bézier `path` may serve as a motion track: animate a different object using `{ "target":"spark", "property":"pathProgress", "path":"wire", "at":0.1, "duration":0.75, "from":0, "to":1, "ease":"power2.inOut" }`. Both objects must share the same parent, and the traveler cannot also animate x/y. All timing remains measured-scene-relative and seekable. Only one pathProgress animation per traveler is supported. This feature does not execute model-generated SVG path code.
+
+See [compound semantics and limits](DIRECTED_COMPOUNDS.md), [the verified regression fixture](../examples/directed_compound_city.json), and [the v1.4 scene-generation prompt](../prompts/CLAUDE_REEL_COMPOUND_MASTER_v1.4.md).
