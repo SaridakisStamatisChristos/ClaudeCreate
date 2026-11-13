@@ -55,10 +55,16 @@ function validateProps(scene, i, errors) {
   }
 }
 
-export const EDITORIAL_TEMPLATES = Object.freeze(['editorial_split','editorial_text_card']);
+export const EDITORIAL_TEMPLATES = Object.freeze(['editorial_split','editorial_text_card','illustration_motion']);
 function validateEditorialProps(scene,i,errors,assetRoot) {
   const p='scenes['+i+'].props',v=scene.props;
   if(!isRecord(v)){errors.push(p+': expected object');return;}
+  if(scene.template==='illustration_motion'){
+    exactKeys(v,['media','label'],p,errors);
+    if(v.label!==undefined&&(typeof v.label!=='string'||wordCount(v.label)>5))errors.push(p+'.label: expected at most 5 words');
+    validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:true,allowVideo:false});
+    return;
+  }
   const split=scene.template==='editorial_split';
   exactKeys(v,split?['media','kicker','text','emphasis','player_chrome']:['kicker','text','emphasis'],p,errors);
   if(!isNonempty(v.text)||wordCount(v.text)>14)errors.push(p+'.text: expected 1–14 words');
@@ -68,7 +74,7 @@ function validateEditorialProps(scene,i,errors,assetRoot) {
     errors.push(p+'.emphasis: must be an exact substring of text');
   if(split){
     if(v.player_chrome!==undefined && typeof v.player_chrome!=='boolean')errors.push(p+'.player_chrome: expected boolean');
-    validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:false,allowVideo:false});
+    validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:true,allowVideo:false});
   }
 }
 
