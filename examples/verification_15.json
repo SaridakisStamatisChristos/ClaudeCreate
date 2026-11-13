@@ -10,8 +10,8 @@
   "scenes": [
     {
       "template": "caption_screen",
-      "say": "Ideas become stories through motion.",
-      "highlight": "Ideas",
+      "say": "Creative ideas become stories.",
+      "highlight": "Creative",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -20,7 +20,7 @@
     },
     {
       "template": "counter",
-      "say": "Clear captions explain every step.",
+      "say": "Clear captions guide audiences.",
       "highlight": "Clear",
       "illustrative": false,
       "sfx": "none",
@@ -33,7 +33,7 @@
     },
     {
       "template": "app_screen",
-      "say": "Numbers reveal growth over time.",
+      "say": "Numbers reveal meaningful progress.",
       "highlight": "Numbers",
       "illustrative": false,
       "sfx": "none",
@@ -54,7 +54,7 @@
     },
     {
       "template": "callout",
-      "say": "Simple tools unlock creative possibilities.",
+      "say": "Simple tools unlock creativity.",
       "highlight": "Simple",
       "illustrative": false,
       "sfx": "none",
@@ -65,7 +65,7 @@
     },
     {
       "template": "object_3d",
-      "say": "Shapes transform data into meaning.",
+      "say": "Shapes transform abstract concepts.",
       "highlight": "Shapes",
       "illustrative": false,
       "sfx": "none",
@@ -76,7 +76,7 @@
     },
     {
       "template": "compare",
-      "say": "Comparisons make different choices clearer.",
+      "say": "Comparisons clarify difficult choices.",
       "highlight": "Comparisons",
       "illustrative": false,
       "sfx": "none",
@@ -93,7 +93,7 @@
     },
     {
       "template": "caption_screen",
-      "say": "Good design respects audience attention.",
+      "say": "Good design respects attention.",
       "highlight": "Good",
       "illustrative": false,
       "sfx": "none",
@@ -103,8 +103,8 @@
     },
     {
       "template": "counter",
-      "say": "Sounds and pictures work together.",
-      "highlight": "Sounds",
+      "say": "Sound and pictures connect.",
+      "highlight": "Sound",
       "illustrative": false,
       "sfx": "none",
       "props": {
