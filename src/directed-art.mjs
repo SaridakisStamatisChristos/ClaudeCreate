@@ -1,5 +1,6 @@
 // ClaudeCreate procedural illustration primitives v0.2.
 // Data-only numeric paths and curated local symbols; never execute or trust raw SVG.
+import { shadowRef } from './directed-environment.mjs';
 export const ART_TYPES = Object.freeze(['ellipse','polygon','path','icon']);
 export const ICON_NAMES = Object.freeze(['lightbulb','person','globe','leaf','book','rocket','factory','computer']);
 const sym = Object.freeze({
@@ -37,7 +38,7 @@ export function validateArtObject(o,p,errors){
   path:['x','y','commands','fill','gradient','stroke','strokeWidth'],
   icon:['x','y','size','name','stroke','strokeWidth']
  }[o.type];
- allowed(o,['id','type','initial','parent','layer',...fields],p,errors);
+ allowed(o,['id','type','initial','parent','layer','shadow',...fields],p,errors);
  const [min,max]=o.parent?[-450,450]:[0,900];
  span(o.x,min,max,p+'.x',errors);span(o.y,min,max,p+'.y',errors);
  if(o.type==='icon'){
@@ -98,5 +99,5 @@ export function renderArtObject(o,index){
  if(o.type==='polygon')child='<polygon points="'+o.points.map(pt=>f(pt.x)+','+f(pt.y)).join(' ')+'" fill="'+fill+'"'+stroke+'/>';
  if(o.type==='path')child='<path d="'+pathD(o.commands)+'" fill="'+fill+'"'+stroke+'/>';
  if(o.type==='icon')child='<g transform="scale('+f(o.size/100)+') translate(-50 -50)" fill="none" stroke="'+o.stroke+'" stroke-width="'+f(o.strokeWidth??5)+'" stroke-linejoin="round" stroke-linecap="round">'+sym[o.name]+'</g>';
- return '<g transform="translate('+f(o.x)+' '+f(o.y)+')"><g id="'+id+'" style="'+style+'">'+child+'</g></g>';
+ return '<g transform="translate('+f(o.x)+' '+f(o.y)+')"><g id="'+id+'" style="'+style+'"'+shadowRef(o,index)+'>'+child+'</g></g>';
 }
