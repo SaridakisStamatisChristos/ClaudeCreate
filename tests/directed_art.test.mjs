@@ -89,3 +89,13 @@ test('runtime computes stroke length on curves for deterministic draw animation'
   assert.ok(tweens.some(x=>x[3]===5+4*.36));
  }finally{if(old===undefined)delete globalThis.document;else globalThis.document=old;}
 });
+
+test('directed scenes are visible immediately instead of inheriting generic entry fade',()=>{
+ const html=buildHTML(fixture,times,{draft:true});
+ assert.match(html,/if\(s\.template==='directed_scene'\)tl\.set\(base\+' \.visual',\{opacity:1,y:0\},start\)/);
+ assert.match(html,/else tl\.fromTo\(base\+' \.visual'/);
+ const invalid=structuredClone(fixture);
+ invalid.scenes[0].props.background='not-a-color';
+ const unvalidated=buildHTML(invalid,times,{draft:true});
+ assert.match(unvalidated,/style="background:#111318"/);
+});
