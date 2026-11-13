@@ -112,10 +112,10 @@ The commands below assume your working directory is the repository root (the fol
 ### 2.4 Install JavaScript/HyperFrames dependencies
 
 ```bash
-npm install
+npm ci
 ```
 
-This installs the exact direct package versions in `package.json` (HyperFrames 0.9.37, GSAP and Three.js). You do **not** need to fork HyperFrames or separately host its rendering service.
+This installs the exact direct and transitive versions in the committed `package-lock.json` (HyperFrames 0.9.37, GSAP and Three.js), rather than floating package updates. You do **not** need to fork HyperFrames or separately host its rendering service.
 
 Check the installed HyperFrames CLI:
 
@@ -585,3 +585,6 @@ npm run test:real
 This uses the short two-scene fixture in `examples/verification_short.json`, with no speech or video mocks. The machine may need to download local model weights on the first run. The test writes `reports/real-verification.json` and MP4 exports under `out/claudecreate-real-pipeline-verification-draft/`. Run `npm test`, `npm run test:integration` and `npm run test:hyperframes` separately for quick tests, mock FFmpeg integration, and real animation with synthetic captions respectively. **None of those three proves Kokoro or Whisper execution.**
 
 Read [the verification levels, evidence, GitHub Actions workflow and remaining production blockers](docs/VERIFICATION.md). Do not describe the application as production-ready until all Level 5 requirements are independently verified.
+
+
+**Audit:** See [production completion technical audit](docs/PRODUCTION_AUDIT.md) for observed defects, fixes, evidence levels and remaining acceptance gates.
