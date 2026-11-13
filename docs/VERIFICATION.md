@@ -1,6 +1,6 @@
 # ClaudeCreate production verification
 
-Checkpoint: development branch `feature/production-verification`. Do not promote to `main` until Level 4 genuine execution and Level 5 production-length verification have passed.
+Checkpoint: development branch `feature/production-verification`. Level 4 genuine execution and Level 5 automated production-length verification have now passed. **Manual artistic acceptance and final release-readiness remain open; do not promote to `main` without explicit user approval.**
 
 ## Evidence levels
 
@@ -10,7 +10,7 @@ Checkpoint: development branch `feature/production-verification`. Do not promote
 | 2 Mock integration | Real FFmpeg with synthetic WAV and mock HyperFrames | `npm run test:integration` (NOT Kokoro) |
 | 3 Real components | Actual HyperFrames Kokoro WAV, whisper.cpp transcription, audio duration/sample rate, exact words | `npm run test:real`, `reports/real-verification.json` |
 | 4 Real end-to-end | Two animated templates + actual narration + word-level captions + FFmpeg portrait/landscape MP4 | `npm run test:real`, video artifacts and ffprobe metadata |
-| 5 Production | 15/30/60-second scripts, 1080×1920 portrait and landscape playback and subjective intelligibility/visual checks | OPEN; not established by 10-second draft |
+| 5 Production | 15/30/60-second scripts, 1080×1920 portrait and landscape playback and subjective intelligibility/visual checks | Automated 15s, 30s, 60s production jobs PASS; manual quality acceptance OPEN |
 
 ## Ubuntu / Linux Mint dependencies
 
@@ -48,8 +48,18 @@ Verify uploaded files by playing the actual MP4: spoken text, captions, scene pr
 
 ## Known remaining risks
 
-- Package versions are pinned at the top level, but no transitive lockfile has yet been generated and committed.
+- Direct dependency versions and the transitive graph are pinned by committed `package-lock.json`; `npm ci` is part of CI.
 - TTS output and Whisper can vary across platforms/models; exact word matching intentionally fails when pronunciation or tokenization differs.
 - Concurrent synthesis of the same cache key is not yet protected by an inter-process lock.
 - A successful 10-second draft does not establish full-resolution 15/30/60-second reliability.
 - A model download blocked by bandwidth, disk or runner capabilities must be reported as a real blocker, not as a passing test.
+
+
+## Verified production updates — 13 November 2026
+
+- [15-second-class full-resolution production](https://github.com/SaridakisStamatisChristos/ClaudeCreate/actions/runs/43409053603): GitHub CI success, eight scenes, genuine narration/FFmpeg exports.
+- [30- and 60-second-class full-resolution production](https://github.com/SaridakisStamatisChristos/ClaudeCreate/actions/runs/43409912649): both jobs passed, with 15- and 30-scene fixtures respectively. These verify export reliability, **not visual sophistication**; templates were repetitive.
+- [Latest baseline validation](https://github.com/SaridakisStamatisChristos/ClaudeCreate/actions/runs/43410533721): passed at previous checkpoint `319c08b`.
+- [Script-directed graphics render](https://github.com/SaridakisStamatisChristos/ClaudeCreate/actions/runs/43455758830): 22 unit tests and genuine 9.867-second procedural demo, portrait/landscape H.264/AAC, 48 kHz audio; six distinct frame samples. See [directed milestone report](DIRECTED_VERIFICATION_2026-11-13.md). This is an *additional small demonstration*, not yet a production-length visually diverse reel.
+
+Automated successes do not replace manual visual and listening acceptance. Avoid overstating the readiness of the declarative graphics renderer.
