@@ -107,6 +107,8 @@ export function validateDirectedProps(p,scenePath,errors){
    const motion=occupied.has(target+':pathProgress');
    if(motion&&(occupied.has(target+':x')||occupied.has(target+':y')))
      errors.push(root+'.animations: pathProgress cannot be combined with x/y tweens for '+target);
+   if((occupied.get(target+':pathProgress')||[]).length>1)
+     errors.push(root+'.animations: allow only one pathProgress segment per target '+target);
  }
 }
 export function renderDirected(scene,index){
