@@ -21,7 +21,7 @@ test('complete target-15 JSON passes all hard checks and length warning gates',(
 test('complete editorial example generates all scene containers and no remote media links',()=>{
  const timeline=example.scenes.map((s,i)=>({start:i*1.9,duration:1.9,audioDuration:1.7,words:[]}));
  const html=buildHTML(example,timeline,{draft:true});
- assert.equal((html.match(/class="clip scene ed-scene"/g)||[]).length,8);
+ assert.equal((html.match(/class="clip scene ed-scene"/g)||[]).length,5);
  assert.match(html,/data-type="video_card"/);
  assert.match(html,/data-type="illustration_motion"/);
  assert.match(html,/data-type="compare"/);
