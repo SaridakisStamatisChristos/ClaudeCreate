@@ -104,7 +104,7 @@ export function renderDirected(scene,index){
   if(o.type==='circle')shape='<circle r="'+f(o.radius)+'" fill="'+artFill(o,index)+'"/>';
   else if(o.type==='rect')shape='<rect x="'+f(-o.width/2)+'" y="'+f(-o.height/2)+'" width="'+f(o.width)+'" height="'+f(o.height)+'" rx="'+f(o.radius??0)+'" fill="'+artFill(o,index)+'"/>';
   else shape='<text x="0" y="0" font-size="'+f(o.fontSize)+'" text-anchor="middle" dominant-baseline="middle" font-family="Arial,sans-serif" font-weight="700" fill="'+o.fill+'">'+esc(o.text)+'</text>';
-  return '<g id="'+name+'" transform="translate('+f(o.x)+' '+f(o.y)+')" style="'+style+'">'+shape+'</g>';
+  return '<g transform="translate('+f(o.x)+' '+f(o.y)+')"><g id="'+name+'" style="'+style+'">'+shape+'</g></g>';
  }).join('');
  return '<svg class="directed-svg" viewBox="0 0 900 900" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="'+esc(scene.say)+'"><rect width="900" height="900" fill="'+p.background+'"/><defs>'+defs+'</defs><g id="directed-camera-'+index+'">'+shapes+'</g></svg>';
 }
