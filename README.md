@@ -616,3 +616,16 @@ node bin/reel.mjs render examples/directed_illustrated.json --draft --target 15
 ```
 
 [Open the illustrated scene example](examples/directed_illustrated.json) and [v1.3 production prompt](prompts/CLAUDE_REEL_ILLUSTRATED_MASTER_v1.3.md). The established TTS/rendering path remains unchanged, and these illustrations are not yet equivalent to character animation or realistic filmmaking. Automated rendering acceptance and manual artistic review must be reported separately.
+
+
+### Compound illustration workflow (experimental v0.3)
+
+ClaudeCreate now supports hierarchically grouped SVG objects (`type: "group"`), sibling painter-order layers (`layer: -20..20`), and object motion along structured Bézier curves (`property: "pathProgress"`). Use this to animate an illustrated house, a city block, or a machine as one object and independently animate its components. Scene JSON is still validated data; it is not executable model-generated code.
+
+```bash
+npm test
+node bin/reel.mjs check examples/directed_compound_city.json --target 15
+node bin/reel.mjs render examples/directed_compound_city.json --draft --target 15
+```
+
+Read the [compound scene specification](docs/DIRECTED_COMPOUNDS.md) and use the [compound storyboard prompt](prompts/CLAUDE_REEL_COMPOUND_MASTER_v1.4.md) for more directed visual variety. The [A City in Motion JSON fixture](examples/directed_compound_city.json) combines layered buildings, a moving sun, a traveling energy particle, and connected neighborhoods. The dedicated [real compound render workflow](.github/workflows/compound-e2e.yml) tests actual local Kokoro/Whisper/HyperFrames MP4 production, not mocks. This is still 2D procedural illustration, not articulated character animation or photorealistic video.
