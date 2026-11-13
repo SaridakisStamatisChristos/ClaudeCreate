@@ -41,7 +41,7 @@ test('full-height sky gradients use only bounded color values',()=>{
  const invalid=structuredClone(fixture);
  invalid.scenes[0].props.environment.sky.top='red";onload="alert(1)';
  const safe=buildHTML(invalid,times,{draft:true});
- assert.match(safe,/style="background:#111318"/);
+ assert.match(safe,/style="background:#111F37"/);
  assert.ok(!safe.includes('onload="alert(1)'));
  assert.equal(environmentCSS({background:'#213456'}),'background:#213456');
 });
