@@ -50,3 +50,27 @@ npm run reel -- check examples/editorial_v2.example.json --target 15
 npm run reel -- preview examples/editorial_v2.example.json --draft --target 15
 npm run reel -- render examples/editorial_v2.example.json --draft --target 15
 ~~~
+
+
+## Implemented checkpoint and evidence summary — 13 November 2026
+
+The checklist above is the target acceptance standard, not an assertion that every item is approved. The following results were measured in the feature-branch GitHub Actions workflow:
+
+| Gate | Verdict | Evidence / limitation |
+| --- | --- | --- |
+| Unversioned v1 compatibility and six classic templates | PASS (automated) | Existing Node unit suite runs unchanged |
+| Explicit v2 schema and four editorial templates | PASS (automated) | Editorial schema and CLI tests |
+| Media traversal, URL, symlink, bad extension, invalid layers | PASS (automated) | Scene-indexed negative tests |
+| Escaped text, safe local media staging | PASS (automated) | Node HTML and staged-asset tests |
+| Genuine 2-second editorial HyperFrames draft | PASS (measured) | Real renderer with synthetic word timing; ffprobe 540×960 |
+| Camera motion and repeat-time still extraction | PASS (automated) | Distinct timestamp frames and matching repeated captures |
+| Genuine 8.4-second editorial HyperFrames draft | PASS (measured) | All four new templates plus FFmpeg export |
+| Portrait and landscape MP4 + audio stream | PASS (measured) | FFprobe 540×960 and 960×540; synthetic tone only |
+| Loudness normalization | PASS (measured) | Two-pass FFmpeg loudnorm and reported final integrated reading; no claim of exact -14 LUFS without value |
+| Actual Kokoro voice and aligned word timestamps | BLOCKED | Local Kokoro weights and end-to-end voice test absent in CI |
+| Scene-by-scene human artistic review of six stills | NOT RUN | CI attaches frames for manual review; no human visual signoff claimed |
+| Fully disconnected production test | NOT RUN | Not demonstrated after disconnect |
+| Local MP4 source seeking | NOT RUN | Explicitly rejected until deterministic seek tested |
+| Full-length production render / merge main | NOT RUN | Intentionally prohibited without owner approval |
+
+The standalone tools/editorial_draft_smoke.mjs **does not use the production Kokoro voice pipeline** and its audio is a synthesized test tone. Its passing result must not be interpreted as a complete narrated reel. Branch must stay feature/editorial-illustrated-v0.2 until further review.
