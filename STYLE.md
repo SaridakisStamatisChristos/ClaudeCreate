@@ -34,3 +34,9 @@ The defaults above continue unchanged for v1 and the six legacy templates. When 
 Full scene composition uses 1080×1920 canvas, 30 fps; draft 540×960. The flagship scene places a generic framed image/player near (70,260) at about 940×700, a kicker/headline below and a distinct word-caption region around y=1553–1769. Preserve side-safe padding around 90 px. Display headlines use locally available Georgia/Times-style serif fallback; sans-serif UI/captions, warm flat texture and restrained shadow. Highlight a phrase using one accent, never flashing effects. Frame motion is bounded, GSAP timeline-driven and repeatable at absolute frame times. Player progress uses scene timing, not fabricated playback metrics.
 
 Single-image motion does not animate people independently. Layered parallax requires transparent, independently authored sprites. No branded player, Instagram clone, copyrighted screenshot art, external font/CDN, or user-supplied executable code.
+
+## Correction to v0.2 creative direction — full-canvas illustration
+
+The owner clarified that the supplied screenshot represents the **finished video itself**, not a player embedded inside a second video. The previous inset-player design is superseded. In all four v2 editorial templates, artwork/typography occupies the full 1080×1920 scene. A lower legibility gradient supports text and synchronized captions over the illustration. There are **no fake playback controls, inset player frames, handles or footers**. The legacy video_card name remains for schema compatibility but its visual is full-frame. Optional player_chrome must be omitted or false; true now fails validation. The original six v1 templates are unchanged.
+
+See [full-canvas correction and testing](docs/EDITORIAL_FULL_CANVAS_V0_2.md). Prior embedded-player screenshots and their visual audits are historical engineering evidence, not approval of the corrected design.
