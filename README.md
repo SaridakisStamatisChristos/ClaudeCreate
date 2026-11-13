@@ -23,6 +23,7 @@ Create vertical Instagram Reels and landscape YouTube videos from a `script.json
 11. [Testing and quality checks](#11-testing-and-quality-checks)
 12. [Troubleshooting](#12-troubleshooting)
 13. [Updates, maintenance and limitations](#13-updates-maintenance-and-limitations)
+14. [Editorial illustrated mode (v0.2)](#14-experimental-editorial-illustrated-mode-v02-feature-branch)
 
 ## 1. Requirements
 
