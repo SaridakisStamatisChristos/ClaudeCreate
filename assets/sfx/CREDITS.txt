@@ -1,0 +1,4 @@
+Original electronic sounds synthesized algorithmically for ClaudeCreate.
+18 WAVs, 24 kHz, mono. Dedicated to the public domain under CC0-1.0.
+No downloaded, copyrighted, or third-party samples used.
+Files: whoosh_1.wav, whoosh_2.wav, whoosh_3.wav, pop_1.wav, pop_2.wav, pop_3.wav, tick_1.wav, tick_2.wav, tick_3.wav, stamp_1.wav, stamp_2.wav, stamp_3.wav, ding_1.wav, ding_2.wav, ding_3.wav, swipe_1.wav, swipe_2.wav, swipe_3.wav

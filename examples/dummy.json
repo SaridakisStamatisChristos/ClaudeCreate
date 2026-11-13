@@ -1,0 +1,13 @@
+{
+  "title": "Three moments, one idea",
+  "handle": "@demo",
+  "voice": "af_heart",
+  "accent": "#F8C95A",
+  "caption": "A tiny demo created entirely on your computer.",
+  "hashtags": ["#demo", "#creators"],
+  "scenes": [
+    {"template":"caption_screen","say":"One idea changes everything.","highlight":"changes","illustrative":false,"sfx":"pop","props":{"big_text":"IDEAS INTO MOTION"}},
+    {"template":"counter","say":"Watch the numbers grow.","highlight":"grow","illustrative":true,"sfx":"tick","props":{"from":0,"to":1000,"prefix":"","suffix":"+","label":"POSSIBILITIES"}},
+    {"template":"object_3d","say":"Then see the future differently.","highlight":"future","illustrative":false,"sfx":"ding","props":{"shape":"torus","label":"REIMAGINE"}}
+  ]
+}

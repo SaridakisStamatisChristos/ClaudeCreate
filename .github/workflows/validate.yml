@@ -1,0 +1,17 @@
+name: Validate local reel code
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  static-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - run: node --check bin/reel.mjs && node --check src/spec.mjs && node --check src/composition.mjs
+      - run: python3 -m py_compile tools/*.py

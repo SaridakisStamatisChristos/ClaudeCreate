@@ -1,0 +1,100 @@
+{
+  "title": "Every template illustrated",
+  "handle": "@demo",
+  "accent": "#F8C95A",
+  "caption": "All six templates rendered locally.",
+  "hashtags": [
+    "#video",
+    "#tutorial"
+  ],
+  "scenes": [
+    {
+      "template": "caption_screen",
+      "say": "This scene demonstrates the caption screen template.",
+      "highlight": "scene",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "big_text": "MAKE IT COUNT"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "This scene demonstrates the counter template.",
+      "highlight": "scene",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 42,
+        "prefix": "$",
+        "suffix": "M",
+        "label": "REACH"
+      }
+    },
+    {
+      "template": "app_screen",
+      "say": "This scene demonstrates the app screen template.",
+      "highlight": "scene",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "app_name": "Analytics",
+        "rows": [
+          {
+            "label": "Visitors",
+            "value": "102k"
+          },
+          {
+            "label": "Growth",
+            "value": "+18%"
+          },
+          {
+            "label": "Revenue",
+            "value": "$48k"
+          }
+        ],
+        "highlight_row": 1
+      }
+    },
+    {
+      "template": "callout",
+      "say": "This scene demonstrates the callout template.",
+      "highlight": "scene",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "text": "REAL RESULTS",
+        "style": "stamp"
+      }
+    },
+    {
+      "template": "object_3d",
+      "say": "This scene demonstrates the object 3d template.",
+      "highlight": "scene",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "shape": "cube",
+        "label": "BUILD"
+      }
+    },
+    {
+      "template": "compare",
+      "say": "This scene demonstrates the compare template.",
+      "highlight": "scene",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "left": {
+          "label": "Before",
+          "value": "4 days"
+        },
+        "right": {
+          "label": "After",
+          "value": "4 hours"
+        }
+      }
+    }
+  ]
+}
