@@ -1,4 +1,5 @@
 // Hierarchical illustration layout: safe, bounded parent groups and stable SVG draw order.
+import { shadowRef } from './directed-environment.mjs';
 const own = (o,k) => Object.prototype.hasOwnProperty.call(o,k);
 const number = n => typeof n === 'number' && Number.isFinite(n);
 const escNum = n => Number(n).toFixed(2);
@@ -56,7 +57,7 @@ export function renderHierarchy(objects,index,renderLeaf){
     const name='directed-'+index+'-'+o.id,opacity=escNum(o.initial?.opacity??1);
     const children=renderLevel(o.id);
     active.delete(o.id);
-    return '<g transform="translate('+escNum(o.x)+' '+escNum(o.y)+')"><g id="'+name+'" style="opacity:'+opacity+'">'+children+'</g></g>';
+    return '<g transform="translate('+escNum(o.x)+' '+escNum(o.y)+')"><g id="'+name+'" style="opacity:'+opacity+'"'+shadowRef(o,index)+'>'+children+'</g></g>';
   }).join('');
  return renderLevel('');
 }
