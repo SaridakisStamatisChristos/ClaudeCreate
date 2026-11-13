@@ -1,5 +1,5 @@
 # ClaudeCreate v0.2 — Editorial Illustrated Mode Technical Specification
-**Status:** Design/proposed schema **not implemented yet**. Branch `feature/editorial-illustrated-v0.2` only.
+**Status:** Four opt-in scene templates and a strict JSON v2 validator are implemented on feature branch feature/editorial-illustrated-v0.2. Automated tests and short synthetic-audio rendering have passed. Actual Kokoro end-to-end narration, human frame review, offline-disconnect test and local MP4 seek remain outstanding.
 
 ## 1. Why v2 needs an explicit opt-in
 Current v1 checker rejects additional top-level fields, new templates and unknown props. We must keep v1 stable while adding new features.
@@ -166,3 +166,15 @@ The example is short on purpose, and the referenced raster fixture is to be gene
 
 ## 6. Verification
 See `docs/EDITORIAL_V0_2_ACCEPTANCE.md`. Require strict validation tests and security negative cases, six stills without clipping, real <=10s HyperFrames draft, ffprobe on portrait and landscape outputs, audit of voice-word alignment, and honest offline network assessment. Tests with synthetic speech must not be described as successful Kokoro synthesis. Do not promote to main without owner's instruction.
+
+
+## Implementation notes and tested examples
+
+- Full v2 eight-scene target-15 example: ../examples/editorial_v2.example.json
+- Compact all-four template example: ../examples/editorial_stage_c.json
+- Original local illustrations: ../assets/editorial/demo-landscape.png and demo-trees.png (transparent overlay)
+- Asset resolver: ../src/editorial/assets.mjs; layout: ../src/editorial/layout.mjs
+- Real renderer tests: ../tools/editorial_hyperframes_smoke.mjs (2 seconds) and ../tools/editorial_draft_smoke.mjs (8.4 seconds, synthetic test tone)
+- Acceptance matrix: EDITORIAL_V0_2_ACCEPTANCE.md
+
+Current implementer constraint: video_card validates and renders an image-backed card, but **kind=video is rejected** until reproducible local seek. This is an intentional unsupported feature, not a silent image substitution. Layered media is accepted by editorial_split and illustration_motion, not video_card. All script media is copied into a sanitized directory below .reel-work before HyperFrames.
