@@ -3,7 +3,19 @@ on:
   push:
     branches:
       - feature/production-verification
+    paths:
+      - '.github/workflows/real-e2e.yml'
+      - 'bin/**'
+      - 'src/**'
+      - 'tests/**'
+      - 'tools/**'
+      - 'examples/verification_short.json'
+      - 'package.json'
   workflow_dispatch:
+
+concurrency:
+  group: claudecreate-genuine-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
