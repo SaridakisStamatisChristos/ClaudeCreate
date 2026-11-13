@@ -8,6 +8,7 @@
   "scripts": {
     "reel": "node bin/reel.mjs",
     "test": "node --test tests/*.test.mjs",
+    "test:integration": "python3 tools/smoke_test.py",
     "doctor": "node bin/reel.mjs doctor",
     "style-scan": "python3 tools/style_scan.py assets/references"
   },
