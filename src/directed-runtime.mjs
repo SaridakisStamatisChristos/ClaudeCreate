@@ -23,6 +23,14 @@ export function setupDirected(timeline,scene,index,start,duration,gsap){
  }
  gsap.set(camera,{transformOrigin:cssOrigin('camera')});
  for(const [key,value] of Object.entries(props.camera||{}))gsap.set(camera,values('camera',key,value));
+ const particles=props.environment?.particles;
+ if(particles){
+  for(const [suffix,factor] of [['back',.38],['front',1]]){
+   const layer=document.getElementById('directed-atmosphere-'+index+'-'+suffix);
+   timeline.fromTo(layer,{x:0,y:0},{x:particles.driftX*factor,y:particles.driftY*factor,
+    duration,ease:'none',immediateRender:false,overwrite:false},start);
+  }
+ }
  const initialized=new Set();
  for(const a of [...props.animations].sort((a,b)=>a.at-b.at)){
   const id=a.target,key=a.property,token=id+':'+key,explicit=id==='camera'?props.camera:defs.get(id)?.initial;
