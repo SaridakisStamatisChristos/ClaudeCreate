@@ -17,6 +17,6 @@ jobs:
       - run: python3 -m py_compile tools/*.py
       - run: sudo apt-get update -qq && sudo apt-get install -y -qq ffmpeg
       - run: npm run test:integration
-      - run: npm install --no-audit --no-fund
+      - run: npm ci --no-audit --no-fund
       - run: node_modules/.bin/hyperframes tts --help && node_modules/.bin/hyperframes transcribe --help
       - run: npm run test:hyperframes
