@@ -66,7 +66,7 @@ The primary composite image frame above text, all within **one timed scene**:
     "kicker":"DID YOU KNOW",
     "text":"Ordinary lives shaped extraordinary histories",
     "emphasis":"extraordinary histories",
-    "player_chrome":true
+    "player_chrome":false
   }
 }
 ~~~
@@ -116,7 +116,7 @@ Props: media required (image or layers only); label optional max 5 words. Still 
   "props":{
     "media":{"kind":"image","src":"assets/editorial/demo-landscape.png","fit":"cover","motion":"zoom_out"},
     "label":"A visual example",
-    "player_chrome":true
+    "player_chrome":false
   }
 }
 ~~~
@@ -144,7 +144,7 @@ Props: media required, label optional max 5 words, player_chrome optional bool. 
         "kicker":"DID YOU KNOW",
         "text":"Ordinary lives shaped extraordinary histories",
         "emphasis":"extraordinary histories",
-        "player_chrome":true
+        "player_chrome":false
       }
     }
   ]
@@ -178,3 +178,9 @@ See `docs/EDITORIAL_V0_2_ACCEPTANCE.md`. Require strict validation tests and sec
 - Acceptance matrix: EDITORIAL_V0_2_ACCEPTANCE.md
 
 Current implementer constraint: video_card validates and renders an image-backed card, but **kind=video is rejected** until reproducible local seek. This is an intentional unsupported feature, not a silent image substitution. Layered media is accepted by editorial_split and illustration_motion, not video_card. All script media is copied into a sanitized directory below .reel-work before HyperFrames.
+
+## Correction to v0.2 creative direction — full-canvas illustration
+
+The owner clarified that the supplied screenshot represents the **finished video itself**, not a player embedded inside a second video. The previous inset-player design is superseded. In all four v2 editorial templates, artwork/typography occupies the full 1080×1920 scene. A lower legibility gradient supports text and synchronized captions over the illustration. There are **no fake playback controls, inset player frames, handles or footers**. The legacy video_card name remains for schema compatibility but its visual is full-frame. Optional player_chrome must be omitted or false; true now fails validation. The original six v1 templates are unchanged.
+
+See [full-canvas correction and testing](EDITORIAL_FULL_CANVAS_V0_2.md). Prior embedded-player screenshots and their visual audits are historical engineering evidence, not approval of the corrected design.
