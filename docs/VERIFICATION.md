@@ -22,7 +22,7 @@ python3 -m venv .venv
 export HYPERFRAMES_PYTHON="$PWD/.venv/bin/python"
 # Install Node 22+ from an official Node distribution if not already installed
 node --version
-npm install
+npm ci
 npm ls hyperframes gsap three --depth=0
 npx hyperframes tts --list
 npx hyperframes transcribe --help
