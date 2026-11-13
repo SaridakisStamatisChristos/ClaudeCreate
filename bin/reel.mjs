@@ -195,6 +195,8 @@ async function main(){
   else if(command==='render')await render(scriptPath);
   else if(command==='doctor') {
     await run('ffmpeg',['-version']);if(!existsSync(CLI))throw new Error('Run npm install first');
+    try{await run(PYTHON,['-c','import kokoro_onnx, soundfile'],{timeoutMs:30000});}
+    catch{throw new Error('HyperFrames Kokoro runtime is missing. Run: python3 -m venv .venv && .venv/bin/python -m pip install kokoro-onnx soundfile');}
     const r=await run(CLI,['doctor']);console.log(r.out.trim().split('\n').slice(-15).join('\n'));
   }else console.log('Usage: reel voice-sample | voice-select VOICE | check script.json [--target 15|30|60] | preview script.json [--draft] | render script.json [--draft] | doctor');
 }
