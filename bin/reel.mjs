@@ -139,7 +139,7 @@ async function normalize(wav,output){
   const pass=await run('ffmpeg',['-hide_banner','-i',wav,'-af',`loudnorm=${settings}:print_format=json`,'-f','null','-']);
   const m=stats(pass.err);
   const filter=`loudnorm=${settings}:measured_I=${m.input_i}:measured_TP=${m.input_tp}:measured_LRA=${m.input_lra}:measured_thresh=${m.input_thresh}:offset=${m.target_offset}:linear=true:print_format=json`;
-  await run('ffmpeg',['-y','-hide_banner','-loglevel','error','-i',wav,'-af',filter,'-c:a','aac','-b:a','192k',output]);
+  await run('ffmpeg',['-y','-hide_banner','-loglevel','error','-i',wav,'-af',filter,'-ar','48000','-ac','2','-c:a','aac','-b:a','192k',output]);
   const measured=await run('ffmpeg',['-hide_banner','-i',output,'-af',`loudnorm=${settings}:print_format=json`,'-f','null','-']);
   return stats(measured.err).input_i;
 }
