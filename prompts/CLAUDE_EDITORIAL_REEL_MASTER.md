@@ -43,7 +43,7 @@ Every scene object has exactly six fields: template, say, highlight, illustrativ
 **editorial_split** — upper framed local moving illustration, lower headline and kicker in the SAME scene:
 
 ~~~json
-{"template":"editorial_split","say":"Rivers carried stories across distant towns.","highlight":"Rivers","illustrative":true,"sfx":"none","props":{"media":{"kind":"image","src":"assets/editorial/demo-landscape.png","fit":"cover","motion":"pan_left"},"kicker":"ILLUSTRATED HISTORY","text":"Every river has an untold history","emphasis":"untold history","player_chrome":true}}
+{"template":"editorial_split","say":"Rivers carried stories across distant towns.","highlight":"Rivers","illustrative":true,"sfx":"none","props":{"media":{"kind":"image","src":"assets/editorial/demo-landscape.png","fit":"cover","motion":"pan_left"},"kicker":"ILLUSTRATED HISTORY","text":"Every river has an untold history","emphasis":"untold history","player_chrome":false}}
 ~~~
 
 **editorial_text_card** — warm paper, serif text, one emphasis:
@@ -61,7 +61,7 @@ Every scene object has exactly six fields: template, say, highlight, illustrativ
 **video_card** — framed image-backed local visual with generic progress chrome; **MP4 clips are not yet supported**:
 
 ~~~json
-{"template":"video_card","say":"Watch an illustration shift in perspective.","highlight":"shift","illustrative":true,"sfx":"swipe","props":{"media":{"kind":"image","src":"assets/editorial/demo-landscape.png","fit":"cover","motion":"zoom_in"},"label":"A visual example","player_chrome":true}}
+{"template":"video_card","say":"Watch an illustration shift in perspective.","highlight":"shift","illustrative":true,"sfx":"swipe","props":{"media":{"kind":"image","src":"assets/editorial/demo-landscape.png","fit":"cover","motion":"zoom_in"},"label":"A visual example","player_chrome":false}}
 ~~~
 
 Media kinds: image, layers (only where supported). Motion: none, zoom_in, zoom_out, pan_left, pan_right or parallax for layers. Fit: cover or contain. Sources must be existing relative assets/... paths to PNG, JPEG or WebP. Layer count 2–5; depth finite in [-1,1]. Never fabricate paths. Ask for the media inventory when it is not supplied.
@@ -92,3 +92,9 @@ npm run reel -- render my-editorial.json --draft --target 15
 ~~~
 
 Never assume or initiate a full render without owner authorization. This is a script-writing prompt for free Claude Chat; local render remains independent.
+
+## Correction to v0.2 creative direction — full-canvas illustration
+
+The owner clarified that the supplied screenshot represents the **finished video itself**, not a player embedded inside a second video. The previous inset-player design is superseded. In all four v2 editorial templates, artwork/typography occupies the full 1080×1920 scene. A lower legibility gradient supports text and synchronized captions over the illustration. There are **no fake playback controls, inset player frames, handles or footers**. The legacy video_card name remains for schema compatibility but its visual is full-frame. Optional player_chrome must be omitted or false; true now fails validation. The original six v1 templates are unchanged.
+
+See [full-canvas correction and testing](../docs/EDITORIAL_FULL_CANVAS_V0_2.md). Prior embedded-player screenshots and their visual audits are historical engineering evidence, not approval of the corrected design.
