@@ -2,11 +2,11 @@
 
 Create vertical Instagram Reels and landscape YouTube videos from a `script.json` file, **without calling Claude, a paid AI service, or a cloud render API while producing the video**.
 
-**Workflow:** Use ordinary/free Claude Chat to write the JSON script → save it locally → validate → synthesize voice with Kokoro → render animated scenes with HyperFrames → mix/export with FFmpeg.
+**Workflow:** Use ordinary/free Claude Chat to write the JSON script → save locally → validate → generate voice with HyperFrames' built-in local Kokoro → transcribe word timings with HyperFrames' local Whisper → render scenes with HyperFrames → mix/export with FFmpeg.
 
 > **Current status:** The JSON validator, six templates, synthetic-audio FFmpeg export test, and a one-second real HyperFrames render have been tested. **A full end-to-end reel using actual Kokoro speech and HyperFrames together still needs testing on a properly configured local machine.** Do not assume all systems are verified just because the source tests pass.
 >
-> **Internet is needed initially** to download Git/Node/Python packages, browser dependencies, and Kokoro (and possibly faster-whisper) model weights. Once installed and cached, the intended production workflow is local-only. Claude Chat itself remains an online service used separately to author the script; the renderer does not invoke it.
+> **Internet is needed initially** to install Git/Node dependencies, browser support, and HyperFrames' local Kokoro/Whisper model weights. The intended production workflow is local-only once everything is cached (a completely offline production run is not yet verified). Claude Chat is used separately to author the script; the renderer does not invoke it.
 
 ## Contents
 
@@ -31,7 +31,7 @@ Create vertical Instagram Reels and landscape YouTube videos from a `script.json
 | Operating system | Ubuntu / Linux Mint (recommended; instructions below) | Local workstation |
 | Node.js | **22 or newer** | Reel CLI and HyperFrames |
 | npm | Installed with Node | JavaScript dependencies |
-| Python | **3.11 or 3.12 recommended** | Kokoro, sound effects, analysis |
+| Python | **3.x** (standard library only) | Sound effects, reference analysis, integration tests |
 | FFmpeg + FFprobe | Available in terminal | Mixing, encoding, media inspection |
 | `espeak-ng` | Installed | Kokoro text phonemization |
 | Chromium / supported browser | Installed and recognized by HyperFrames | Local scene capture/rendering |
@@ -50,8 +50,8 @@ Open **Terminal** and run the steps in order. Run commands as your normal user e
 sudo apt update
 sudo apt install -y \
   git curl ca-certificates build-essential \
-  ffmpeg espeak-ng libsndfile1 \
-  python3 python3-venv python3-pip
+  ffmpeg espeak-ng \
+  python3
 ```
 
 Install a local Chromium browser if you do not already have one:
@@ -72,7 +72,7 @@ espeak-ng --version
 python3 --version
 ```
 
-**Python version:** Prefer Python 3.11 or 3.12 for the current Kokoro stack. If your system default is newer/unsupported, install a compatible interpreter using your distribution's supported method (or a Python version manager) and use `python3.12 -m venv .venv` instead of `python3 -m venv .venv` below. Do not replace the operating system's system Python.
+**Python:** Only the Python 3 standard library is used for local sound-effect generation and test utilities. You do **not** need `pip`, `numpy`, `kokoro`, `faster-whisper` or `.venv`.
 
 ### 2.2 Install Node.js 22+ (only if needed)
 
@@ -107,7 +107,7 @@ cd "$HOME/ClaudeCreate"
 git pull --ff-only
 ```
 
-The commands below assume your working directory is the repository root (the folder containing `package.json`, `requirements.txt` and `config.json`).
+The commands below assume your working directory is the repository root (the folder containing `package.json` and `config.json`).
 
 ### 2.4 Install JavaScript/HyperFrames dependencies
 
@@ -133,47 +133,38 @@ npx skills add heygen-com/hyperframes
 
 Only run that optional command if you want its agent skills; it may be interactive and requires internet.
 
-### 2.5 Create the Python environment and install Kokoro
+### 2.5 Use HyperFrames' built-in Kokoro and Whisper (no extra Python setup)
 
-Use one of the following to create the local environment:
+The npm package already includes a local Kokoro TTS command and a local Whisper transcription command. **Do not clone Kokoro or install a separate Python speech stack.**
+
+Check the installed commands:
 
 ```bash
-# Use this if python3 is version 3.11 or 3.12:
-python3 -m venv .venv
-
-# Otherwise, if you installed Python 3.12 separately, use:
-# python3.12 -m venv .venv
+npx --no-install hyperframes tts --help
+npx --no-install hyperframes transcribe --help
+npx --no-install hyperframes tts --list
 ```
 
-Then install the project requirements into that environment:
+### 2.6 First-time speech initialization
+
+With internet access for the first model download, generate a short sample:
 
 ```bash
-.venv/bin/python -m pip install --upgrade pip
-.venv/bin/python -m pip install -r requirements.txt
-```
-
-The requirements include `kokoro`, `numpy`, `soundfile` and `faster-whisper` (a local timestamp fallback). Package installation may pull in larger machine-learning dependencies. If an installation fails, record the **first meaningful error**, the Python version, and the exact package that failed before making changes.
-
-Check that Kokoro imports from the correct environment:
-
-```bash
-.venv/bin/python -c "from kokoro import KPipeline; print('Kokoro import OK')"
-```
-
-**Important:** Python packages being installed does not mean Kokoro's model weights and voice data are cached. A first speech-generation run can download them automatically.
-
-### 2.6 First-time download / initialization
-
-Do this **while connected to the internet** so that the chosen Kokoro voice and any local alignment model can be cached. Generate a short voice sample:
-
-```bash
-.venv/bin/python tools/tts.py \
-  --text "An interesting idea starts with a question." \
+npx --no-install hyperframes tts \
+  "An interesting idea starts with a question." \
   --voice af_heart \
   --output /tmp/claudecreate-first-voice.wav
 ```
 
-A successful command writes a WAV file and JSON timing metadata to the terminal. You may listen to the WAV file using your usual media player. If Kokoro's timing data is insufficient, the application uses local faster-whisper, which may also need a one-time model download. The full `voice-sample` command below can prewarm several voices.
+Generate actual word-level timestamps (this may download Whisper model weights):
+
+```bash
+npx --no-install hyperframes transcribe \
+  /tmp/claudecreate-first-voice.wav \
+  --dir /tmp --engine whisper --model small.en --language en --json
+```
+
+A full render performs these steps **automatically** for each scene through `src/audio/hyperframes.mjs`. Caption timings must match the original scripted words; errors stop the render rather than estimating timestamps. HyperFrames caches downloaded model weights; ClaudeCreate separately caches approved WAV/timing pairs under `.cache/voices/`. A genuine speech-to-video production test must still be performed on a local machine. See [native HyperFrames voice pipeline](docs/HYPERFRAMES_VOICE.md).
 
 ## 3. Verify the installation
 
@@ -337,8 +328,8 @@ For a script titled `"The Secret of Zero"`, ClaudeCreate normalizes the title to
 ```text
 ClaudeCreate/
 ├── bin/reel.mjs                   # CLI
-├── src/                           # validation and compositions
-├── tools/                         # Kokoro, SFX, style analysis, smoke tests
+├── src/                           # validation, speech bridge and compositions
+├── tools/                         # SFX, style analysis, integration smoke tests
 ├── prompts/CLAUDE_REEL_MASTER.md  # Free Claude Chat master prompt
 ├── docs/                           # technical and JSON reference
 ├── assets/
@@ -368,7 +359,7 @@ ClaudeCreate/
         └── CREDITS.txt
 ```
 
-The exact slug is derived from the script title. Two scripts with the same normalized title may write to the same output folder, so use distinct titles or back up finished videos before re-rendering. `node_modules/`, `.venv/`, `.cache/`, `.reel-work/` and `out/` are Git-ignored and are **not stored in GitHub**.
+The exact slug is derived from the script title. Two scripts with the same normalized title may write to the same output folder, so use distinct titles or back up finished videos before re-rendering. `node_modules/`, `.cache/`, `.reel-work/` and `out/` are Git-ignored and are **not stored in GitHub**.
 
 ## 8. Script format and templates
 
@@ -512,10 +503,10 @@ GitHub Actions runs the automated checks defined in [.github/workflows/validate.
 | `node` or `npm` not found, or Node version below 22 | Reopen terminal, load nvm, install/use Node 22+, check `node -v`. |
 | `Cannot find module` or missing `hyperframes` | Run `npm install` from repository root. |
 | HyperFrames doctor complains about browser | Install/configure Chromium supported by your Linux distribution; rerun `npx --no-install hyperframes doctor`. |
-| `No module named kokoro` | Verify `.venv/bin/python` exists, then rerun `.venv/bin/python -m pip install -r requirements.txt`. |
+| HyperFrames `tts` or `transcribe` command unavailable | Run `npm install` from the repository root, then check `npx --no-install hyperframes tts --help` and `npx --no-install hyperframes transcribe --help`. |
 | `espeak` / phonemizer error | Install `espeak-ng` and ensure `espeak-ng --version` works. |
 | Models fail to download | Check internet access on the **first** TTS run; repeat after a successful download. |
-| `Could not align all word timestamps` | Ensure a plain, pronounceable English `say` string; keep punctuation reasonable. The code may need local faster-whisper; alignment is not faked. |
+| HyperFrames transcription does not match scripted word | Check the scene narration for acronyms, numbers, punctuation, or mispronunciation; retry with a clear script or a better ASR model. The renderer never invents word timings. |
 | `Cannot read script JSON` | Save **only** the valid JSON object; remove markdown fences and any trailing "Facts to verify" text. |
 | `unknown template` / `unknown effect` | Use only the six templates and seven SFX values listed above. |
 | `highlight: phrase not found` | Copy the exact phrase from the scene's `say` text into `highlight`. |
@@ -526,7 +517,7 @@ GitHub Actions runs the automated checks defined in [.github/workflows/validate.
 | Need to rerun after editing text/voice | Rerun the render. Cached TTS is keyed by text and voice; changed text synthesizes a new sample. |
 | Finished video appears overwritten | Different scripts can share a title-derived slug; use a distinct `title` or back up the prior output. |
 
-If debugging a failure, report **OS/version, Node version, Python version, command run, and the last error message**. Avoid sharing private API keys (none are needed for this application).
+If debugging a failure, report **OS/version, Node version, HyperFrames version, command run, and the last error message**. Avoid sharing private API keys (none are needed for this application).
 
 ## 13. Updates, maintenance and limitations
 
@@ -539,29 +530,30 @@ cd "$HOME/ClaudeCreate"
 git status --short
 git pull --ff-only
 npm install
-.venv/bin/python -m pip install -r requirements.txt
 npm test
 ```
 
-If you have uncommitted local changes, `git pull --ff-only` may refuse to proceed; preserve them or review them before updating. Re-running `npm install` and the Python requirement command is normally safe. Do not delete caches unless you need to regenerate models or timing data.
+If you have uncommitted local changes, `git pull --ff-only` may refuse to proceed; preserve them or review them before updating. Re-running `npm install` is normally safe; no separate Python speech environment needs maintenance. Do not delete caches unless you need to regenerate models or timing data.
 
 ### Free disk space selectively
 
 - `out/` contains your **finished videos**, thumbnails and previews: back them up before deleting.
 - `.cache/voices/` contains expensive-to-recreate Kokoro audio/timing cache: keep it if you rerender frequently.
 - `.reel-work/` contains intermediate generated compositions and media; remove old subfolders only after securing finished exports.
-- `node_modules/` and `.venv/` can be reinstalled but require new package downloads.
+- `node_modules/` can be reinstalled but requires new package downloads. An old `.venv/` from pre-migration installations is no longer used by the app.
 - The program is **not** a web service; no application server, subscription, paid API key or externally hosted inference is required.
 
 ### Known limitations
 
-- Full real Kokoro→HyperFrames→FFmpeg end-to-end production still needs local verification.
+- Full real HyperFrames Kokoro→HyperFrames Whisper→HyperFrames video→FFmpeg production still needs local verification.
 - Only six included scene templates; no automatic stock footage, image search or photorealistic AI video.
 - Built-in voice samples are English; other languages need compatible voice, phonemization and alignment support and have not been verified.
 - Some voice/model packages need an internet download the first time they are used.
 - Voice timing is per scene; actual final runtime can differ from the rough word-count estimate.
 - Music licensing and factual verification remain the user's responsibility.
 - No graphical desktop UI yet; current interface is command-line.
+
+**Speech engine:** [docs/HYPERFRAMES_VOICE.md](docs/HYPERFRAMES_VOICE.md)
 
 **Development guide:** [CLAUDE.md](CLAUDE.md) · [STYLE.md](STYLE.md) · [docs/SCRIPT_SPEC.md](docs/SCRIPT_SPEC.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 

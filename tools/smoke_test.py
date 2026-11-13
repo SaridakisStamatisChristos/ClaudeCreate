@@ -4,7 +4,6 @@
 This explicitly does NOT establish Kokoro or HyperFrames engine correctness.
 """
 import array
-import hashlib
 import json
 import math
 import shutil
@@ -26,19 +25,6 @@ def dimensions(path):
     v=json.loads(result)['streams'][0]
     return v['width'], v['height']
 
-def fake_voices(root, script):
-    folder=root/'.cache'/'voices';folder.mkdir(parents=True)
-    for scene in script['scenes']:
-        text=scene['say'];voice=scene.get('voice',script.get('voice','af_heart'))
-        payload=json.dumps({'text':text,'selected':voice,'engine':'kokoro-1','speed':1},separators=(',',':'))
-        digest=hashlib.sha256(payload.encode()).hexdigest()
-        words=text.split();seconds=len(words)*.4
-        samples=array.array('h',(int(math.sin(i/24000*2*math.pi*230)*2100) for i in range(int(seconds*24000))))
-        with wave.open(str(folder/f'{digest}.wav'),'wb') as f:
-            f.setnchannels(1);f.setsampwidth(2);f.setframerate(24000);f.writeframes(samples.tobytes())
-        meta={'duration':seconds,'words':[{'word':w,'start':round(i*.4,3),'end':round((i+1)*.4,3)} for i,w in enumerate(words)]}
-        (folder/f'{digest}.json').write_text(json.dumps(meta))
-
 def main():
     for required in ['node','ffmpeg','ffprobe']:
         if not shutil.which(required):
@@ -58,13 +44,30 @@ def main():
         (root/'node_modules'/'three'/'build'/'three.core.js').write_text('')
         mock = root/'node_modules'/'.bin'/'hyperframes'
         mock.write_text('''#!/usr/bin/env python3
-import subprocess,sys
-args=sys.argv[1:];out=args[args.index('--output')+1];seconds=args[args.index('--end')+1] if '--end' in args else '6'
-subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-f','lavfi','-i','color=c=black:s=540x960:r=30','-t',seconds,'-c:v','libx264','-preset','ultrafast','-pix_fmt','yuv420p',out],check=True)
+import sys,subprocess,wave,math,array,json
+from pathlib import Path
+args=sys.argv[1:];cmd=args[0]
+if cmd=='tts':
+    speech=Path(args[1]).read_text();wav=Path(args[args.index('--output')+1]);wav.parent.mkdir(parents=True,exist_ok=True)
+    (wav.parent/'text.json').write_text(json.dumps(speech))
+    seconds=len(speech.split())*.4;rate=24000
+    samples=array.array('h',(int(math.sin(i/rate*2*math.pi*230)*2100) for i in range(int(seconds*rate))))
+    with wave.open(str(wav),'wb') as f:
+        f.setnchannels(1);f.setsampwidth(2);f.setframerate(rate);f.writeframes(samples.tobytes())
+elif cmd=='transcribe':
+    wav=Path(args[1]);folder=Path(args[args.index('--dir')+1])
+    words=json.loads((wav.parent/'text.json').read_text()).split()
+    timings=[{'text':w,'start':round(i*.4,3),'end':round((i+1)*.4,3)} for i,w in enumerate(words)]
+    (folder/'transcript.json').write_text(json.dumps(timings))
+    print(json.dumps({'words':len(timings),'file':str(folder/'transcript.json')}))
+elif cmd=='render':
+    out=args[args.index('--output')+1];seconds=args[args.index('--end')+1] if '--end' in args else '6'
+    subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-f','lavfi','-i','color=c=black:s=540x960:r=30','-t',seconds,'-c:v','libx264','-preset','ultrafast','-pix_fmt','yuv420p',out],check=True)
+else:
+    raise RuntimeError('Unexpected mocked HyperFrames command: '+cmd)
 ''')
         mock.chmod(0o755)
         script=json.loads((root/'examples'/'dummy.json').read_text())
-        fake_voices(root,script)
         output=call('node','bin/reel.mjs','render','examples/dummy.json','--draft',cwd=root)
         target=root/'out'/'three-moments-one-idea-draft'
         for name in ['instagram.mp4','youtube.mp4','thumb_a.png','thumb_b.png','caption.txt','CREDITS.txt']:
@@ -72,7 +75,10 @@ subprocess.run(['ffmpeg','-y','-hide_banner','-loglevel','error','-f','lavfi','-
         assert dimensions(target/'instagram.mp4')==(540,960)
         assert dimensions(target/'youtube.mp4')==(960,540)
         assert abs(float(output.split('Measured integrated loudness: ')[1].split(' LUFS')[0])+14)<.6,output
-        print('PASS: local FFmpeg integration (synthetic speech, test render; not genuine TTS/HyperFrames)')
+        voice_cache=list((root/'.cache'/'voices').glob('*/timing.json'))
+        assert len(voice_cache)==len(script['scenes']), f'Wrong synthetic TTS cache count: {len(voice_cache)}'
+        assert all(json.loads(p.read_text())['provider']=='hyperframes-kokoro' for p in voice_cache)
+        print('PASS: native HyperFrames TTS/transcribe interface mocked; FFmpeg export verified with synthetic tone (not genuine Kokoro/Whisper)')
 
 if __name__=='__main__':
     main()

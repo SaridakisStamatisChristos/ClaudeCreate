@@ -1,12 +1,12 @@
 #!/usr/bin/env node
 import { spawn } from 'node:child_process';
-import { createHash } from 'node:crypto';
 import { existsSync } from 'node:fs';
 import { copyFile, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { basename, dirname, extname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { DEFAULTS, loadScript, DEFAULT_TARGET_SECONDS, ALLOWED_TARGET_SECONDS } from '../src/spec.mjs';
 import { writeComposition } from '../src/composition.mjs';
+import { synthesizeSpeech } from '../src/audio/hyperframes.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const CLI=join(ROOT,'node_modules','.bin','hyperframes');
@@ -45,18 +45,7 @@ async function config() {
 }
 function slug(text) { return text.normalize('NFKD').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,60)||'reel'; }
 async function voice(text,selected) {
-  const hash=createHash('sha256').update(JSON.stringify({text,selected,engine:'kokoro-1',speed:1})).digest('hex');
-  const folder=join(ROOT,'.cache','voices');await mkdir(folder,{recursive:true});
-  const wav=join(folder,`${hash}.wav`),json=join(folder,`${hash}.json`);
-  if(existsSync(wav)&&existsSync(json)) {
-    try { const timing=JSON.parse(await readFile(json,'utf8')); if(timing.duration>0&&timing.words?.length>0) return {wav,...timing}; }catch{}
-  }
-  const out=await run(PYTHON,[join(ROOT,'tools','tts.py'),'--text',text,'--voice',selected,'--output',wav]);
-  let meta;
-  try { meta=JSON.parse(out.out.trim().split('\n').at(-1)); }catch {throw new Error('Kokoro produced invalid word timing metadata');}
-  if(!meta.duration||!Array.isArray(meta.words))throw new Error('Kokoro did not produce word times');
-  await writeFile(json,JSON.stringify(meta));
-  return {wav,...meta};
+  return synthesizeSpeech(text,selected,{root:ROOT,cli:CLI,exec:run});
 }
 async function assetsReady() {
   if(!existsSync(CLI)) throw new Error('HyperFrames is not installed. Run npm install.');
@@ -149,7 +138,7 @@ async function render(path){
   await frame(instagram,maximum*.25,join(output,'thumb_a.png'));
   await frame(instagram,maximum*.74,join(output,'thumb_b.png'));
   await writeFile(join(output,'caption.txt'),script.caption.trim()+'\n\n'+script.hashtags.join(' ')+'\n');
-  await writeFile(join(output,'CREDITS.txt'),`Original synthesized effects: CC0-1.0, see assets/sfx/CREDITS.txt.\nMusic: ${music ? 'User-supplied '+music+' — verify rights before publishing':'none'}\nVoice: locally generated with Kokoro.\n`);
+  await writeFile(join(output,'CREDITS.txt'),`Original synthesized effects: CC0-1.0, see assets/sfx/CREDITS.txt.\nMusic: ${music ? 'User-supplied '+music+' — verify rights before publishing':'none'}\nVoice: locally generated with HyperFrames/Kokoro, word timing by local transcription.\n`);
   console.log(`DONE: ${output}\nInstagram: ${draft?'540x960':'1080x1920'} / YouTube: ${ww}x${hh} / ${maximum.toFixed(2)}s\nMeasured integrated loudness: ${lufs} LUFS`);
 }
 async function preview(path){

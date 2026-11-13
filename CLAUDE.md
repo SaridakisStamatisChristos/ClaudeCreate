@@ -10,3 +10,4 @@ Read **STYLE.md** and **docs/SCRIPT_SPEC.md** before any change.
 - Preserve source assets/credits, avoid reference content or logos.
 - No reference reels: do not invent metrics or falsely claim visual equivalence.
 - During phased work, report `PHASE N DONE` with three concise summary lines.
+- HyperFrames owns local Kokoro TTS and Whisper word timing. Do not reintroduce a separate Python Kokoro/faster-whisper runtime. Strictly verify caption alignment; synthetic tests are not model proof.

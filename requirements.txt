@@ -1,6 +1,0 @@
-# In a Python 3.11/3.12 virtual environment (Kokoro support is best tested there)
-kokoro>=0.9.4,<1
-numpy>=1.26,<3
-soundfile>=0.12
-# Optional only if Kokoro does not return reliable word timestamps:
-faster-whisper>=1.2,<2
