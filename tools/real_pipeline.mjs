@@ -3,6 +3,7 @@
 import {spawnSync} from 'node:child_process';
 import {createHash} from 'node:crypto';
 import {stat,readFile,mkdir,writeFile} from 'node:fs/promises';
+import {existsSync} from 'node:fs';
 import {join,resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {synthesizeSpeech,cacheKey} from '../src/audio/hyperframes.mjs';
@@ -19,7 +20,7 @@ const report={kind:'genuine-model-and-video-verification',fixture:'examples/veri
   }};
 const exec=async(cmd,args,opts={})=>{
   const result=spawnSync(cmd,args,{cwd:opts.cwd||root,encoding:'utf8',timeout:25*60*1000,maxBuffer:4*1024*1024,
-    env:{...process.env,HF_DISABLE_TELEMETRY:'1',DO_NOT_TRACK:'1'}});
+    env:{...process.env,...(!process.env.HYPERFRAMES_PYTHON&&existsSync(join(root,'.venv','bin','python'))?{HYPERFRAMES_PYTHON:join(root,'.venv','bin','python')}:{}),HF_DISABLE_TELEMETRY:'1',DO_NOT_TRACK:'1'}});
   if(result.error)throw Error(cmd+': '+result.error.message);
   if(result.status!==0)throw Error(cmd+' '+args[0]+' exited '+result.status+': '+(result.stderr||result.stdout||'').slice(-3500));
   return {out:result.stdout,err:result.stderr};
