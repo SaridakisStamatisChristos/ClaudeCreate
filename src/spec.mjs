@@ -55,10 +55,17 @@ function validateProps(scene, i, errors) {
   }
 }
 
-export const EDITORIAL_TEMPLATES = Object.freeze(['editorial_split','editorial_text_card','illustration_motion']);
+export const EDITORIAL_TEMPLATES = Object.freeze(['editorial_split','editorial_text_card','illustration_motion','video_card']);
 function validateEditorialProps(scene,i,errors,assetRoot) {
   const p='scenes['+i+'].props',v=scene.props;
   if(!isRecord(v)){errors.push(p+': expected object');return;}
+  if(scene.template==='video_card'){
+    exactKeys(v,['media','label','player_chrome'],p,errors);
+    if(v.label!==undefined&&(typeof v.label!=='string'||wordCount(v.label)>5))errors.push(p+'.label: expected at most 5 words');
+    if(v.player_chrome!==undefined&&typeof v.player_chrome!=='boolean')errors.push(p+'.player_chrome: expected boolean');
+    validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:false,allowVideo:false});
+    return;
+  }
   if(scene.template==='illustration_motion'){
     exactKeys(v,['media','label'],p,errors);
     if(v.label!==undefined&&(typeof v.label!=='string'||wordCount(v.label)>5))errors.push(p+'.label: expected at most 5 words');
