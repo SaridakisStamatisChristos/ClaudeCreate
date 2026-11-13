@@ -6,10 +6,13 @@ on:
     paths:
       - '.github/workflows/directed-e2e.yml'
       - 'src/directed.mjs'
+      - 'src/directed-art.mjs'
       - 'src/directed-runtime.mjs'
       - 'src/composition.mjs'
       - 'src/spec.mjs'
       - 'examples/directed_network.json'
+      - 'examples/directed_illustrated.json'
+      - 'tests/directed_art.test.mjs'
       - 'tests/directed.test.mjs'
   workflow_dispatch:
 
@@ -41,18 +44,20 @@ jobs:
         run: |
           npm test
           node bin/reel.mjs check examples/directed_network.json --target 15
+          node bin/reel.mjs check examples/directed_illustrated.json --target 15
       - name: Render real Kokoro/Whisper/HyperFrames animation
         shell: bash
         run: |
           set -o pipefail
           node bin/reel.mjs render examples/directed_network.json --draft --target 15 2>&1 | tee directed-render.log
+          node bin/reel.mjs render examples/directed_illustrated.json --draft --target 15 2>&1 | tee illustrated-render.log
       - name: Inspect real MP4 properties and sample time-separated frames
         shell: bash
         run: |
           python3 - <<'PY'
           import json, subprocess, hashlib, pathlib
-          root=pathlib.Path('out/an-idea-becomes-a-network-draft')
-          files=[root/'instagram.mp4', root/'youtube.mp4']
+          roots=[pathlib.Path('out/an-idea-becomes-a-network-draft'),pathlib.Path('out/how-ideas-change-the-world-draft')]
+          files=[p/name for p in roots for name in ('instagram.mp4','youtube.mp4')]
           for f in files:
               if not f.exists(): raise SystemExit('Missing output: '+str(f))
               p=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(f)]))
@@ -84,5 +89,8 @@ jobs:
           if-no-files-found: warn
           path: |
             directed-render.log
+            illustrated-render.log
             out/an-idea-becomes-a-network-draft/**
+            out/how-ideas-change-the-world-draft/**
             .reel-work/an-idea-becomes-a-network-draft/index.html
+            .reel-work/how-ideas-change-the-world-draft/index.html
