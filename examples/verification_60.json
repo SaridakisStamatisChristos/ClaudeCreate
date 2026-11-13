@@ -10,7 +10,7 @@
   "scenes": [
     {
       "template": "caption_screen",
-      "say": "Ideas become stories through motion.",
+      "say": "Ideas become moving stories.",
       "highlight": "Ideas",
       "illustrative": false,
       "sfx": "none",
@@ -20,7 +20,7 @@
     },
     {
       "template": "counter",
-      "say": "Clear captions explain every step.",
+      "say": "Clear captions guide viewers.",
       "highlight": "Clear",
       "illustrative": false,
       "sfx": "none",
@@ -33,7 +33,7 @@
     },
     {
       "template": "app_screen",
-      "say": "Numbers reveal growth over time.",
+      "say": "Numbers reveal useful progress.",
       "highlight": "Numbers",
       "illustrative": false,
       "sfx": "none",
@@ -54,7 +54,7 @@
     },
     {
       "template": "callout",
-      "say": "Simple tools unlock creative possibilities.",
+      "say": "Simple tools inspire creativity.",
       "highlight": "Simple",
       "illustrative": false,
       "sfx": "none",
@@ -65,7 +65,7 @@
     },
     {
       "template": "object_3d",
-      "say": "Shapes transform data into meaning.",
+      "say": "Shapes create visual meaning.",
       "highlight": "Shapes",
       "illustrative": false,
       "sfx": "none",
@@ -76,7 +76,7 @@
     },
     {
       "template": "compare",
-      "say": "Comparisons make different choices clearer.",
+      "say": "Comparisons reveal better choices.",
       "highlight": "Comparisons",
       "illustrative": false,
       "sfx": "none",
@@ -93,7 +93,7 @@
     },
     {
       "template": "caption_screen",
-      "say": "Good design respects audience attention.",
+      "say": "Good design respects attention.",
       "highlight": "Good",
       "illustrative": false,
       "sfx": "none",
@@ -103,7 +103,7 @@
     },
     {
       "template": "counter",
-      "say": "Sounds and pictures work together.",
+      "say": "Sounds complement animated visuals.",
       "highlight": "Sounds",
       "illustrative": false,
       "sfx": "none",
@@ -116,7 +116,7 @@
     },
     {
       "template": "app_screen",
-      "say": "Every frame carries useful information.",
+      "say": "Every frame conveys information.",
       "highlight": "Every",
       "illustrative": false,
       "sfx": "none",
@@ -137,7 +137,7 @@
     },
     {
       "template": "callout",
-      "say": "Creative workflows save valuable time.",
+      "say": "Creative tools save time.",
       "highlight": "Creative",
       "illustrative": false,
       "sfx": "none",
@@ -148,8 +148,8 @@
     },
     {
       "template": "object_3d",
-      "say": "Smart templates keep visuals consistent.",
-      "highlight": "Smart",
+      "say": "Templates keep visuals consistent.",
+      "highlight": "Templates",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -159,7 +159,7 @@
     },
     {
       "template": "compare",
-      "say": "Local tools protect creative freedom.",
+      "say": "Local tools preserve freedom.",
       "highlight": "Local",
       "illustrative": false,
       "sfx": "none",
@@ -176,7 +176,7 @@
     },
     {
       "template": "caption_screen",
-      "say": "Smooth motion guides viewer focus.",
+      "say": "Smooth motion guides attention.",
       "highlight": "Smooth",
       "illustrative": false,
       "sfx": "none",
@@ -186,7 +186,7 @@
     },
     {
       "template": "counter",
-      "say": "Clear structure helps ideas spread.",
+      "say": "Clear structure improves comprehension.",
       "highlight": "Clear",
       "illustrative": false,
       "sfx": "none",
@@ -199,7 +199,7 @@
     },
     {
       "template": "app_screen",
-      "say": "Strong visuals support honest storytelling.",
+      "say": "Strong visuals support storytelling.",
       "highlight": "Strong",
       "illustrative": false,
       "sfx": "none",
@@ -220,7 +220,7 @@
     },
     {
       "template": "callout",
-      "say": "Captions remain synchronized with speech.",
+      "say": "Captions synchronize with narration.",
       "highlight": "Captions",
       "illustrative": false,
       "sfx": "none",
@@ -231,8 +231,8 @@
     },
     {
       "template": "object_3d",
-      "say": "Each scene deserves careful timing.",
-      "highlight": "Each",
+      "say": "Every scene needs timing.",
+      "highlight": "Every",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -242,7 +242,7 @@
     },
     {
       "template": "compare",
-      "say": "Reliable tools reduce production friction.",
+      "say": "Reliable systems reduce errors.",
       "highlight": "Reliable",
       "illustrative": false,
       "sfx": "none",
@@ -259,8 +259,8 @@
     },
     {
       "template": "caption_screen",
-      "say": "Voice narration brings stories alive.",
-      "highlight": "Voice",
+      "say": "Voices make stories memorable.",
+      "highlight": "Voices",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -269,8 +269,8 @@
     },
     {
       "template": "counter",
-      "say": "Dynamic charts demonstrate meaningful progress.",
-      "highlight": "Dynamic",
+      "say": "Charts demonstrate real progress.",
+      "highlight": "Charts",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -282,7 +282,7 @@
     },
     {
       "template": "app_screen",
-      "say": "Animated objects add visual depth.",
+      "say": "Animated objects add depth.",
       "highlight": "Animated",
       "illustrative": false,
       "sfx": "none",
@@ -303,8 +303,8 @@
     },
     {
       "template": "callout",
-      "say": "Contrasting options reveal useful tradeoffs.",
-      "highlight": "Contrasting",
+      "say": "Comparisons expose meaningful differences.",
+      "highlight": "Comparisons",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -314,7 +314,7 @@
     },
     {
       "template": "object_3d",
-      "say": "Feedback helps refine every edit.",
+      "say": "Feedback improves every frame.",
       "highlight": "Feedback",
       "illustrative": false,
       "sfx": "none",
@@ -325,8 +325,8 @@
     },
     {
       "template": "compare",
-      "say": "Thoughtful transitions sustain visual flow.",
-      "highlight": "Thoughtful",
+      "say": "Transitions maintain visual continuity.",
+      "highlight": "Transitions",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -342,7 +342,7 @@
     },
     {
       "template": "caption_screen",
-      "say": "Short scenes maintain steady momentum.",
+      "say": "Short scenes sustain attention.",
       "highlight": "Short",
       "illustrative": false,
       "sfx": "none",
@@ -352,8 +352,8 @@
     },
     {
       "template": "counter",
-      "say": "Repeatable steps support creative teams.",
-      "highlight": "Repeatable",
+      "say": "Repeatability empowers creative teams.",
+      "highlight": "Repeatability",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -365,7 +365,7 @@
     },
     {
       "template": "app_screen",
-      "say": "Automated checks catch subtle defects.",
+      "say": "Automated tests catch defects.",
       "highlight": "Automated",
       "illustrative": false,
       "sfx": "none",
@@ -386,7 +386,7 @@
     },
     {
       "template": "callout",
-      "say": "Offline rendering keeps production independent.",
+      "say": "Offline rendering preserves independence.",
       "highlight": "Offline",
       "illustrative": false,
       "sfx": "none",
@@ -397,7 +397,7 @@
     },
     {
       "template": "object_3d",
-      "say": "Accurate timing improves audience understanding.",
+      "say": "Accurate timing helps understanding.",
       "highlight": "Accurate",
       "illustrative": false,
       "sfx": "none",
@@ -408,8 +408,8 @@
     },
     {
       "template": "compare",
-      "say": "Together these tools enable storytelling.",
-      "highlight": "Together",
+      "say": "These tools empower storytelling.",
+      "highlight": "These",
       "illustrative": false,
       "sfx": "none",
       "props": {
