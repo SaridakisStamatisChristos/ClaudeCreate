@@ -53,9 +53,16 @@ function validateProps(scene, i, errors) {
       break;
   }
 }
-export function checkScript(script, config = DEFAULTS) {
+export const DEFAULT_TARGET_SECONDS = 30;
+export const ALLOWED_TARGET_SECONDS = Object.freeze([15, 30, 60]);
+export const ESTIMATED_WORDS_PER_SECOND = 2.4;
+
+// Length warnings use spoken words / 2.4. Actual rendered duration is measured
+// from synthesized audio; this estimate intentionally excludes the scene gaps.
+export function checkScript(script, config = DEFAULTS, { targetSeconds = DEFAULT_TARGET_SECONDS } = {}) {
   const errors = [], warnings = [];
-  if (!isRecord(script)) return { ok: false, errors: ['script: expected JSON object'], warnings, estimatedSeconds: 0 };
+  if (!ALLOWED_TARGET_SECONDS.includes(targetSeconds)) throw new Error(`target must be 15, 30, or 60 seconds`);
+  if (!isRecord(script)) return { ok: false, errors: ['script: expected JSON object'], warnings, estimatedSeconds: 0, targetSeconds };
   exactKeys(script, ['title', 'handle', 'voice', 'accent', 'caption', 'hashtags', 'scenes'], 'script', errors);
   if (!isNonempty(script.title)) errors.push('title: expected nonempty string');
   if (typeof script.handle !== 'string' || !/^@[A-Za-z0-9._]{1,30}$/.test(script.handle)) errors.push('handle: expected @handle');
@@ -65,7 +72,11 @@ export function checkScript(script, config = DEFAULTS) {
   if (!Array.isArray(script.hashtags) || !script.hashtags.every(tag => typeof tag === 'string' && /^#[\p{L}\p{N}_]+$/u.test(tag))) errors.push('hashtags: expected array of #tags');
   if (!Array.isArray(script.scenes) || script.scenes.length === 0) errors.push('scenes: expected at least one scene');
   if (Array.isArray(script.scenes)) {
-    if (script.scenes.length < 20 || script.scenes.length > 40) warnings.push(`scenes: ${script.scenes.length} scenes; target is 20–40`);
+    const expectedScenes = targetSeconds / 2;
+    const lowerScenes = Math.ceil(expectedScenes * 0.6);
+    const upperScenes = Math.floor(expectedScenes * 1.4);
+    if (script.scenes.length < lowerScenes || script.scenes.length > upperScenes)
+      warnings.push(`scenes: ${script.scenes.length} scenes; target ${targetSeconds}s suggests ${lowerScenes}–${upperScenes} (±40%)`);
     script.scenes.forEach((s, i) => {
       const p = `scenes[${i}]`;
       if (!isRecord(s)) { errors.push(`${p}: expected object`); return; }
@@ -84,16 +95,18 @@ export function checkScript(script, config = DEFAULTS) {
       if (TEMPLATES.includes(s.template)) validateProps(s, i, errors);
     });
   }
-  const wpm = numeric(config.wordsPerMinute) && config.wordsPerMinute > 0 ? config.wordsPerMinute : DEFAULTS.wordsPerMinute;
-  const gap = numeric(config.gap) && config.gap >= 0 ? config.gap : DEFAULTS.gap;
-  const seconds = Array.isArray(script.scenes) ? script.scenes.reduce((n, s) => n + (isNonempty(s?.say) ? wordCount(s.say) * 60 / wpm : 0) + gap, 0) : 0;
-  if (seconds < 45 || seconds > 75) warnings.push(`estimated length: ${seconds.toFixed(1)}s; target is 45–75s`);
-  return { ok: errors.length === 0, errors, warnings, estimatedSeconds: +seconds.toFixed(2) };
+  const totalWords = Array.isArray(script.scenes) ? script.scenes.reduce((n, s) => n + (isNonempty(s?.say) ? wordCount(s.say) : 0), 0) : 0;
+  const seconds = totalWords / ESTIMATED_WORDS_PER_SECOND;
+  const lowerSeconds = targetSeconds * 0.8;
+  const upperSeconds = targetSeconds * 1.2;
+  if (seconds < lowerSeconds || seconds > upperSeconds)
+    warnings.push(`estimated length: ${seconds.toFixed(1)}s; target ${targetSeconds}s allows ${lowerSeconds.toFixed(1)}–${upperSeconds.toFixed(1)}s (±20%, words / 2.4)`);
+  return { ok: errors.length === 0, errors, warnings, estimatedSeconds: +seconds.toFixed(2), targetSeconds };
 }
-export async function loadScript(path, config = DEFAULTS) {
+export async function loadScript(path, config = DEFAULTS, options = {}) {
   let script;
   try { script = JSON.parse(await readFile(path, 'utf8')); }
   catch (e) { throw new Error(`Cannot read script JSON: ${e.message}`); }
-  const result = checkScript(script, config);
+  const result = checkScript(script, config, options);
   return { script, result };
 }

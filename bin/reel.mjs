@@ -5,16 +5,27 @@ import { existsSync } from 'node:fs';
 import { copyFile, mkdir, readFile, readdir, writeFile } from 'node:fs/promises';
 import { basename, dirname, extname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { DEFAULTS, loadScript, checkScript } from '../src/spec.mjs';
+import { DEFAULTS, loadScript, DEFAULT_TARGET_SECONDS, ALLOWED_TARGET_SECONDS } from '../src/spec.mjs';
 import { writeComposition } from '../src/composition.mjs';
 
 const ROOT=resolve(dirname(fileURLToPath(import.meta.url)),'..');
 const CLI=join(ROOT,'node_modules','.bin','hyperframes');
 const PYTHON=existsSync(join(ROOT,'.venv','bin','python'))?join(ROOT,'.venv','bin','python'):'python3';
 const CFG=join(ROOT,'config.json');
-const flags=new Set(process.argv.filter(x=>x.startsWith('--')));
-const args=process.argv.slice(2).filter(x=>!x.startsWith('--'));
-const [command, scriptPath]=args;
+const flags=new Set(), args=[];
+let targetSeconds=DEFAULT_TARGET_SECONDS, argumentError='';
+const argv=process.argv.slice(2);
+for(let i=0;i<argv.length;i++) {
+  const arg=argv[i];
+  if(arg==='--target'||arg.startsWith('--target=')) {
+    const value=arg==='--target'?argv[++i]:arg.slice('--target='.length);
+    if(!ALLOWED_TARGET_SECONDS.map(String).includes(value)) argumentError='--target must be 15, 30, or 60 seconds';
+    else targetSeconds=Number(value);
+  }else if(arg==='--draft') flags.add('--draft');
+  else if(arg.startsWith('--')) argumentError=`unknown flag ${arg}`;
+  else args.push(arg);
+}
+const [command,scriptPath]=args;
 const draft=flags.has('--draft');
 
 function fail(message) { console.error(`ERROR: ${message}`); process.exitCode=1; }
@@ -53,7 +64,7 @@ async function assetsReady() {
 }
 async function load(path) {
   if(!path)throw new Error('Specify script.json');
-  const {script,result}=await loadScript(resolve(path),await config());
+  const {script,result}=await loadScript(resolve(path),await config(),{targetSeconds});
   for(const warning of result.warnings) console.log(`WARN: ${warning}`);
   if(!result.ok) throw new Error(result.errors.join('\nERROR: '));
   return script;
@@ -157,12 +168,14 @@ async function sample(){
   console.log(`Samples: ${target}\nSelect a voice: node bin/reel.mjs voice-select af_heart`);
 }
 async function main(){
+  if(argumentError) throw new Error(argumentError);
   if(command==='check'){
     const c=await config();if(!scriptPath)throw new Error('Specify script.json');
-    const {result}=await loadScript(resolve(scriptPath),c);
+    const {result}=await loadScript(resolve(scriptPath),c,{targetSeconds});
+    console.log(`TARGET: ${targetSeconds}s | estimate ${result.estimatedSeconds}s | ${result.warnings.length} warnings`);
     result.errors.forEach(x=>console.error('ERROR: '+x));result.warnings.forEach(x=>console.log('WARN: '+x));
     if(!result.ok)process.exitCode=1;
-    else console.log(`VALID: ${result.estimatedSeconds}s estimated; ${result.warnings.length} warnings`);
+    else console.log(`VALID: ${result.estimatedSeconds}s estimated for ${targetSeconds}s target; ${result.warnings.length} warnings`);
   }else if(command==='voice-sample')await sample();
   else if(command==='voice-select'){
     if(!/^[a-z]{2}_[a-z0-9_]+$/.test(scriptPath||''))throw new Error('Specify a valid Kokoro voice id');
@@ -172,6 +185,6 @@ async function main(){
   else if(command==='doctor') {
     await run('ffmpeg',['-version']);if(!existsSync(CLI))throw new Error('Run npm install first');
     const r=await run(CLI,['doctor']);console.log(r.out.trim().split('\n').slice(-15).join('\n'));
-  }else console.log('Usage: reel voice-sample | voice-select VOICE | check script.json | preview script.json [--draft] | render script.json [--draft] | doctor');
+  }else console.log('Usage: reel voice-sample | voice-select VOICE | check script.json [--target 15|30|60] | preview script.json [--draft] | render script.json [--draft] | doctor');
 }
 main().catch(e=>fail(e.message));

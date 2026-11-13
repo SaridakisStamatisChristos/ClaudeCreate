@@ -25,7 +25,7 @@ npm test
 
 ```bash
 npm run reel -- voice-sample                     # create several local WAV samples
-npm run reel -- check examples/dummy.json         # strict checks; one-line problems
+npm run reel -- check examples/dummy.json --target 30  # 15, 30 or 60 seconds
 npm run reel -- preview examples/dummy.json --draft # 6–8 PNGs, no video
 npm run reel -- render examples/dummy.json --draft  # 540×960, <=10 seconds
 ```
@@ -36,7 +36,21 @@ Outputs go into `out/<title-slug>/`: `instagram.mp4`, `youtube.mp4` (vertical ov
 
 ## Script format
 
-The schema is fixed as supplied. See [docs/SCRIPT_SPEC.md](docs/SCRIPT_SPEC.md) and [examples/templates.json](examples/templates.json). `say` must contain at most 16 words (4–10 recommended), `highlight` must match a substring in it, `accent` is `#RRGGBB`, `sfx` is one of `whoosh/pop/tick/stamp/ding/swipe/none`. Validation warns about 20–40 scenes and 45–75s estimated duration, but does not reject short dummy scripts. A scene marked `illustrative:true` displays an `EXAMPLE` tag. Captions follow the per-word timestamps produced by Kokoro, with optional **local** faster-whisper fallback.
+The schema is fixed as supplied. See [docs/SCRIPT_SPEC.md](docs/SCRIPT_SPEC.md) and [examples/templates.json](examples/templates.json). `say` must contain at most 16 words (4–10 recommended), `highlight` must match a substring in it, `accent` is `#RRGGBB`, `sfx` is one of `whoosh/pop/tick/stamp/ding/swipe/none`. Validation warns when scene count differs by more than 40% from target/2, or spoken duration (words / 2.4) differs by more than 20% from a 15-, 30-, or 60-second target (default 30). Short dummy scripts remain valid but emit warnings. A scene marked `illustrative:true` displays an `EXAMPLE` tag. Captions follow the per-word timestamps produced by Kokoro, with optional **local** faster-whisper fallback.
+
+## Free Claude Chat → local reel workflow
+
+Copy [prompts/CLAUDE_REEL_MASTER.md](prompts/CLAUDE_REEL_MASTER.md) into ordinary free Claude Chat (or put sections 1–11 into a Claude Project's instructions). Fill out **section 12** with your topic, audience, Instagram handle and `TARGET LENGTH: 15`, `30`, or `60` seconds; 30 seconds is the default. Claude should return a JSON code block followed by a `Facts to verify:` line. **Save only the JSON inside the code block** as `script.json` (do not include backticks or the `Facts to verify` text). Review any factual claims before publishing.
+
+```bash
+npm run reel -- check script.json --target 30
+npm run reel -- preview script.json --draft
+npm run reel -- render script.json --draft
+# After confirming the short draft, remove --draft for final production:
+npm run reel -- render script.json
+```
+
+`--target` configures duration *warnings*, not a fixed rendering length. Measured Kokoro speech controls the actual final runtime; it may differ from the 2.4-words-per-second estimate. The script schema and the existing hard 16-word voiceover limit remain unchanged; the prompt intentionally generates at most 10 words per scene. The prompt's scene variety and on-screen word limits are creative instructions, not additional hard validation rules.
 
 ## Appearance, SFX, and local-only operation
 
