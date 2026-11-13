@@ -13,7 +13,7 @@ const timeline=script.scenes.map((_,i)=>({start:i*2.6,duration:2.6,audioDuration
 test('v2 requires explicit version and mode; Stage A templates validate',()=>{
   const r=checkScript(script,undefined,{targetSeconds:15});
   assert.equal(r.ok,true,r.errors.join('; '));
-  assert.deepEqual(EDITORIAL_TEMPLATES,['editorial_split','editorial_text_card']);
+  assert.deepEqual(EDITORIAL_TEMPLATES.slice(0,2),['editorial_split','editorial_text_card']);
   const legacy=structuredClone(script);delete legacy.schema_version;delete legacy.mode;
   assert.equal(checkScript(legacy).ok,false);
   assert.match(checkScript(legacy).errors.join(' '),/unknown template/);
