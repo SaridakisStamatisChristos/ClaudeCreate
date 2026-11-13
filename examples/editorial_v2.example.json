@@ -1,0 +1,146 @@
+{
+  "schema_version": 2,
+  "mode": "editorial_illustrated",
+  "title": "How Rivers Connected the World",
+  "handle": "@claudecreate",
+  "accent": "#B18A42",
+  "voice": "af_heart",
+  "caption": "An original illustrated explanation of how waterways connected communities.",
+  "hashtags": [
+    "#history",
+    "#learning",
+    "#illustration"
+  ],
+  "scenes": [
+    {
+      "template": "editorial_split",
+      "say": "Rivers connected settlements across centuries.",
+      "highlight": "Rivers",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "media": {
+          "kind": "image",
+          "src": "assets/editorial/demo-landscape.png",
+          "fit": "cover",
+          "motion": "pan_left"
+        },
+        "kicker": "ILLUSTRATED HISTORY",
+        "text": "Waterways were the roads of early civilizations",
+        "emphasis": "roads of early civilizations",
+        "player_chrome": true
+      }
+    },
+    {
+      "template": "illustration_motion",
+      "say": "Currents shaped trade and migration.",
+      "highlight": "trade",
+      "illustrative": true,
+      "sfx": "whoosh",
+      "props": {
+        "media": {
+          "kind": "layers",
+          "fit": "cover",
+          "motion": "parallax",
+          "layers": [
+            {
+              "src": "assets/editorial/demo-landscape.png",
+              "depth": -0.4
+            },
+            {
+              "src": "assets/editorial/demo-trees.png",
+              "depth": 0.8
+            }
+          ]
+        },
+        "label": "Original layered illustration"
+      }
+    },
+    {
+      "template": "video_card",
+      "say": "A landscape reveals hidden routes.",
+      "highlight": "hidden routes",
+      "illustrative": true,
+      "sfx": "swipe",
+      "props": {
+        "media": {
+          "kind": "image",
+          "src": "assets/editorial/demo-landscape.png",
+          "fit": "cover",
+          "motion": "zoom_in"
+        },
+        "label": "A river landscape",
+        "player_chrome": true
+      }
+    },
+    {
+      "template": "editorial_text_card",
+      "say": "Travel carried ideas farther outward.",
+      "highlight": "ideas",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "kicker": "CONNECTIONS",
+        "text": "People moved stories knowledge and skills",
+        "emphasis": "stories knowledge and skills"
+      }
+    },
+    {
+      "template": "compare",
+      "say": "Boats shortened difficult journeys dramatically.",
+      "highlight": "shortened",
+      "illustrative": true,
+      "sfx": "tick",
+      "props": {
+        "left": {
+          "label": "LAND",
+          "value": "Slow routes"
+        },
+        "right": {
+          "label": "RIVER",
+          "value": "Shared routes"
+        }
+      }
+    },
+    {
+      "template": "callout",
+      "say": "Each meeting changed local knowledge.",
+      "highlight": "knowledge",
+      "illustrative": true,
+      "sfx": "pop",
+      "props": {
+        "text": "IDEAS TRAVEL",
+        "style": "stamp"
+      }
+    },
+    {
+      "template": "caption_screen",
+      "say": "Stories moved alongside everyday goods.",
+      "highlight": "Stories",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "big_text": "ROUTES BECOME CONNECTIONS"
+      }
+    },
+    {
+      "template": "editorial_split",
+      "say": "Those connections still matter today.",
+      "highlight": "matter",
+      "illustrative": true,
+      "sfx": "ding",
+      "props": {
+        "media": {
+          "kind": "image",
+          "src": "assets/editorial/demo-landscape.png",
+          "fit": "cover",
+          "motion": "zoom_out"
+        },
+        "kicker": "THE BIG PICTURE",
+        "text": "Our shared histories are shaped by countless journeys",
+        "emphasis": "shared histories",
+        "player_chrome": true
+      }
+    }
+  ]
+}
