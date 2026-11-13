@@ -1,0 +1,45 @@
+{
+  "schema_version": 2,
+  "mode": "editorial_illustrated",
+  "title": "The River That Remembered",
+  "handle": "@claudecreate",
+  "accent": "#B18A42",
+  "caption": "How rivers shaped journeys and ideas.",
+  "hashtags": [
+    "#history",
+    "#illustration"
+  ],
+  "scenes": [
+    {
+      "template": "editorial_split",
+      "say": "Rivers carried stories from one settlement to another.",
+      "highlight": "Rivers",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "media": {
+          "kind": "image",
+          "src": "assets/editorial/demo-landscape.png",
+          "fit": "cover",
+          "motion": "none"
+        },
+        "kicker": "ILLUSTRATED HISTORY",
+        "text": "Every river carries a story of people and place",
+        "emphasis": "people and place",
+        "player_chrome": true
+      }
+    },
+    {
+      "template": "editorial_text_card",
+      "say": "Trade routes helped knowledge travel across centuries.",
+      "highlight": "knowledge",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "kicker": "THE BIG IDEA",
+        "text": "A single waterway could connect a thousand distant lives",
+        "emphasis": "connect a thousand distant lives"
+      }
+    }
+  ]
+}
