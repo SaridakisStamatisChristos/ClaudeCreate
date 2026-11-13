@@ -1,0 +1,69 @@
+{
+  "schema_version": 2,
+  "mode": "editorial_illustrated",
+  "title": "Landscape Layers",
+  "handle": "@claudecreate",
+  "accent": "#B18A42",
+  "caption": "An original artwork with independently positioned foreground vegetation.",
+  "hashtags": [
+    "#illustration",
+    "#storytelling"
+  ],
+  "scenes": [
+    {
+      "template": "illustration_motion",
+      "say": "Landscape layers offer a gentle sense of depth.",
+      "highlight": "gentle",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "media": {
+          "kind": "layers",
+          "fit": "cover",
+          "motion": "parallax",
+          "layers": [
+            {
+              "src": "assets/editorial/demo-landscape.png",
+              "depth": -0.4
+            },
+            {
+              "src": "assets/editorial/demo-trees.png",
+              "depth": 0.8
+            }
+          ]
+        },
+        "label": "An original layered illustration"
+      }
+    },
+    {
+      "template": "editorial_split",
+      "say": "The same artwork can accompany a larger story.",
+      "highlight": "larger story",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "media": {
+          "kind": "image",
+          "src": "assets/editorial/demo-landscape.png",
+          "fit": "cover",
+          "motion": "pan_left"
+        },
+        "kicker": "COMPOSITION STUDY",
+        "text": "The frame above and the story below",
+        "emphasis": "story below"
+      }
+    },
+    {
+      "template": "editorial_text_card",
+      "say": "Real character animation requires separate moving assets.",
+      "highlight": "separate moving assets",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "kicker": "LIMITS OF MOTION",
+        "text": "Camera movement is not independent human movement",
+        "emphasis": "not independent human movement"
+      }
+    }
+  ]
+}
