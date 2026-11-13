@@ -31,7 +31,7 @@ Create vertical Instagram Reels and landscape YouTube videos from a `script.json
 | Operating system | Ubuntu / Linux Mint (recommended; instructions below) | Local workstation |
 | Node.js | **22 or newer** | Reel CLI and HyperFrames |
 | npm | Installed with Node | JavaScript dependencies |
-| Python | **3.x** (standard library only) | Sound effects, reference analysis, integration tests |
+| Python | **3.x with venv/pip** | HyperFrames Kokoro ONNX runtime, sound effects and tests |
 | FFmpeg + FFprobe | Available in terminal | Mixing, encoding, media inspection |
 | `espeak-ng` | Installed | Kokoro text phonemization |
 | Chromium / supported browser | Installed and recognized by HyperFrames | Local scene capture/rendering |
@@ -51,7 +51,7 @@ sudo apt update
 sudo apt install -y \
   git curl ca-certificates build-essential \
   ffmpeg espeak-ng \
-  python3
+  python3 python3-venv
 ```
 
 Install a local Chromium browser if you do not already have one:
@@ -72,7 +72,7 @@ espeak-ng --version
 python3 --version
 ```
 
-**Python:** Only the Python 3 standard library is used for local sound-effect generation and test utilities. You do **not** need `pip`, `numpy`, `kokoro`, `faster-whisper` or `.venv`.
+**Python:** HyperFrames 0.9.37 uses the Python `kokoro-onnx` and `soundfile` packages to execute Kokoro TTS. Keep them in a small local `.venv`; no duplicate Python TTS application or `faster-whisper` is needed. This requirement was confirmed by a real-model GitHub Actions failure.
 
 ### 2.2 Install Node.js 22+ (only if needed)
 
@@ -115,7 +115,7 @@ The commands below assume your working directory is the repository root (the fol
 npm install
 ```
 
-This installs the versions allowed by `package.json`, including HyperFrames, GSAP and Three.js. You do **not** need to fork HyperFrames or separately host its rendering service.
+This installs the exact direct package versions in `package.json` (HyperFrames 0.9.37, GSAP and Three.js). You do **not** need to fork HyperFrames or separately host its rendering service.
 
 Check the installed HyperFrames CLI:
 
@@ -133,9 +133,18 @@ npx skills add heygen-com/hyperframes
 
 Only run that optional command if you want its agent skills; it may be interactive and requires internet.
 
-### 2.5 Use HyperFrames' built-in Kokoro and Whisper (no extra Python setup)
+### 2.5 Install the HyperFrames Kokoro runtime
 
-The npm package already includes a local Kokoro TTS command and a local Whisper transcription command. **Do not clone Kokoro or install a separate Python speech stack.**
+HyperFrames provides the **single** TTS CLI interface, but its Kokoro execution backend requires Python `kokoro-onnx` and `soundfile`. Install only these runtime dependencies into the local venv. Do not restore the old standalone TTS script or add `faster-whisper`.
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+export HYPERFRAMES_PYTHON="$PWD/.venv/bin/python"
+.venv/bin/python -c "import kokoro_onnx, soundfile; print('Kokoro runtime ready')"
+```
+
+The ClaudeCreate CLI automatically prefers `.venv/bin/python` when invoking HyperFrames. The `export` above also makes the same venv available to standalone `npx hyperframes tts` invocations in this shell.
 
 Check the installed commands:
 
@@ -505,6 +514,7 @@ GitHub Actions runs the automated checks defined in [.github/workflows/validate.
 | HyperFrames doctor complains about browser | Install/configure Chromium supported by your Linux distribution; rerun `npx --no-install hyperframes doctor`. |
 | HyperFrames `tts` or `transcribe` command unavailable | Run `npm install` from the repository root, then check `npx --no-install hyperframes tts --help` and `npx --no-install hyperframes transcribe --help`. |
 | `espeak` / phonemizer error | Install `espeak-ng` and ensure `espeak-ng --version` works. |
+| `kokoro-onnx package is not installed` | Run the venv/pip commands in §2.5; set `HYPERFRAMES_PYTHON` for direct HyperFrames commands. |
 | Models fail to download | Check internet access on the **first** TTS run; repeat after a successful download. |
 | HyperFrames transcription does not match scripted word | Check the scene narration for acronyms, numbers, punctuation, or mispronunciation; retry with a clear script or a better ASR model. The renderer never invents word timings. |
 | `Cannot read script JSON` | Save **only** the valid JSON object; remove markdown fences and any trailing "Facts to verify" text. |
@@ -533,14 +543,14 @@ npm install
 npm test
 ```
 
-If you have uncommitted local changes, `git pull --ff-only` may refuse to proceed; preserve them or review them before updating. Re-running `npm install` is normally safe; no separate Python speech environment needs maintenance. Do not delete caches unless you need to regenerate models or timing data.
+If you have uncommitted local changes, `git pull --ff-only` may refuse to proceed; preserve them or review them before updating. Re-running `npm install` is normally safe. Keep the local `.venv` containing the `kokoro-onnx` and `soundfile` runtime packages; if deleted, recreate it using §2.5. Do not delete caches unless you need to regenerate models or timing data.
 
 ### Free disk space selectively
 
 - `out/` contains your **finished videos**, thumbnails and previews: back them up before deleting.
 - `.cache/voices/` contains expensive-to-recreate Kokoro audio/timing cache: keep it if you rerender frequently.
 - `.reel-work/` contains intermediate generated compositions and media; remove old subfolders only after securing finished exports.
-- `node_modules/` can be reinstalled but requires new package downloads. An old `.venv/` from pre-migration installations is no longer used by the app.
+- `node_modules/` can be reinstalled but requires new package downloads. A `.venv/` with HyperFrames' Kokoro ONNX runtime is used by the app; recreate it using §2.5 if absent or corrupted.
 - The program is **not** a web service; no application server, subscription, paid API key or externally hosted inference is required.
 
 ### Known limitations
@@ -565,7 +575,9 @@ If you have uncommitted local changes, `git pull --ff-only` may refuse to procee
 To run the **real** Kokoro → Whisper → HyperFrames → FFmpeg test on Ubuntu/Linux Mint:
 
 ~~~bash
-sudo apt-get install -y ffmpeg python3 espeak-ng
+sudo apt-get install -y ffmpeg python3 python3-venv espeak-ng
+python3 -m venv .venv
+.venv/bin/python -m pip install kokoro-onnx soundfile
 npm install
 npm run test:real
 ~~~
