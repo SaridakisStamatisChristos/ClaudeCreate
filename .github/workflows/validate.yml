@@ -19,3 +19,11 @@ jobs:
       - run: npm run test:integration
       - run: npm install --no-audit --no-fund
       - run: npm run test:hyperframes
+      - run: node tools/editorial_hyperframes_smoke.mjs
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: editorial-v02-stills
+          path: .reel-work/editorial-smoke/frames/*.png
+          if-no-files-found: ignore
+          retention-days: 7
