@@ -1,0 +1,118 @@
+{
+  "title": "ClaudeCreate production verification 15 seconds",
+  "handle": "@demo",
+  "voice": "af_heart",
+  "accent": "#F8C95A",
+  "caption": "Genuine local 15-second production verification",
+  "hashtags": [
+    "#verification"
+  ],
+  "scenes": [
+    {
+      "template": "caption_screen",
+      "say": "Ideas become stories through motion.",
+      "highlight": "Ideas",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "big_text": "STORIES IN MOTION"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "Clear captions explain every step.",
+      "highlight": "Clear",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 100,
+        "suffix": "%",
+        "label": "PROGRESS"
+      }
+    },
+    {
+      "template": "app_screen",
+      "say": "Numbers reveal growth over time.",
+      "highlight": "Numbers",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "app_name": "Local Studio",
+        "rows": [
+          {
+            "label": "Projects",
+            "value": "12"
+          },
+          {
+            "label": "Progress",
+            "value": "+20%"
+          }
+        ],
+        "highlight_row": 1
+      }
+    },
+    {
+      "template": "callout",
+      "say": "Simple tools unlock creative possibilities.",
+      "highlight": "Simple",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "text": "KEEP CREATING",
+        "style": "stamp"
+      }
+    },
+    {
+      "template": "object_3d",
+      "say": "Shapes transform data into meaning.",
+      "highlight": "Shapes",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "shape": "torus",
+        "label": "ANIMATED IDEAS"
+      }
+    },
+    {
+      "template": "compare",
+      "say": "Comparisons make different choices clearer.",
+      "highlight": "Comparisons",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "left": {
+          "label": "Before",
+          "value": "Static"
+        },
+        "right": {
+          "label": "After",
+          "value": "Motion"
+        }
+      }
+    },
+    {
+      "template": "caption_screen",
+      "say": "Good design respects audience attention.",
+      "highlight": "Good",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "big_text": "STORIES IN MOTION"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "Sounds and pictures work together.",
+      "highlight": "Sounds",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 100,
+        "suffix": "%",
+        "label": "PROGRESS"
+      }
+    }
+  ]
+}
