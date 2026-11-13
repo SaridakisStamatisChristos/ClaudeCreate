@@ -1,0 +1,574 @@
+{
+  "title": "An Idea Becomes a Network",
+  "handle": "@claudecreate",
+  "voice": "af_heart",
+  "accent": "#66E0FF",
+  "caption": "An original procedural network animation created locally with ClaudeCreate.",
+  "hashtags": [
+    "#animation",
+    "#ideas",
+    "#networks"
+  ],
+  "scenes": [
+    {
+      "template": "directed_scene",
+      "say": "One small idea grows into a global network.",
+      "highlight": "global network",
+      "illustrative": true,
+      "sfx": "pop",
+      "props": {
+        "background": "#071823",
+        "objects": [
+          {
+            "id": "seed",
+            "type": "circle",
+            "x": 450,
+            "y": 460,
+            "radius": 58,
+            "fill": "#FFCA63"
+          },
+          {
+            "id": "north",
+            "type": "circle",
+            "x": 220,
+            "y": 230,
+            "radius": 34,
+            "fill": "#66E0FF"
+          },
+          {
+            "id": "east",
+            "type": "circle",
+            "x": 720,
+            "y": 300,
+            "radius": 34,
+            "fill": "#66E0FF"
+          },
+          {
+            "id": "south",
+            "type": "circle",
+            "x": 695,
+            "y": 690,
+            "radius": 34,
+            "fill": "#66E0FF"
+          },
+          {
+            "id": "west",
+            "type": "circle",
+            "x": 210,
+            "y": 670,
+            "radius": 34,
+            "fill": "#66E0FF"
+          },
+          {
+            "id": "n_link",
+            "type": "line",
+            "from": "seed",
+            "to": "north",
+            "stroke": "#63B5CF",
+            "strokeWidth": 7
+          },
+          {
+            "id": "e_link",
+            "type": "line",
+            "from": "seed",
+            "to": "east",
+            "stroke": "#63B5CF",
+            "strokeWidth": 7
+          },
+          {
+            "id": "s_link",
+            "type": "line",
+            "from": "seed",
+            "to": "south",
+            "stroke": "#63B5CF",
+            "strokeWidth": 7
+          },
+          {
+            "id": "w_link",
+            "type": "line",
+            "from": "seed",
+            "to": "west",
+            "stroke": "#63B5CF",
+            "strokeWidth": 7
+          },
+          {
+            "id": "label",
+            "type": "text",
+            "x": 450,
+            "y": 100,
+            "text": "ONE IDEA",
+            "fontSize": 72,
+            "fill": "#FFFFFF"
+          }
+        ],
+        "camera": {
+          "scale": 1.16
+        },
+        "animations": [
+          {
+            "target": "seed",
+            "property": "opacity",
+            "at": 0.03,
+            "duration": 0.14,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "seed",
+            "property": "scale",
+            "at": 0.03,
+            "duration": 0.14,
+            "from": 0.25,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "label",
+            "property": "opacity",
+            "at": 0.1,
+            "duration": 0.14,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "north",
+            "property": "opacity",
+            "at": 0.22,
+            "duration": 0.11,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "north",
+            "property": "scale",
+            "at": 0.22,
+            "duration": 0.11,
+            "from": 0.25,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "n_link",
+            "property": "draw",
+            "at": 0.22,
+            "duration": 0.19,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "east",
+            "property": "opacity",
+            "at": 0.38,
+            "duration": 0.11,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "east",
+            "property": "scale",
+            "at": 0.38,
+            "duration": 0.11,
+            "from": 0.25,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "e_link",
+            "property": "draw",
+            "at": 0.38,
+            "duration": 0.19,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "south",
+            "property": "opacity",
+            "at": 0.54,
+            "duration": 0.11,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "south",
+            "property": "scale",
+            "at": 0.54,
+            "duration": 0.11,
+            "from": 0.25,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "s_link",
+            "property": "draw",
+            "at": 0.54,
+            "duration": 0.19,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "west",
+            "property": "opacity",
+            "at": 0.7,
+            "duration": 0.11,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "west",
+            "property": "scale",
+            "at": 0.7,
+            "duration": 0.11,
+            "from": 0.25,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "w_link",
+            "property": "draw",
+            "at": 0.7,
+            "duration": 0.19,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.16,
+            "to": 0.9,
+            "ease": "power2.inOut"
+          }
+        ]
+      }
+    },
+    {
+      "template": "directed_scene",
+      "say": "Ideas travel along new pathways and reach distant people.",
+      "highlight": "new pathways",
+      "illustrative": false,
+      "sfx": "swipe",
+      "props": {
+        "background": "#102018",
+        "objects": [
+          {
+            "id": "hub",
+            "type": "rect",
+            "x": 445,
+            "y": 430,
+            "width": 280,
+            "height": 154,
+            "radius": 30,
+            "fill": "#225F4A"
+          },
+          {
+            "id": "hubText",
+            "type": "text",
+            "x": 445,
+            "y": 430,
+            "text": "IDEAS",
+            "fontSize": 66,
+            "fill": "#FFFFFF"
+          },
+          {
+            "id": "a",
+            "type": "circle",
+            "x": 160,
+            "y": 210,
+            "radius": 37,
+            "fill": "#B0F4B9"
+          },
+          {
+            "id": "b",
+            "type": "circle",
+            "x": 735,
+            "y": 190,
+            "radius": 37,
+            "fill": "#B0F4B9"
+          },
+          {
+            "id": "c",
+            "type": "circle",
+            "x": 200,
+            "y": 690,
+            "radius": 37,
+            "fill": "#B0F4B9"
+          },
+          {
+            "id": "d",
+            "type": "circle",
+            "x": 690,
+            "y": 700,
+            "radius": 37,
+            "fill": "#B0F4B9"
+          },
+          {
+            "id": "la",
+            "type": "line",
+            "from": "hub",
+            "to": "a",
+            "stroke": "#63B5CF",
+            "strokeWidth": 7
+          },
+          {
+            "id": "lb",
+            "type": "line",
+            "from": "hub",
+            "to": "b",
+            "stroke": "#63B5CF",
+            "strokeWidth": 7
+          },
+          {
+            "id": "lc",
+            "type": "line",
+            "from": "hub",
+            "to": "c",
+            "stroke": "#63B5CF",
+            "strokeWidth": 7
+          },
+          {
+            "id": "ld",
+            "type": "line",
+            "from": "hub",
+            "to": "d",
+            "stroke": "#63B5CF",
+            "strokeWidth": 7
+          },
+          {
+            "id": "heading",
+            "type": "text",
+            "x": 450,
+            "y": 92,
+            "text": "CONNECTIONS",
+            "fontSize": 61,
+            "fill": "#D9FFE0"
+          }
+        ],
+        "animations": [
+          {
+            "target": "hub",
+            "property": "opacity",
+            "at": 0,
+            "duration": 0.17,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "hubText",
+            "property": "opacity",
+            "at": 0.08,
+            "duration": 0.15,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "heading",
+            "property": "opacity",
+            "at": 0.12,
+            "duration": 0.13,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "la",
+            "property": "draw",
+            "at": 0.2,
+            "duration": 0.2,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "a",
+            "property": "opacity",
+            "at": 0.32,
+            "duration": 0.12,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "lb",
+            "property": "draw",
+            "at": 0.37,
+            "duration": 0.2,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "b",
+            "property": "opacity",
+            "at": 0.49,
+            "duration": 0.12,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "lc",
+            "property": "draw",
+            "at": 0.52,
+            "duration": 0.2,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "c",
+            "property": "opacity",
+            "at": 0.64,
+            "duration": 0.12,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "ld",
+            "property": "draw",
+            "at": 0.67,
+            "duration": 0.2,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "d",
+            "property": "opacity",
+            "at": 0.79,
+            "duration": 0.12,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.12,
+            "to": 0.94,
+            "ease": "power2.inOut"
+          }
+        ]
+      }
+    },
+    {
+      "template": "directed_scene",
+      "say": "Together, these connections change what becomes possible.",
+      "highlight": "what becomes possible",
+      "illustrative": false,
+      "sfx": "ding",
+      "props": {
+        "background": "#171026",
+        "objects": [
+          {
+            "id": "back",
+            "type": "rect",
+            "x": 450,
+            "y": 450,
+            "width": 810,
+            "height": 600,
+            "radius": 50,
+            "fill": "#372156"
+          },
+          {
+            "id": "ring",
+            "type": "circle",
+            "x": 450,
+            "y": 450,
+            "radius": 195,
+            "fill": "#9C69F0"
+          },
+          {
+            "id": "title",
+            "type": "text",
+            "x": 450,
+            "y": 390,
+            "text": "THE FUTURE",
+            "fontSize": 76,
+            "fill": "#FFFFFF"
+          },
+          {
+            "id": "sub",
+            "type": "text",
+            "x": 450,
+            "y": 510,
+            "text": "IS CONNECTED",
+            "fontSize": 49,
+            "fill": "#FFFFFF"
+          }
+        ],
+        "animations": [
+          {
+            "target": "back",
+            "property": "opacity",
+            "at": 0,
+            "duration": 0.2,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "ring",
+            "property": "scale",
+            "at": 0.1,
+            "duration": 0.39,
+            "from": 0.25,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "ring",
+            "property": "opacity",
+            "at": 0.1,
+            "duration": 0.39,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "title",
+            "property": "opacity",
+            "at": 0.46,
+            "duration": 0.21,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "sub",
+            "property": "opacity",
+            "at": 0.67,
+            "duration": 0.2,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.25,
+            "to": 0.92,
+            "ease": "power2.inOut"
+          }
+        ]
+      }
+    }
+  ]
+}
