@@ -13,24 +13,3 @@
 **Testing:** `node tools/hyperframes_smoke.mjs` runs a real 1-second local HyperFrames rendering smoke test (requires npm packages but not Kokoro). `python3 tools/smoke_test.py` runs the actual FFmpeg export pipeline against deterministic synthetic WAVs and a dummy renderer. This is not a genuine HyperFrames or Kokoro test. `node --test` exercises the JSON schema, six template emission, and escaping, without TTS models or network. Full integration must be tested on a machine with the HyperFrames CLI and Kokoro weights installed. Never interpret static green tests as proof a video was rendered. `--draft` bounds render to <=10s.
 
 **Current known limits:** Default Kokoro voice examples are English; other languages require compatible phonemization and may not align. Full rendering is CPU/GPU intensive. Actual cuts, style and WPM cannot be derived from references until videos are supplied. User-provided music licenses are the user's responsibility. Kokoro and faster-whisper download model assets once unless already cached; no paid inference API is used.
-
-
-## Editorial illustrated v0.2 branch extension
-
-The original CLI, Kokoro timing/alignment, GSAP/Three classic scene composition, FFmpeg audio, and output packaging remain in place. src/spec.mjs selects strict unversioned v1 or explicit schema_version:2 + mode:editorial_illustrated. The four editorial templates reuse the standard scene timing and caption word metadata.
-
-- src/editorial/assets.mjs verifies media paths against a single approved repository assets root, resolves real paths, checks file/size/extension constraints, and stages only referenced assets in a generated media directory under content-derived safe filenames. No JSON-provided HTML/CSS/JS is executed.
-- src/editorial/layout.mjs owns the warm paper palette, upper framed image/player, lower serif headline, layered illustration, video card, and escaped markup. The original dark six-template composition is unchanged.
-- src/composition.mjs integrates these v2 layouts into existing HyperFrames HTML, GSAP absolute-time scene animation, image motion, and caption words. Pan/zoom uses at least 9% image-scale overscan and a bounded horizontal motion; explicit layers move at depth-weighted rates. Player progress is time-based.
-- Local MP4 clip input is not enabled because deterministic browser frame seeking has not been demonstrated. video_card is an image-backed moving visual today.
-- assets/editorial contains project-generated, rights-cleared PNG illustrations: a river landscape and transparent foliage layer. There are no runtime CDN references.
-
-**Test levels are distinct:** npm test covers validation/escaping/security and composition markup. tools/editorial_hyperframes_smoke.mjs creates a genuine 2-second local HyperFrames draft and frame samples. tools/editorial_draft_smoke.mjs creates an actual 8.4-second 540×960 HyperFrames draft using synthetic timing, then FFmpeg two-pass-measured audio tone, 960×540 export, ffprobe, still images and captions/credits. These do NOT prove end-to-end genuine Kokoro narration, word alignment, caption visual signoff, or fully disconnected offline operation. The existing tools/smoke_test.py is a synthetic FFmpeg integration test with a dummy renderer; do not misreport it as a Kokoro video render.
-
-Do not run tests longer than 10 seconds at 540×960 or merge into main without explicit approval. GitHub CI artifacts provide visual material for human review.
-
-## Correction to v0.2 creative direction — full-canvas illustration
-
-The owner clarified that the supplied screenshot represents the **finished video itself**, not a player embedded inside a second video. The previous inset-player design is superseded. In all four v2 editorial templates, artwork/typography occupies the full 1080×1920 scene. A lower legibility gradient supports text and synchronized captions over the illustration. There are **no fake playback controls, inset player frames, handles or footers**. The legacy video_card name remains for schema compatibility but its visual is full-frame. Optional player_chrome must be omitted or false; true now fails validation. The original six v1 templates are unchanged.
-
-See [full-canvas correction and testing](EDITORIAL_FULL_CANVAS_V0_2.md). Prior embedded-player screenshots and their visual audits are historical engineering evidence, not approval of the corrected design.

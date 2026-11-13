@@ -4,7 +4,7 @@ Create vertical Instagram Reels and landscape YouTube videos from a `script.json
 
 **Workflow:** Use ordinary/free Claude Chat to write the JSON script → save it locally → validate → synthesize voice with Kokoro → render animated scenes with HyperFrames → mix/export with FFmpeg.
 
-> **Current status:** The original JSON v1 validator and six templates remain available. On the experimental v0.2 feature branch, four opt-in editorial templates, secure local asset staging, real short HyperFrames smoke tests, and an 8.4-second draft with synthetic test audio are implemented and CI-verified. **A full end-to-end reel using actual Kokoro speech and HyperFrames together still needs testing on a properly configured local machine.** Do not assume all systems are verified just because the source tests pass.
+> **Current status:** The JSON validator, six templates, synthetic-audio FFmpeg export test, and a one-second real HyperFrames render have been tested. **A full end-to-end reel using actual Kokoro speech and HyperFrames together still needs testing on a properly configured local machine.** Do not assume all systems are verified just because the source tests pass.
 >
 > **Internet is needed initially** to download Git/Node/Python packages, browser dependencies, and Kokoro (and possibly faster-whisper) model weights. Once installed and cached, the intended production workflow is local-only. Claude Chat itself remains an online service used separately to author the script; the renderer does not invoke it.
 
@@ -23,7 +23,6 @@ Create vertical Instagram Reels and landscape YouTube videos from a `script.json
 11. [Testing and quality checks](#11-testing-and-quality-checks)
 12. [Troubleshooting](#12-troubleshooting)
 13. [Updates, maintenance and limitations](#13-updates-maintenance-and-limitations)
-14. [Editorial illustrated mode (v0.2)](#14-experimental-editorial-illustrated-mode-v02-feature-branch)
 
 ## 1. Requirements
 
@@ -567,59 +566,3 @@ If you have uncommitted local changes, `git pull --ff-only` may refuse to procee
 **Development guide:** [CLAUDE.md](CLAUDE.md) · [STYLE.md](STYLE.md) · [docs/SCRIPT_SPEC.md](docs/SCRIPT_SPEC.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 **Repository:** https://github.com/SaridakisStamatisChristos/ClaudeCreate
-
-
-## 14. Experimental editorial illustrated mode (v0.2 feature branch)
-
-**Branch:** feature/editorial-illustrated-v0.2. Do not merge or modify main without owner approval. This mode is opt-in and preserves the original six templates and unversioned v1 scripts. The new four templates are editorial_split, editorial_text_card, illustration_motion and video_card. The documented v2 envelope requires BOTH schema_version = 2 and mode = "editorial_illustrated". Do not add v2 fields to unversioned v1 JSON. For exact keys, see [v2 spec](docs/EDITORIAL_ILLUSTRATED_V0_2_SPEC.md), [script spec](docs/SCRIPT_SPEC.md), and [acceptance evidence](docs/EDITORIAL_V0_2_ACCEPTANCE.md).
-
-### Install the feature branch on Linux Mint / Ubuntu
-
-Use the existing full Linux installation procedure in Sections 1–3 above (Node 22+, npm, Python 3.11/3.12, FFmpeg/FFprobe, espeak-ng, Kokoro requirements, HyperFrames browser installation). For a fresh checkout:
-
-~~~bash
-git clone https://github.com/SaridakisStamatisChristos/ClaudeCreate.git
-cd ClaudeCreate
-git switch feature/editorial-illustrated-v0.2
-npm install --no-audit --no-fund
-python3 -m venv .venv
-. .venv/bin/activate
-python -m pip install -r requirements.txt
-npm test
-npm run test:integration
-npm run test:hyperframes
-~~~
-
-Use the Python setup notes above if your distribution requires a separately installed Python 3.12. Ensure FFmpeg and its ffprobe utility are on PATH. Kokoro model downloads and browser/package installation happen at setup; normal media files are resolved strictly from the repository's local assets directory.
-
-### Create a v2 script and try a short draft
-
-Start with [complete 15-second target example](examples/editorial_v2.example.json), [small scene-type example](examples/editorial_stage_c.json), and [free Claude Chat prompt](prompts/CLAUDE_EDITORIAL_REEL_MASTER.md). Original, project-created illustrations are included in assets/editorial/. To use your own pictures, place licensed or self-authored PNG/JPEG/WebP files inside assets/ and reference them as relative assets/... paths. No remote URLs, file:// paths, parent traversal, SVG or symlink escape are allowed; missing media is a hard error.
-
-~~~bash
-npm run reel -- check examples/editorial_v2.example.json --target 15
-npm run reel -- preview examples/editorial_v2.example.json --draft --target 15
-npm run reel -- render examples/editorial_v2.example.json --draft --target 15
-~~~
-
-**Render safety:** --draft produces 540×960 portrait and 960×540 landscape with a hard ten-second visual bound. The --target setting changes checking estimates and warnings; it does **not** force exact audio duration. Do not invoke a longer full render until the owner approves. Caption timestamps in real production come from Kokoro or its verified local alignment fallback, not proportional word splitting. All ten templates use the existing CLI flags and audio/export system.
-
-The framed player is intentionally generic; video_card is presently **image-backed only**. Local MP4 clip input is rejected rather than assuming reproducible browser seeking. The image pan, zoom and layered parallax are camera/layer effects—not independently animated human figures. Independent walking, lip sync or gestures require supplied sprites, separated motion layers or an independently validated local video pipeline.
-
-### Verification and known gaps
-
-~~~bash
-npm test
-node tools/editorial_hyperframes_smoke.mjs
-node tools/editorial_draft_smoke.mjs
-~~~
-
-The first command tests strict schema, HTML escaping, media security and legacy regressions. The second makes a **real 2-second HyperFrames render** at draft resolution and tests multiple stills. The third renders a **real 8.4-second HyperFrames scene sequence**, creates both FFmpeg MP4 orientations, extracts six stills, verifies FFprobe duration/resolution, and records two-pass loudness measurements using a **synthetic tone**. It does **not** validate real Kokoro narration or generated speech timestamps. Both rendering tests run in GitHub Actions and attach ephemeral artifacts. Visual review of all the exported stills still needs human sign-off.
-
-The established Python integration test uses synthetic WAVs and a dummy renderer; it must not be described as full Kokoro/HyperFrames verification. A complete actual Kokoro-to-Instagram v2 production test, fully disconnected network run, source-audio/music licensing checks and independent art review are **not yet completed**. Continue to use the feature branch until those gates are satisfied. The original v1 Claude prompt remains at prompts/CLAUDE_REEL_MASTER.md.
-
-## Correction to v0.2 creative direction — full-canvas illustration
-
-The owner clarified that the supplied screenshot represents the **finished video itself**, not a player embedded inside a second video. The previous inset-player design is superseded. In all four v2 editorial templates, artwork/typography occupies the full 1080×1920 scene. A lower legibility gradient supports text and synchronized captions over the illustration. There are **no fake playback controls, inset player frames, handles or footers**. The legacy video_card name remains for schema compatibility but its visual is full-frame. Optional player_chrome must be omitted or false; true now fails validation. The original six v1 templates are unchanged.
-
-See [full-canvas correction and testing](docs/EDITORIAL_FULL_CANVAS_V0_2.md). Prior embedded-player screenshots and their visual audits are historical engineering evidence, not approval of the corrected design.

@@ -1,5 +1,4 @@
 import { readFile } from 'node:fs/promises';
-import { DEFAULT_ASSET_ROOT, validateMediaDescriptor } from './editorial/assets.mjs';
 
 export const TEMPLATES = Object.freeze(['caption_screen', 'counter', 'app_screen', 'callout', 'object_3d', 'compare']);
 export const SFX = Object.freeze(['whoosh', 'pop', 'tick', 'stamp', 'ding', 'swipe', 'none']);
@@ -54,53 +53,17 @@ function validateProps(scene, i, errors) {
       break;
   }
 }
-
-export const EDITORIAL_TEMPLATES = Object.freeze(['editorial_split','editorial_text_card','illustration_motion','video_card']);
-function validateEditorialProps(scene,i,errors,assetRoot) {
-  const p='scenes['+i+'].props',v=scene.props;
-  if(!isRecord(v)){errors.push(p+': expected object');return;}
-  if(scene.template==='video_card'){
-    exactKeys(v,['media','label','player_chrome'],p,errors);
-    if(v.label!==undefined&&(typeof v.label!=='string'||wordCount(v.label)>5))errors.push(p+'.label: expected at most 5 words');
-    if(v.player_chrome!==undefined && v.player_chrome!==false)errors.push(p+'.player_chrome: embedded player controls are no longer supported; omit or set false');
-    validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:false,allowVideo:false});
-    return;
-  }
-  if(scene.template==='illustration_motion'){
-    exactKeys(v,['media','label'],p,errors);
-    if(v.label!==undefined&&(typeof v.label!=='string'||wordCount(v.label)>5))errors.push(p+'.label: expected at most 5 words');
-    validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:true,allowVideo:false});
-    return;
-  }
-  const split=scene.template==='editorial_split';
-  exactKeys(v,split?['media','kicker','text','emphasis','player_chrome']:['kicker','text','emphasis'],p,errors);
-  if(!isNonempty(v.text)||wordCount(v.text)>14)errors.push(p+'.text: expected 1–14 words');
-  if(v.kicker!==undefined && (typeof v.kicker!=='string'||wordCount(v.kicker)>4))
-    errors.push(p+'.kicker: expected at most 4 words');
-  if(v.emphasis!==undefined && (typeof v.emphasis!=='string'||(v.emphasis && (!isNonempty(v.text)||!v.text.includes(v.emphasis)))))
-    errors.push(p+'.emphasis: must be an exact substring of text');
-  if(split){
-    if(v.player_chrome!==undefined && v.player_chrome!==false)errors.push(p+'.player_chrome: embedded player controls are no longer supported; omit or set false');
-    validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:true,allowVideo:false});
-  }
-}
-
 export const DEFAULT_TARGET_SECONDS = 30;
 export const ALLOWED_TARGET_SECONDS = Object.freeze([15, 30, 60]);
 export const ESTIMATED_WORDS_PER_SECOND = 2.4;
 
 // Length warnings use spoken words / 2.4. Actual rendered duration is measured
 // from synthesized audio; this estimate intentionally excludes the scene gaps.
-export function checkScript(script, config = DEFAULTS, { targetSeconds = DEFAULT_TARGET_SECONDS, assetRoot = DEFAULT_ASSET_ROOT } = {}) {
+export function checkScript(script, config = DEFAULTS, { targetSeconds = DEFAULT_TARGET_SECONDS } = {}) {
   const errors = [], warnings = [];
   if (!ALLOWED_TARGET_SECONDS.includes(targetSeconds)) throw new Error(`target must be 15, 30, or 60 seconds`);
   if (!isRecord(script)) return { ok: false, errors: ['script: expected JSON object'], warnings, estimatedSeconds: 0, targetSeconds };
-  const editorial=script.schema_version===2 && script.mode==='editorial_illustrated';
-  const templates=editorial ? [...TEMPLATES,...EDITORIAL_TEMPLATES] : TEMPLATES;
-  exactKeys(script,editorial?['schema_version','mode','title','handle','voice','accent','caption','hashtags','scenes']:['title','handle','voice','accent','caption','hashtags','scenes'],'script',errors);
-  if(Object.hasOwn(script,'schema_version') && script.schema_version!==2)errors.push('schema_version: expected integer 2');
-  if(script.schema_version===2 && script.mode!=='editorial_illustrated')errors.push('mode: expected editorial_illustrated');
-  if(Object.hasOwn(script,'mode') && script.schema_version!==2)errors.push('mode: requires schema_version 2');
+  exactKeys(script, ['title', 'handle', 'voice', 'accent', 'caption', 'hashtags', 'scenes'], 'script', errors);
   if (!isNonempty(script.title)) errors.push('title: expected nonempty string');
   if (typeof script.handle !== 'string' || !/^@[A-Za-z0-9._]{1,30}$/.test(script.handle)) errors.push('handle: expected @handle');
   if (script.voice !== undefined && (!isNonempty(script.voice) || !/^[a-z]{2}_[a-z0-9_]+$/.test(script.voice))) errors.push('voice: expected Kokoro voice id such as af_heart');
@@ -118,7 +81,7 @@ export function checkScript(script, config = DEFAULTS, { targetSeconds = DEFAULT
       const p = `scenes[${i}]`;
       if (!isRecord(s)) { errors.push(`${p}: expected object`); return; }
       exactKeys(s, ['template', 'say', 'highlight', 'illustrative', 'sfx', 'props'], p, errors);
-      if (!templates.includes(s.template)) errors.push(`${p}.template: unknown template '${s.template}'`);
+      if (!TEMPLATES.includes(s.template)) errors.push(`${p}.template: unknown template '${s.template}'`);
       if (!SFX.includes(s.sfx)) errors.push(`${p}.sfx: unknown effect '${s.sfx}'`);
       if (!isNonempty(s.say)) errors.push(`${p}.say: expected nonempty voiceover`);
       else {
@@ -130,7 +93,6 @@ export function checkScript(script, config = DEFAULTS, { targetSeconds = DEFAULT
       else if (s.highlight.trim() && typeof s.say === 'string' && !s.say.toLocaleLowerCase().includes(s.highlight.toLocaleLowerCase())) errors.push(`${p}.highlight: phrase not found in say`);
       if (typeof s.illustrative !== 'boolean') errors.push(`${p}.illustrative: expected boolean`);
       if (TEMPLATES.includes(s.template)) validateProps(s, i, errors);
-      if (editorial && EDITORIAL_TEMPLATES.includes(s.template)) validateEditorialProps(s,i,errors,assetRoot);
     });
   }
   const totalWords = Array.isArray(script.scenes) ? script.scenes.reduce((n, s) => n + (isNonempty(s?.say) ? wordCount(s.say) : 0), 0) : 0;
