@@ -1,0 +1,87 @@
+{
+  "schema_version": 2,
+  "mode": "editorial_illustrated",
+  "title": "A Study in Motion",
+  "handle": "@claudecreate",
+  "accent": "#B18A42",
+  "caption": "Illustration, story, and local video cards.",
+  "hashtags": [
+    "#education",
+    "#motion"
+  ],
+  "scenes": [
+    {
+      "template": "video_card",
+      "say": "Watch the illustrated river drift slowly through frame.",
+      "highlight": "river",
+      "illustrative": true,
+      "sfx": "swipe",
+      "props": {
+        "media": {
+          "kind": "image",
+          "src": "assets/editorial/demo-landscape.png",
+          "fit": "cover",
+          "motion": "zoom_in"
+        },
+        "label": "The river remembers",
+        "player_chrome": true
+      }
+    },
+    {
+      "template": "editorial_split",
+      "say": "The text beneath gives context to the scene.",
+      "highlight": "context",
+      "illustrative": true,
+      "sfx": "none",
+      "props": {
+        "media": {
+          "kind": "image",
+          "src": "assets/editorial/demo-landscape.png",
+          "fit": "cover",
+          "motion": "pan_right"
+        },
+        "kicker": "A VISUAL STUDY",
+        "text": "A moving illustration and an editorial idea",
+        "emphasis": "editorial idea",
+        "player_chrome": true
+      }
+    },
+    {
+      "template": "illustration_motion",
+      "say": "Transparent layers create independent foreground motion.",
+      "highlight": "independent",
+      "illustrative": true,
+      "sfx": "whoosh",
+      "props": {
+        "media": {
+          "kind": "layers",
+          "fit": "cover",
+          "motion": "parallax",
+          "layers": [
+            {
+              "src": "assets/editorial/demo-landscape.png",
+              "depth": -0.4
+            },
+            {
+              "src": "assets/editorial/demo-trees.png",
+              "depth": 0.8
+            }
+          ]
+        },
+        "label": "A layered landscape"
+      }
+    },
+    {
+      "template": "editorial_text_card",
+      "say": "A single memorable conclusion completes the explanation.",
+      "highlight": "memorable",
+      "illustrative": false,
+      "sfx": "ding",
+      "props": {
+        "kicker": "REMEMBER",
+        "text": "Motion supports meaning rather than distracting from it",
+        "emphasis": "Motion supports meaning"
+      }
+    }
+  ]
+}
