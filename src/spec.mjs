@@ -62,7 +62,7 @@ function validateEditorialProps(scene,i,errors,assetRoot) {
   if(scene.template==='video_card'){
     exactKeys(v,['media','label','player_chrome'],p,errors);
     if(v.label!==undefined&&(typeof v.label!=='string'||wordCount(v.label)>5))errors.push(p+'.label: expected at most 5 words');
-    if(v.player_chrome!==undefined&&typeof v.player_chrome!=='boolean')errors.push(p+'.player_chrome: expected boolean');
+    if(v.player_chrome!==undefined && v.player_chrome!==false)errors.push(p+'.player_chrome: embedded player controls are no longer supported; omit or set false');
     validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:false,allowVideo:false});
     return;
   }
@@ -80,7 +80,7 @@ function validateEditorialProps(scene,i,errors,assetRoot) {
   if(v.emphasis!==undefined && (typeof v.emphasis!=='string'||(v.emphasis && (!isNonempty(v.text)||!v.text.includes(v.emphasis)))))
     errors.push(p+'.emphasis: must be an exact substring of text');
   if(split){
-    if(v.player_chrome!==undefined && typeof v.player_chrome!=='boolean')errors.push(p+'.player_chrome: expected boolean');
+    if(v.player_chrome!==undefined && v.player_chrome!==false)errors.push(p+'.player_chrome: embedded player controls are no longer supported; omit or set false');
     validateMediaDescriptor(v.media,p+'.media',errors,{assetRoot,allowLayers:true,allowVideo:false});
   }
 }
