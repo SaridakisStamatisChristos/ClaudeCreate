@@ -54,7 +54,7 @@ async function run(executable,argv,{cwd=ROOT,timeoutMs=20*60*1000}={}) {
       clearTimeout(timer);
       if(timedOut)reject(new Error(basename(executable)+' timed out after '+Math.round(timeoutMs/1000)+' seconds'));
       else if(code===0)resolve({out,err});
-      else reject(new Error(`${basename(executable)} exited ${code??signal}: ${(err||out).trim().split('\\n').slice(-8).join(' | ')}`));
+      else reject(new Error(`${basename(executable)} exited ${code??signal}: ${(err||out).trim().split('\n').slice(-8).join(' | ')}`));
     });
   });
 }
