@@ -5,6 +5,7 @@ node_modules/
 out/
 __pycache__/
 *.pyc
+assets/sfx/*.wav
 assets/references/*
 !assets/references/.gitkeep
 assets/music/*
