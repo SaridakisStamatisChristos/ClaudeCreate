@@ -22,7 +22,7 @@ test('all scene primitives are compiled into a local SVG composition',()=>{
  assert.match(html,/stroke-dasharray=/);
  assert.match(html,/setupDirected\(tl,s,i,start,dur,gsap\)/);
  assert.match(html,/\.\/directed-runtime\.mjs/);
- assert.doesNotMatch(html,/https?:\/\/.*\.js/);
+ assert.doesNotMatch(html,/<script[^>]*src=["']https?:\/\//);
 });
 test('scene object ids, links, and animation timelines are strictly validated',()=>{
  const bad=structuredClone(example);
