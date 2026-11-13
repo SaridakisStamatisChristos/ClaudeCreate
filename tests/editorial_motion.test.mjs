@@ -44,7 +44,8 @@ test('motion markup supports time-driven camera movement and escapes labels',()=
   const script=structuredClone(demo);
   script.scenes[0].props.label='<script>danger</script>';
   const html=buildHTML(script,timing,{draft:true});
-  assert.match(html,/class="ed-motion-frame"/);
+  assert.match(html,/class="ed-artwork"/);
+  assert.doesNotMatch(html,/ed-motion-frame|ed-player-chrome/);
   assert.match(html,/data-depth="-0.4"/);
   assert.match(html,/ed-anim-asset/);
   assert.match(html,/motion==='parallax'/);
