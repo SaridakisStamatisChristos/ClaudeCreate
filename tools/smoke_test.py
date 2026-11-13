@@ -25,6 +25,13 @@ def dimensions(path):
     v=json.loads(result)['streams'][0]
     return v['width'], v['height']
 
+def audio_format(path):
+    result = call('ffprobe', '-v', 'error', '-select_streams', 'a:0',
+                  '-show_entries', 'stream=sample_rate,channels', '-of', 'json', str(path))
+    streams = json.loads(result)['streams']
+    assert streams, f'Missing audio stream: {path}'
+    return int(streams[0]['sample_rate']), int(streams[0]['channels'])
+
 def main():
     for required in ['node','ffmpeg','ffprobe']:
         if not shutil.which(required):
@@ -74,6 +81,8 @@ else:
             assert (target/name).stat().st_size>0, f'Missing {name}'
         assert dimensions(target/'instagram.mp4')==(540,960)
         assert dimensions(target/'youtube.mp4')==(960,540)
+        assert audio_format(target/'instagram.mp4')==(48000,2), 'Portrait AAC must be 48 kHz stereo'
+        assert audio_format(target/'youtube.mp4')==(48000,2), 'Landscape AAC must be 48 kHz stereo'
         assert abs(float(output.split('Measured integrated loudness: ')[1].split(' LUFS')[0])+14)<.6,output
         voice_cache=list((root/'.cache'/'voices').glob('*/timing.json'))
         assert len(voice_cache)==len(script['scenes']), f'Wrong synthetic TTS cache count: {len(voice_cache)}'
