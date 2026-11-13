@@ -28,7 +28,7 @@
         "kicker": "ILLUSTRATED HISTORY",
         "text": "Waterways were the roads of early civilizations",
         "emphasis": "roads of early civilizations",
-        "player_chrome": true
+        "player_chrome": false
       }
     },
     {
@@ -70,7 +70,7 @@
           "motion": "zoom_in"
         },
         "label": "A river landscape",
-        "player_chrome": true
+        "player_chrome": false
       }
     },
     {
@@ -139,7 +139,7 @@
         "kicker": "THE BIG PICTURE",
         "text": "Our shared histories are shaped by countless journeys",
         "emphasis": "shared histories",
-        "player_chrome": true
+        "player_chrome": false
       }
     }
   ]
