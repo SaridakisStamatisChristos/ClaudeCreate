@@ -35,7 +35,7 @@ async function run(executable,argv,{cwd=ROOT,timeoutMs=20*60*1000}={}) {
     // its ffmpeg/whisper children be terminated together, not just the CLI shell.
     const isolated=process.platform!=='win32';
     const child=spawn(executable,argv,{cwd,detached:isolated,
-      stdio:['ignore','pipe','pipe'],env:{...process.env,HF_DISABLE_TELEMETRY:'1',DO_NOT_TRACK:'1'}});
+      stdio:['ignore','pipe','pipe'],env:{...process.env,HYPERFRAMES_PYTHON:process.env.HYPERFRAMES_PYTHON||PYTHON,HF_DISABLE_TELEMETRY:'1',DO_NOT_TRACK:'1'}});
     let out='',err='',timedOut=false;
     const timer=setTimeout(()=>{
       timedOut=true;
