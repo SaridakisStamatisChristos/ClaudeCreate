@@ -1,6 +1,6 @@
 # ClaudeCreate v0.2 — Acceptance Matrix
 **Branch:** `feature/editorial-illustrated-v0.2`
-**Status:** These are planned tests, not yet completed.
+**Status:** Automated Stage A–D tests have been implemented and CI-smoked; the full acceptance checklist remains open for real Kokoro, independent human review, offline disconnect and local MP4 seeking. See measured results below and EDITORIAL_V0_2_VISUAL_AUDIT.md.
 
 ## Compatibility and schema
 - [ ] Original unversioned v1 `examples/dummy.json` and `examples/templates.json` pass with unchanged rules and visual output.
