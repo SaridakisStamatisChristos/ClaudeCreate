@@ -18,13 +18,13 @@ test('video_card rejects unsupported MP4 and malformed props',()=>{
   const errors=checkScript(bad).errors.join(' ');
   assert.match(errors,/video_card|scenes\[0\]/);
   assert.match(errors,/kind: expected image/);
-  assert.match(errors,/player_chrome: expected boolean/);
+  assert.match(errors,/player_chrome: embedded player controls are no longer supported/);
   assert.match(errors,/unknown property 'unexpected'/);
 });
 test('image-backed video_card renders full canvas without nested fake player',()=>{
   const html=buildHTML(example,timing,{draft:true});
   assert.match(html,/data-type="video_card"/);
-  assert.match(html,/class="ed-video-label"/);
+  assert.match(html,/class="ed-label"/);
   assert.match(html,/class="ed-artwork"/);
   assert.match(html,/width:1080px;height:1920px/);
   assert.doesNotMatch(html,/ed-player|ed-progress-fill|ed-play-icon/);
