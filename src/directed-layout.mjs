@@ -44,14 +44,19 @@ export function renderHierarchy(objects,index,renderLeaf){
    if(!map.has(parent))map.set(parent,[]);
    map.get(parent).push({o,i});
  }
+ const active=new Set();
  const renderLevel=parent=>(map.get(parent)||[])
   .sort((a,b)=>((a.o.layer??0)-(b.o.layer??0))||
-    (a.o.type==='line'?-1:b.o.type==='line'?1:0)||
+    ((a.o.type==='line'?0:1)-(b.o.type==='line'?0:1))||
     (a.i-b.i))
   .map(({o})=>{
     if(o.type!=='group')return renderLeaf(o,index);
+    if(active.has(o.id))throw new Error('Circular illustration group: '+o.id);
+    active.add(o.id);
     const name='directed-'+index+'-'+o.id,opacity=escNum(o.initial?.opacity??1);
-    return '<g transform="translate('+escNum(o.x)+' '+escNum(o.y)+')"><g id="'+name+'" style="opacity:'+opacity+'">'+renderLevel(o.id)+'</g></g>';
+    const children=renderLevel(o.id);
+    active.delete(o.id);
+    return '<g transform="translate('+escNum(o.x)+' '+escNum(o.y)+')"><g id="'+name+'" style="opacity:'+opacity+'">'+children+'</g></g>';
   }).join('');
  return renderLevel('');
 }
