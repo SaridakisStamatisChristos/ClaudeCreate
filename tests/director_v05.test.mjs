@@ -24,7 +24,8 @@ test('avatar renders head, eyes, mouth, torso, articulated arms and independentl
  for(const part of ['head','arm-left','arm-right','leg-left','leg-right'])
   assert.match(html,new RegExp('id="directed-0-explorer-'+part+'"'));
  assert.match(html,/Q0 36 12 27/);
- assert.match(html,/scale\(0\.60\)/);
+ const character=fixture.scenes[0].props.objects.find(o=>o.id==='explorer');
+ assert.ok(html.includes('scale('+(character.size/300).toFixed(2)+')'));
  assert.doesNotMatch(html,/<script|foreignObject|onload=/);
 });
 test('scene boundaries contain matched two-sided overlays with no overlay on first arrival',()=>{
