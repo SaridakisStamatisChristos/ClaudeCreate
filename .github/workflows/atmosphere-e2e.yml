@@ -1,0 +1,115 @@
+name: Real v0.4 atmosphere and depth MP4
+
+on:
+  push:
+    branches: [feature/production-verification]
+    paths:
+      - '.github/workflows/atmosphere-e2e.yml'
+      - 'src/directed-environment.mjs'
+      - 'src/directed-art.mjs'
+      - 'src/directed.mjs'
+      - 'src/directed-layout.mjs'
+      - 'src/directed-runtime.mjs'
+      - 'src/composition.mjs'
+      - 'examples/directed_atmosphere_city.json'
+      - 'tests/directed_environment.test.mjs'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: claudecreate-atmosphere-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  render-real-atmosphere:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install real local synthesis and rendering dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg python3 python3-venv espeak-ng
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+          npm ci --no-audit --no-fund
+          echo "HYPERFRAMES_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+      - name: Verify renderer and new four-environment schema
+        run: |
+          node --check src/directed-environment.mjs
+          node --check src/directed.mjs
+          node --check src/directed-runtime.mjs
+          node --check src/composition.mjs
+          npm test
+          node bin/reel.mjs check examples/directed_atmosphere_city.json --target 15
+      - name: Render genuine Kokoro, Whisper and HyperFrames videos
+        shell: bash
+        run: |
+          set -o pipefail
+          node bin/reel.mjs render examples/directed_atmosphere_city.json --draft --target 15 2>&1 | tee atmosphere-render.log
+      - name: Inspect MP4 streams, scene colours, and frame variety
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, subprocess, hashlib
+          from pathlib import Path
+          root=Path('out/a-city-through-four-skies-draft')
+          files=[(root/'instagram.mp4',(540,960)),(root/'youtube.mp4',(960,540))]
+          durations=[]
+          for path,size in files:
+              if not path.is_file(): raise SystemExit('Missing actual video '+str(path))
+              probe=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(path)]))
+              video=next((s for s in probe['streams'] if s['codec_type']=='video'),None)
+              audio=next((s for s in probe['streams'] if s['codec_type']=='audio'),None)
+              if video is None or audio is None: raise SystemExit('Missing audio/video stream '+str(path))
+              if video['codec_name']!='h264' or audio['codec_name']!='aac': raise SystemExit('Unexpected stream codec')
+              if (video['width'],video['height'])!=size:raise SystemExit('Wrong dimensions '+str(path))
+              if audio['sample_rate']!='48000':raise SystemExit('Audio not 48kHz')
+              dur=float(probe['format']['duration']);durations.append(dur)
+              if not 5<dur<13:raise SystemExit('Unexpected draft duration '+str(dur))
+              print('VERIFIED',str(path),'duration',round(dur,3),'codecs',video['codec_name'],audio['codec_name'])
+          if abs(durations[0]-durations[1])>.06:raise SystemExit('Mismatched orientation durations')
+          movie=str(files[0][0]);length=durations[0]
+          samples=[.13,.38,.63,.88]
+          frames=[];upper=[];vertical=[]
+          for fraction in samples:
+              time=round(length*fraction,4)
+              raw=subprocess.check_output(['ffmpeg','-v','error','-ss',str(time),'-i',movie,'-vf','scale=160:160,format=rgb24','-frames:v','1','-f','rawvideo','pipe:1'])
+              if len(raw)!=160*160*3:raise SystemExit('Frame decode failed')
+              frames.append(raw)
+              pixels=[]
+              for y in (40,895):
+                  small=subprocess.check_output(['ffmpeg','-v','error','-ss',str(time),'-i',movie,'-vf',f'crop=2:2:8:{y},format=rgb24','-frames:v','1','-f','rawvideo','pipe:1'])
+                  if len(small)!=12:raise SystemExit('Sky pixel crop decode failed')
+                  pixels.append(tuple(sum(small[i::3])/4 for i in range(3)))
+              upper.append(tuple(round(v) for v in pixels[0]))
+              vertical.append(sum(abs(a-b) for a,b in zip(*pixels))/3)
+          if len(set(hashlib.sha256(frame).hexdigest() for frame in frames))<4:
+              raise SystemExit('No reliable scene-to-scene image differences')
+          if len(set(upper))<3:raise SystemExit('Sky backgrounds do not visually change between scenes')
+          if any(v<10 for v in vertical):
+              raise SystemExit('A scene does not show measurable vertical sky colour depth: '+str(vertical))
+          print('Distinct sky colours:',upper)
+          print('Top-to-bottom per-channel colour differences:',[round(x,1) for x in vertical])
+          html=Path('.reel-work/a-city-through-four-skies-draft/index.html').read_text()
+          for token in ('directed-atmosphere-0-back','directed-atmosphere-1-front','directed-atmosphere-2-back','directed-atmosphere-3-front','directed-shadow-0-sun','directed-shadow-3-future'):
+              if token not in html:raise SystemExit('Missing authored atmosphere or shadow '+token)
+          print('Verified all four atmospheric scenes and targeted glow/depth filters')
+          PY
+      - name: Preserve real output and execution evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudecreate-v04-four-skies-mp4
+          retention-days: 7
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: |
+            atmosphere-render.log
+            out/a-city-through-four-skies-draft/**
+            .reel-work/a-city-through-four-skies-draft/index.html

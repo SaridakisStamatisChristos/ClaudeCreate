@@ -16,8 +16,9 @@ test('aligns exact scripted words with transcript word times and punctuation',()
 });
 
 test('rejects ASR omissions, missing audio, non-monotonic and out-of-range timestamps',()=>{
-  assert.throws(()=>alignSpeech('one two',[{text:'one',start:0,end:.2}],.5),/does not match scripted word/);
+  assert.throws(()=>alignSpeech('one two',[{text:'one',start:0,end:.2}],.5),/word count differs/);
   assert.throws(()=>alignSpeech('one',[],1),/no word-level/);
+  assert.throws(()=>alignSpeech('one',[{text:'one',start:0,end:.1},{text:'extra',start:.11,end:.2}],1),/word count differs/);
   assert.throws(()=>alignSpeech('one',[{text:'one',start:0,end:2}],1),/invalid word timestamp/);
   assert.throws(()=>alignSpeech('one two',[
     {text:'one',start:.3,end:.4},{text:'two',start:.1,end:.2}],1),/not in chronological/);
@@ -45,7 +46,7 @@ test('bridge invokes local HyperFrames Kokoro then transcription; caches only va
        ]));
        return {out:'{}'};
      }
-     if(executable==='ffprobe')return {out:JSON.stringify({format:{duration:'0.7'}})};
+     if(executable==='ffprobe')return {out:JSON.stringify({streams:[{codec_type:'audio',sample_rate:'24000',channels:1}],format:{duration:'0.7'}})};
      throw new Error('Unexpected executable/args');
    };
    const options={root,cli:'/opt/hyperframes/bin/hyperframes',exec};
@@ -60,6 +61,12 @@ test('bridge invokes local HyperFrames Kokoro then transcription; caches only va
    assert.match(first.wav,/\.cache\/voices\/[0-9a-f]{64}\/narration\.wav$/);
    const meta=JSON.parse(await readFile(join(root,'.cache','voices',cacheKey('Hello world.','af_heart'),'timing.json'),'utf8'));
    assert.equal(meta.duration,.7);
+   assert.equal(meta.sampleRate,24000);
+   assert.match(meta.wavSha256,/^[0-9a-f]{64}$/);
+   await writeFile(first.wav,'corrupted wav');
+   const third=await synthesizeSpeech('Hello world.','af_heart',options);
+   assert.equal(trace.length,6,'corrupt WAV forces regeneration even when timing.json exists');
+   assert.deepEqual(third,first);
  }finally{await rm(root,{recursive:true,force:true});}
 });
 
@@ -75,13 +82,29 @@ test('no timing file cached when Whisper text does not align; multilingual model
        await writeFile(join(cwd,'transcript.json'),JSON.stringify([{text:'Hola',start:0,end:.25}]));
        return {out:''};
      }
-     return {out:JSON.stringify({format:{duration:'.5'}})};
+     return {out:JSON.stringify({streams:[{codec_type:'audio',sample_rate:'24000',channels:1}],format:{duration:'.5'}})};
    };
    await assert.rejects(
      synthesizeSpeech('Hola mundo','ef_dora',{root,cli:'/bin/hyperframes',exec}),
-     /does not match scripted word "mundo"/);
+     /word count differs/);
    const timing=join(root,'.cache','voices',cacheKey('Hola mundo','ef_dora'),'timing.json');
    await assert.rejects(readFile(timing),/ENOENT/);
    assert.equal(calls.length,3);
+ }finally{await rm(root,{recursive:true,force:true});}
+});
+
+test('rejects a non-audio ffprobe result before writing timing cache',async()=>{
+ const root=await mkdtemp(join(tmpdir(),'claudecreate-invalid-wav-'));
+ try{
+   const runner=async(cmd,args,{cwd}={})=>{
+     if(args[0]==='tts'){await writeFile(args[args.indexOf('--output')+1],'not audio');return {out:''};}
+     if(args[0]==='transcribe'){
+       await writeFile(join(cwd,'transcript.json'),JSON.stringify([{text:'Hello',start:0,end:.2}]));
+       return {out:''};
+     }
+     return {out:JSON.stringify({format:{duration:'1.0'},streams:[]})};
+   };
+   await assert.rejects(synthesizeSpeech('Hello','af_heart',{root,cli:'/bin/hyperframes',exec:runner}),/failed ffprobe audio validation/);
+   await assert.rejects(readFile(join(root,'.cache','voices',cacheKey('Hello','af_heart'),'timing.json')),/ENOENT/);
  }finally{await rm(root,{recursive:true,force:true});}
 });

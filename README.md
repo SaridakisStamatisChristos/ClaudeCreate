@@ -31,7 +31,7 @@ Create vertical Instagram Reels and landscape YouTube videos from a `script.json
 | Operating system | Ubuntu / Linux Mint (recommended; instructions below) | Local workstation |
 | Node.js | **22 or newer** | Reel CLI and HyperFrames |
 | npm | Installed with Node | JavaScript dependencies |
-| Python | **3.x** (standard library only) | Sound effects, reference analysis, integration tests |
+| Python | **3.x with venv/pip** | HyperFrames Kokoro ONNX runtime, sound effects and tests |
 | FFmpeg + FFprobe | Available in terminal | Mixing, encoding, media inspection |
 | `espeak-ng` | Installed | Kokoro text phonemization |
 | Chromium / supported browser | Installed and recognized by HyperFrames | Local scene capture/rendering |
@@ -51,7 +51,7 @@ sudo apt update
 sudo apt install -y \
   git curl ca-certificates build-essential \
   ffmpeg espeak-ng \
-  python3
+  python3 python3-venv
 ```
 
 Install a local Chromium browser if you do not already have one:
@@ -72,7 +72,7 @@ espeak-ng --version
 python3 --version
 ```
 
-**Python:** Only the Python 3 standard library is used for local sound-effect generation and test utilities. You do **not** need `pip`, `numpy`, `kokoro`, `faster-whisper` or `.venv`.
+**Python:** HyperFrames 0.9.37 uses the Python `kokoro-onnx` and `soundfile` packages to execute Kokoro TTS. Keep them in a small local `.venv`; no duplicate Python TTS application or `faster-whisper` is needed. This requirement was confirmed by a real-model GitHub Actions failure.
 
 ### 2.2 Install Node.js 22+ (only if needed)
 
@@ -112,10 +112,10 @@ The commands below assume your working directory is the repository root (the fol
 ### 2.4 Install JavaScript/HyperFrames dependencies
 
 ```bash
-npm install
+npm ci
 ```
 
-This installs the versions allowed by `package.json`, including HyperFrames, GSAP and Three.js. You do **not** need to fork HyperFrames or separately host its rendering service.
+This installs the exact direct and transitive versions in the committed `package-lock.json` (HyperFrames 0.9.37, GSAP and Three.js), rather than floating package updates. You do **not** need to fork HyperFrames or separately host its rendering service.
 
 Check the installed HyperFrames CLI:
 
@@ -133,9 +133,18 @@ npx skills add heygen-com/hyperframes
 
 Only run that optional command if you want its agent skills; it may be interactive and requires internet.
 
-### 2.5 Use HyperFrames' built-in Kokoro and Whisper (no extra Python setup)
+### 2.5 Install the HyperFrames Kokoro runtime
 
-The npm package already includes a local Kokoro TTS command and a local Whisper transcription command. **Do not clone Kokoro or install a separate Python speech stack.**
+HyperFrames provides the **single** TTS CLI interface, but its Kokoro execution backend requires Python `kokoro-onnx` and `soundfile`. Install only these runtime dependencies into the local venv. Do not restore the old standalone TTS script or add `faster-whisper`.
+
+```bash
+python3 -m venv .venv
+.venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+export HYPERFRAMES_PYTHON="$PWD/.venv/bin/python"
+.venv/bin/python -c "import kokoro_onnx, soundfile; print('Kokoro runtime ready')"
+```
+
+The ClaudeCreate CLI automatically prefers `.venv/bin/python` when invoking HyperFrames. The `export` above also makes the same venv available to standalone `npx hyperframes tts` invocations in this shell.
 
 Check the installed commands:
 
@@ -505,6 +514,7 @@ GitHub Actions runs the automated checks defined in [.github/workflows/validate.
 | HyperFrames doctor complains about browser | Install/configure Chromium supported by your Linux distribution; rerun `npx --no-install hyperframes doctor`. |
 | HyperFrames `tts` or `transcribe` command unavailable | Run `npm install` from the repository root, then check `npx --no-install hyperframes tts --help` and `npx --no-install hyperframes transcribe --help`. |
 | `espeak` / phonemizer error | Install `espeak-ng` and ensure `espeak-ng --version` works. |
+| `kokoro-onnx package is not installed` | Run the venv/pip commands in §2.5; set `HYPERFRAMES_PYTHON` for direct HyperFrames commands. |
 | Models fail to download | Check internet access on the **first** TTS run; repeat after a successful download. |
 | HyperFrames transcription does not match scripted word | Check the scene narration for acronyms, numbers, punctuation, or mispronunciation; retry with a clear script or a better ASR model. The renderer never invents word timings. |
 | `Cannot read script JSON` | Save **only** the valid JSON object; remove markdown fences and any trailing "Facts to verify" text. |
@@ -533,14 +543,14 @@ npm install
 npm test
 ```
 
-If you have uncommitted local changes, `git pull --ff-only` may refuse to proceed; preserve them or review them before updating. Re-running `npm install` is normally safe; no separate Python speech environment needs maintenance. Do not delete caches unless you need to regenerate models or timing data.
+If you have uncommitted local changes, `git pull --ff-only` may refuse to proceed; preserve them or review them before updating. Re-running `npm install` is normally safe. Keep the local `.venv` containing the `kokoro-onnx` and `soundfile` runtime packages; if deleted, recreate it using §2.5. Do not delete caches unless you need to regenerate models or timing data.
 
 ### Free disk space selectively
 
 - `out/` contains your **finished videos**, thumbnails and previews: back them up before deleting.
 - `.cache/voices/` contains expensive-to-recreate Kokoro audio/timing cache: keep it if you rerender frequently.
 - `.reel-work/` contains intermediate generated compositions and media; remove old subfolders only after securing finished exports.
-- `node_modules/` can be reinstalled but requires new package downloads. An old `.venv/` from pre-migration installations is no longer used by the app.
+- `node_modules/` can be reinstalled but requires new package downloads. A `.venv/` with HyperFrames' Kokoro ONNX runtime is used by the app; recreate it using §2.5 if absent or corrupted.
 - The program is **not** a web service; no application server, subscription, paid API key or externally hosted inference is required.
 
 ### Known limitations
@@ -558,3 +568,92 @@ If you have uncommitted local changes, `git pull --ff-only` may refuse to procee
 **Development guide:** [CLAUDE.md](CLAUDE.md) · [STYLE.md](STYLE.md) · [docs/SCRIPT_SPEC.md](docs/SCRIPT_SPEC.md) · [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
 
 **Repository:** https://github.com/SaridakisStamatisChristos/ClaudeCreate
+
+
+## Production verification (genuine models)
+
+To run the **real** Kokoro → Whisper → HyperFrames → FFmpeg test on Ubuntu/Linux Mint:
+
+~~~bash
+sudo apt-get install -y ffmpeg python3 python3-venv espeak-ng
+python3 -m venv .venv
+.venv/bin/python -m pip install kokoro-onnx soundfile
+npm install
+npm run test:real
+~~~
+
+This uses the short two-scene fixture in `examples/verification_short.json`, with no speech or video mocks. The machine may need to download local model weights on the first run. The test writes `reports/real-verification.json` and MP4 exports under `out/claudecreate-real-pipeline-verification-draft/`. Run `npm test`, `npm run test:integration` and `npm run test:hyperframes` separately for quick tests, mock FFmpeg integration, and real animation with synthetic captions respectively. **None of those three proves Kokoro or Whisper execution.**
+
+Read [the verification levels, evidence, GitHub Actions workflow and remaining production blockers](docs/VERIFICATION.md). Do not describe the application as production-ready until all Level 5 requirements are independently verified.
+
+
+**Audit:** See [production completion technical audit](docs/PRODUCTION_AUDIT.md) for observed defects, fixes, evidence levels and remaining acceptance gates.
+
+
+## Experimental: script-directed visual scenes
+
+The `directed_scene` template adds deterministic, script-controlled SVG primitives (`circle`, `rect`, `line`, `text`), object IDs, normalized-time animations, and camera pan/zoom. Existing templates, TTS, word-level captions and FFmpeg exports are preserved. The generated JSON is **data, not executable JavaScript**.
+
+Start from [`examples/directed_network.json`](examples/directed_network.json), then run:
+
+```bash
+node bin/reel.mjs check examples/directed_network.json --target 15
+node bin/reel.mjs render examples/directed_network.json --draft --target 15
+```
+
+See [Directed Scenes guide](docs/DIRECTED_SCENES.md) for every supported property, validation rule and current limitations. This is a first graphics milestone, **not yet full artistic production readiness**. AetherMotion and other video repositories remain separate.
+
+For automated storyboarding with object-level motion instructions, use [`prompts/CLAUDE_REEL_DIRECTED_MASTER_v1.2.md`](prompts/CLAUDE_REEL_DIRECTED_MASTER_v1.2.md). The original `CLAUDE_REEL_MASTER.md` remains available for template-only workflows.
+
+
+### Illustrated vector scenes (experimental v0.2)
+
+The `directed_scene` renderer now supports `ellipse`, `polygon`, numeric Bézier `path` segments and eight curated vector `icon` symbols in addition to the original four primitives. It also supports local linear gradients, stroke drawing, relative object movement, and matched full-scene backgrounds. No arbitrary SVG, external illustration API or additional video engine is required.
+
+```bash
+node bin/reel.mjs check examples/directed_illustrated.json --target 15
+node bin/reel.mjs render examples/directed_illustrated.json --draft --target 15
+```
+
+[Open the illustrated scene example](examples/directed_illustrated.json) and [v1.3 production prompt](prompts/CLAUDE_REEL_ILLUSTRATED_MASTER_v1.3.md). The established TTS/rendering path remains unchanged, and these illustrations are not yet equivalent to character animation or realistic filmmaking. Automated rendering acceptance and manual artistic review must be reported separately.
+
+
+### Compound illustration workflow (experimental v0.3)
+
+ClaudeCreate now supports hierarchically grouped SVG objects (`type: "group"`), sibling painter-order layers (`layer: -20..20`), and object motion along structured Bézier curves (`property: "pathProgress"`). Use this to animate an illustrated house, a city block, or a machine as one object and independently animate its components. Scene JSON is still validated data; it is not executable model-generated code.
+
+```bash
+npm test
+node bin/reel.mjs check examples/directed_compound_city.json --target 15
+node bin/reel.mjs render examples/directed_compound_city.json --draft --target 15
+```
+
+Read the [compound scene specification](docs/DIRECTED_COMPOUNDS.md) and use the [compound storyboard prompt](prompts/CLAUDE_REEL_COMPOUND_MASTER_v1.4.md) for more directed visual variety. The [A City in Motion JSON fixture](examples/directed_compound_city.json) combines layered buildings, a moving sun, a traveling energy particle, and connected neighborhoods. The dedicated [real compound render workflow](.github/workflows/compound-e2e.yml) tests actual local Kokoro/Whisper/HyperFrames MP4 production, not mocks. This is still 2D procedural illustration, not articulated character animation or photorealistic video.
+
+
+### Cinematic vector atmosphere (experimental v0.4)
+
+Script-directed animation now supports full-height two-colour sky gradients, deterministic environmental particles (stars, fireflies, mist, rain), and bounded native-SVG shadow/glow effects on individual shapes or compound groups. Environmental movement is bound to the same paused GSAP timeline as the visual objects, so all effects are reproducible by frame. It remains fully local; no AI image API, external assets, or new runtime package is required.
+
+```bash
+npm test
+node bin/reel.mjs check examples/directed_atmosphere_city.json --target 15
+node bin/reel.mjs render examples/directed_atmosphere_city.json --draft --target 15
+```
+
+The complete [atmosphere and depth guide](docs/DIRECTED_ENVIRONMENTS.md), [four-environment city demo](examples/directed_atmosphere_city.json), and [v1.5 scene-writing prompt](prompts/CLAUDE_REEL_ATMOSPHERE_MASTER_v1.5.md) explain how to create layered authored scenes. This is improved editorial illustration and stylized motion graphics, **not** character acting or photorealism. The demo runs shorter than a calibrated 15-second reel.
+
+
+### Character-led stories and clip-safe transitions (v0.5)
+
+The `directed_scene` visual language now includes a reusable articulated `character` SVG primitive with independent head, arms and legs, configurable clothing and skin palettes, and semantic `props.performances` actions (`walk`, `wave`, `nod`, `cheer`). A walking gesture can be combined with a previous `x` or `pathProgress` tween to move the character through the drawing stage.
+
+To avoid HyperFrames clipping animations at scene boundaries, a scene may declare a bounded incoming `transition` (`fade`, `wipe-left`, `iris`). ClaudeCreate creates two matching, frame-seekable transition halves: the previous scene is covered as it ends; the next scene is revealed from the identical colour as it starts. Existing scripts without a transition continue to use hard cuts.
+
+```bash
+npm test
+node bin/reel.mjs check examples/directed_story_v05.json --target 15
+node bin/reel.mjs render examples/directed_story_v05.json --draft --target 15
+```
+
+See [the full acting and transition contract](docs/DIRECTOR_V05.md), [A City Comes Alive example](examples/directed_story_v05.json), and [v1.6 director prompt](prompts/CLAUDE_REEL_DIRECTOR_MASTER_v1.6.md). The real [v0.5 end-to-end workflow](.github/workflows/director-v05-e2e.yml) must complete successfully before this build is accepted as an actual narrated MP4. This is still stylized 2D animation, not realistic lip-synchronized actors.

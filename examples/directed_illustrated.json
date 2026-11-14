@@ -1,0 +1,663 @@
+{
+  "title": "How Ideas Change the World",
+  "handle": "@claudecreate",
+  "voice": "af_heart",
+  "accent": "#F8C95A",
+  "caption": "A locally produced illustrated explanation of how questions become discoveries.",
+  "hashtags": [
+    "#animation",
+    "#science",
+    "#ideas"
+  ],
+  "scenes": [
+    {
+      "template": "directed_scene",
+      "say": "Every discovery begins with curiosity.",
+      "highlight": "curiosity",
+      "illustrative": false,
+      "sfx": "pop",
+      "props": {
+        "background": "#101C2E",
+        "objects": [
+          {
+            "id": "halo",
+            "type": "ellipse",
+            "x": 450,
+            "y": 440,
+            "rx": 240,
+            "ry": 240,
+            "fill": "#273D73",
+            "gradient": {
+              "start": "#2349A3",
+              "end": "#101C2E",
+              "direction": "vertical"
+            }
+          },
+          {
+            "id": "light",
+            "type": "ellipse",
+            "x": 450,
+            "y": 435,
+            "rx": 200,
+            "ry": 200,
+            "fill": "#12233D"
+          },
+          {
+            "id": "lamp",
+            "type": "icon",
+            "name": "lightbulb",
+            "x": 450,
+            "y": 415,
+            "size": 325,
+            "stroke": "#F9D77B",
+            "strokeWidth": 4
+          },
+          {
+            "id": "wave",
+            "type": "path",
+            "x": 450,
+            "y": 750,
+            "commands": [
+              {
+                "op": "M",
+                "x": -260,
+                "y": 0
+              },
+              {
+                "op": "C",
+                "c1x": -160,
+                "c1y": -80,
+                "c2x": -80,
+                "c2y": 80,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "op": "C",
+                "c1x": 80,
+                "c1y": -80,
+                "c2x": 160,
+                "c2y": 80,
+                "x": 260,
+                "y": 0
+              }
+            ],
+            "fill": "none",
+            "stroke": "#6596D9",
+            "strokeWidth": 5
+          },
+          {
+            "id": "phrase",
+            "type": "text",
+            "x": 450,
+            "y": 115,
+            "text": "WHERE IDEAS BEGIN",
+            "fontSize": 55,
+            "fill": "#E9F0FF"
+          }
+        ],
+        "animations": [
+          {
+            "target": "halo",
+            "property": "scale",
+            "at": 0,
+            "duration": 0.38,
+            "from": 0.15,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "light",
+            "property": "opacity",
+            "at": 0.08,
+            "duration": 0.25,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "lamp",
+            "property": "scale",
+            "at": 0.12,
+            "duration": 0.5,
+            "from": 0.15,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "lamp",
+            "property": "rotation",
+            "at": 0.12,
+            "duration": 0.5,
+            "from": -15,
+            "to": 0,
+            "ease": "power2.out"
+          },
+          {
+            "target": "wave",
+            "property": "draw",
+            "at": 0.36,
+            "duration": 0.48,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "phrase",
+            "property": "opacity",
+            "at": 0.55,
+            "duration": 0.25,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.12,
+            "to": 0.94,
+            "ease": "power2.inOut"
+          }
+        ]
+      }
+    },
+    {
+      "template": "directed_scene",
+      "say": "Knowledge travels between people.",
+      "highlight": "between people",
+      "illustrative": false,
+      "sfx": "whoosh",
+      "props": {
+        "background": "#102A31",
+        "objects": [
+          {
+            "id": "disc",
+            "type": "ellipse",
+            "x": 450,
+            "y": 450,
+            "rx": 305,
+            "ry": 305,
+            "fill": "#163B4B",
+            "gradient": {
+              "start": "#196C6B",
+              "end": "#0D2530",
+              "direction": "diagonal"
+            }
+          },
+          {
+            "id": "world",
+            "type": "icon",
+            "name": "globe",
+            "x": 450,
+            "y": 438,
+            "size": 330,
+            "stroke": "#9CE4D5",
+            "strokeWidth": 3
+          },
+          {
+            "id": "personLeft",
+            "type": "icon",
+            "name": "person",
+            "x": 155,
+            "y": 345,
+            "size": 170,
+            "stroke": "#DDF8ED",
+            "strokeWidth": 4
+          },
+          {
+            "id": "personRight",
+            "type": "icon",
+            "name": "person",
+            "x": 748,
+            "y": 565,
+            "size": 170,
+            "stroke": "#DDF8ED",
+            "strokeWidth": 4
+          },
+          {
+            "id": "arc",
+            "type": "path",
+            "x": 450,
+            "y": 460,
+            "commands": [
+              {
+                "op": "M",
+                "x": -270,
+                "y": -95
+              },
+              {
+                "op": "Q",
+                "cx": -12,
+                "cy": -310,
+                "x": 276,
+                "y": 90
+              }
+            ],
+            "fill": "none",
+            "stroke": "#EACA77",
+            "strokeWidth": 6
+          },
+          {
+            "id": "caption",
+            "type": "text",
+            "x": 450,
+            "y": 120,
+            "text": "SHARED KNOWLEDGE",
+            "fontSize": 59,
+            "fill": "#E9F7F5"
+          }
+        ],
+        "animations": [
+          {
+            "target": "disc",
+            "property": "opacity",
+            "at": 0,
+            "duration": 0.24,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "world",
+            "property": "rotation",
+            "at": 0.12,
+            "duration": 0.78,
+            "from": -18,
+            "to": 14,
+            "ease": "power2.out"
+          },
+          {
+            "target": "personLeft",
+            "property": "opacity",
+            "at": 0.1,
+            "duration": 0.22,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "personRight",
+            "property": "opacity",
+            "at": 0.35,
+            "duration": 0.2,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "arc",
+            "property": "draw",
+            "at": 0.22,
+            "duration": 0.57,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "caption",
+            "property": "opacity",
+            "at": 0.63,
+            "duration": 0.22,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "x",
+            "at": 0,
+            "duration": 1,
+            "from": 80,
+            "to": -50,
+            "ease": "power2.inOut"
+          }
+        ]
+      }
+    },
+    {
+      "template": "directed_scene",
+      "say": "Experiments turn questions into understanding.",
+      "highlight": "understanding",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "background": "#291C2F",
+        "objects": [
+          {
+            "id": "panel",
+            "type": "rect",
+            "x": 450,
+            "y": 450,
+            "width": 720,
+            "height": 510,
+            "radius": 45,
+            "fill": "#35263D",
+            "gradient": {
+              "start": "#56305B",
+              "end": "#241E39",
+              "direction": "diagonal"
+            }
+          },
+          {
+            "id": "book",
+            "type": "icon",
+            "name": "book",
+            "x": 225,
+            "y": 425,
+            "size": 195,
+            "stroke": "#F3BFDC",
+            "strokeWidth": 4
+          },
+          {
+            "id": "computer",
+            "type": "icon",
+            "name": "computer",
+            "x": 665,
+            "y": 425,
+            "size": 215,
+            "stroke": "#B8D8FE",
+            "strokeWidth": 4
+          },
+          {
+            "id": "poly",
+            "type": "polygon",
+            "x": 445,
+            "y": 610,
+            "points": [
+              {
+                "x": -90,
+                "y": 0
+              },
+              {
+                "x": 0,
+                "y": -58
+              },
+              {
+                "x": 90,
+                "y": 0
+              }
+            ],
+            "fill": "#B78FC7"
+          },
+          {
+            "id": "bridge",
+            "type": "path",
+            "x": 450,
+            "y": 430,
+            "commands": [
+              {
+                "op": "M",
+                "x": -110,
+                "y": 0
+              },
+              {
+                "op": "Q",
+                "cx": 0,
+                "cy": -150,
+                "x": 105,
+                "y": 0
+              }
+            ],
+            "fill": "none",
+            "stroke": "#FAE6A2",
+            "strokeWidth": 6
+          },
+          {
+            "id": "heading",
+            "type": "text",
+            "x": 450,
+            "y": 155,
+            "text": "FROM QUESTION TO ANSWER",
+            "fontSize": 49,
+            "fill": "#FFF0FC"
+          }
+        ],
+        "animations": [
+          {
+            "target": "panel",
+            "property": "scale",
+            "at": 0,
+            "duration": 0.32,
+            "from": 0.76,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "book",
+            "property": "x",
+            "at": 0.1,
+            "duration": 0.4,
+            "from": -110,
+            "to": 0,
+            "ease": "power2.out"
+          },
+          {
+            "target": "computer",
+            "property": "x",
+            "at": 0.1,
+            "duration": 0.4,
+            "from": 110,
+            "to": 0,
+            "ease": "power2.out"
+          },
+          {
+            "target": "bridge",
+            "property": "draw",
+            "at": 0.27,
+            "duration": 0.46,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "poly",
+            "property": "opacity",
+            "at": 0.5,
+            "duration": 0.23,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "heading",
+            "property": "opacity",
+            "at": 0.54,
+            "duration": 0.28,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.06,
+            "to": 0.94,
+            "ease": "power2.inOut"
+          }
+        ]
+      }
+    },
+    {
+      "template": "directed_scene",
+      "say": "And discoveries change our future.",
+      "highlight": "our future",
+      "illustrative": false,
+      "sfx": "ding",
+      "props": {
+        "background": "#172539",
+        "objects": [
+          {
+            "id": "moon",
+            "type": "ellipse",
+            "x": 680,
+            "y": 260,
+            "rx": 175,
+            "ry": 175,
+            "fill": "#B8DAE3",
+            "gradient": {
+              "start": "#F0DBB2",
+              "end": "#6DADC2",
+              "direction": "diagonal"
+            }
+          },
+          {
+            "id": "planet",
+            "type": "ellipse",
+            "x": 680,
+            "y": 260,
+            "rx": 135,
+            "ry": 135,
+            "fill": "#86A5BD"
+          },
+          {
+            "id": "ship",
+            "type": "icon",
+            "name": "rocket",
+            "x": 380,
+            "y": 490,
+            "size": 300,
+            "stroke": "#F4EEEF",
+            "strokeWidth": 4
+          },
+          {
+            "id": "trail",
+            "type": "path",
+            "x": 390,
+            "y": 680,
+            "commands": [
+              {
+                "op": "M",
+                "x": -8,
+                "y": -25
+              },
+              {
+                "op": "C",
+                "c1x": -40,
+                "c1y": 52,
+                "c2x": -95,
+                "c2y": 130,
+                "x": -120,
+                "y": 170
+              }
+            ],
+            "fill": "none",
+            "stroke": "#E6A267",
+            "strokeWidth": 12
+          },
+          {
+            "id": "end",
+            "type": "text",
+            "x": 450,
+            "y": 125,
+            "text": "IMAGINE WHAT'S NEXT",
+            "fontSize": 59,
+            "fill": "#FFFFFF"
+          },
+          {
+            "id": "lower",
+            "type": "path",
+            "x": 450,
+            "y": 835,
+            "commands": [
+              {
+                "op": "M",
+                "x": -260,
+                "y": 0
+              },
+              {
+                "op": "C",
+                "c1x": -160,
+                "c1y": -80,
+                "c2x": -80,
+                "c2y": 80,
+                "x": 0,
+                "y": 0
+              },
+              {
+                "op": "C",
+                "c1x": 80,
+                "c1y": -80,
+                "c2x": 160,
+                "c2y": 80,
+                "x": 260,
+                "y": 0
+              }
+            ],
+            "fill": "none",
+            "stroke": "#94C8E2",
+            "strokeWidth": 5
+          }
+        ],
+        "animations": [
+          {
+            "target": "moon",
+            "property": "opacity",
+            "at": 0,
+            "duration": 0.34,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "ship",
+            "property": "y",
+            "at": 0.14,
+            "duration": 0.76,
+            "from": 190,
+            "to": -90,
+            "ease": "power2.out"
+          },
+          {
+            "target": "ship",
+            "property": "rotation",
+            "at": 0.14,
+            "duration": 0.76,
+            "from": -18,
+            "to": 5,
+            "ease": "power2.inOut"
+          },
+          {
+            "target": "trail",
+            "property": "draw",
+            "at": 0.2,
+            "duration": 0.6,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "end",
+            "property": "opacity",
+            "at": 0.5,
+            "duration": 0.25,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "lower",
+            "property": "draw",
+            "at": 0.55,
+            "duration": 0.36,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.18,
+            "to": 0.89,
+            "ease": "power2.inOut"
+          }
+        ]
+      }
+    }
+  ]
+}

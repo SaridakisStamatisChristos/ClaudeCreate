@@ -29,14 +29,33 @@ const [command,scriptPath]=args;
 const draft=flags.has('--draft');
 
 function fail(message) { console.error(`ERROR: ${message}`); process.exitCode=1; }
-async function run(executable,argv,{cwd=ROOT,quiet=true}={}) {
+async function run(executable,argv,{cwd=ROOT,timeoutMs=20*60*1000}={}) {
   return new Promise((resolve,reject)=>{
-    const child=spawn(executable,argv,{cwd,stdio:['ignore','pipe','pipe'],env:{...process.env,HF_DISABLE_TELEMETRY:'1',DO_NOT_TRACK:'1'}});
-    let out='',err='';
-    child.stdout.on('data',b=>{out+=b.toString();if(out.length>4_000_000) out=out.slice(-4_000_000);});
-    child.stderr.on('data',b=>{err+=b.toString();if(err.length>4_000_000) err=err.slice(-4_000_000);});
-    child.on('error',reject);
-    child.on('close',code=>code===0?resolve({out,err}):reject(new Error(`${basename(executable)} exited ${code}: ${(err||out).trim().split('\n').slice(-8).join(' | ')}`)));
+    // An isolated POSIX process group lets a timed-out HyperFrames command and
+    // its ffmpeg/whisper children be terminated together, not just the CLI shell.
+    const isolated=process.platform!=='win32';
+    const child=spawn(executable,argv,{cwd,detached:isolated,
+      stdio:['ignore','pipe','pipe'],env:{...process.env,HYPERFRAMES_PYTHON:process.env.HYPERFRAMES_PYTHON||PYTHON,HF_DISABLE_TELEMETRY:'1',DO_NOT_TRACK:'1'}});
+    let out='',err='',timedOut=false;
+    const timer=setTimeout(()=>{
+      timedOut=true;
+      try {
+        if(isolated && child.pid)process.kill(-child.pid,'SIGKILL');
+        else child.kill('SIGKILL');
+      }catch{child.kill('SIGKILL');}
+    },timeoutMs);
+    child.stdout.on('data',b=>{out+=b.toString();if(out.length>4_000_000)out=out.slice(-4_000_000);});
+    child.stderr.on('data',b=>{err+=b.toString();if(err.length>4_000_000)err=err.slice(-4_000_000);});
+    child.on('error',error=>{
+      clearTimeout(timer);
+      reject(new Error('Cannot start '+basename(executable)+': '+error.message));
+    });
+    child.on('close',(code,signal)=>{
+      clearTimeout(timer);
+      if(timedOut)reject(new Error(basename(executable)+' timed out after '+Math.round(timeoutMs/1000)+' seconds'));
+      else if(code===0)resolve({out,err});
+      else reject(new Error(`${basename(executable)} exited ${code??signal}: ${(err||out).trim().split('\n').slice(-8).join(' | ')}`));
+    });
   });
 }
 async function config() {
@@ -69,10 +88,13 @@ async function prepare(script,{short=false}={}) {
     const frames=Math.ceil((v.duration+c.gap)*30);
     timing.push({start:frame/30,duration:frames/30,audioDuration:v.duration,words:v.words,wav:v.wav});
     frame+=frames;
-    if(short && frame/30>=10)break;
+    if((short||draft) && frame/30>=10)break;
   }
-  // Use the original scenes when the full timeline is needed; in draft, render will clip to 10 sec.
-  await writeComposition(folder,script,timing,{draft,baseDir:ROOT});
+  // A draft must not synthesize narration for the unrendered remainder of a 60s script.
+  // The generated composition must contain exactly the timed scenes, or its
+  // scene serialization will access missing timing entries.
+  const timedScript={...script,scenes:script.scenes.slice(0,timing.length)};
+  await writeComposition(folder,timedScript,timing,{draft,baseDir:ROOT});
   return {folder,timing,total:frame/30,name};
 }
 function effectPath(kind,index){return join(ROOT,'assets','sfx',`${kind}_${(index%3)+1}.wav`);}
@@ -117,7 +139,7 @@ async function normalize(wav,output){
   const pass=await run('ffmpeg',['-hide_banner','-i',wav,'-af',`loudnorm=${settings}:print_format=json`,'-f','null','-']);
   const m=stats(pass.err);
   const filter=`loudnorm=${settings}:measured_I=${m.input_i}:measured_TP=${m.input_tp}:measured_LRA=${m.input_lra}:measured_thresh=${m.input_thresh}:offset=${m.target_offset}:linear=true:print_format=json`;
-  await run('ffmpeg',['-y','-hide_banner','-loglevel','error','-i',wav,'-af',filter,'-c:a','aac','-b:a','192k',output]);
+  await run('ffmpeg',['-y','-hide_banner','-loglevel','error','-i',wav,'-af',filter,'-ar','48000','-ac','2','-c:a','aac','-b:a','192k',output]);
   const measured=await run('ffmpeg',['-hide_banner','-i',output,'-af',`loudnorm=${settings}:print_format=json`,'-f','null','-']);
   return stats(measured.err).input_i;
 }
@@ -173,6 +195,8 @@ async function main(){
   else if(command==='render')await render(scriptPath);
   else if(command==='doctor') {
     await run('ffmpeg',['-version']);if(!existsSync(CLI))throw new Error('Run npm install first');
+    try{await run(PYTHON,['-c','import kokoro_onnx, soundfile'],{timeoutMs:30000});}
+    catch{throw new Error('HyperFrames Kokoro runtime is missing. Run: python3 -m venv .venv && .venv/bin/python -m pip install kokoro-onnx soundfile');}
     const r=await run(CLI,['doctor']);console.log(r.out.trim().split('\n').slice(-15).join('\n'));
   }else console.log('Usage: reel voice-sample | voice-select VOICE | check script.json [--target 15|30|60] | preview script.json [--draft] | render script.json [--draft] | doctor');
 }

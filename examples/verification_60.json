@@ -1,0 +1,427 @@
+{
+  "title": "ClaudeCreate production verification 60 seconds",
+  "handle": "@demo",
+  "voice": "af_heart",
+  "accent": "#F8C95A",
+  "caption": "Genuine local 60-second production verification",
+  "hashtags": [
+    "#verification"
+  ],
+  "scenes": [
+    {
+      "template": "caption_screen",
+      "say": "Ideas become moving stories.",
+      "highlight": "Ideas",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "big_text": "STORIES IN MOTION"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "Clear captions guide viewers.",
+      "highlight": "Clear",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 100,
+        "suffix": "%",
+        "label": "PROGRESS"
+      }
+    },
+    {
+      "template": "app_screen",
+      "say": "Numbers reveal useful progress.",
+      "highlight": "Numbers",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "app_name": "Local Studio",
+        "rows": [
+          {
+            "label": "Projects",
+            "value": "12"
+          },
+          {
+            "label": "Progress",
+            "value": "+20%"
+          }
+        ],
+        "highlight_row": 1
+      }
+    },
+    {
+      "template": "callout",
+      "say": "Simple tools inspire creativity.",
+      "highlight": "Simple",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "text": "KEEP CREATING",
+        "style": "stamp"
+      }
+    },
+    {
+      "template": "object_3d",
+      "say": "Shapes create visual meaning.",
+      "highlight": "Shapes",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "shape": "torus",
+        "label": "ANIMATED IDEAS"
+      }
+    },
+    {
+      "template": "compare",
+      "say": "Comparisons reveal better choices.",
+      "highlight": "Comparisons",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "left": {
+          "label": "Before",
+          "value": "Static"
+        },
+        "right": {
+          "label": "After",
+          "value": "Motion"
+        }
+      }
+    },
+    {
+      "template": "caption_screen",
+      "say": "Good design respects attention.",
+      "highlight": "Good",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "big_text": "STORIES IN MOTION"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "Sounds complement animated visuals.",
+      "highlight": "Sounds",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 100,
+        "suffix": "%",
+        "label": "PROGRESS"
+      }
+    },
+    {
+      "template": "app_screen",
+      "say": "Every frame conveys information.",
+      "highlight": "Every",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "app_name": "Local Studio",
+        "rows": [
+          {
+            "label": "Projects",
+            "value": "12"
+          },
+          {
+            "label": "Progress",
+            "value": "+20%"
+          }
+        ],
+        "highlight_row": 1
+      }
+    },
+    {
+      "template": "callout",
+      "say": "Creative tools save time.",
+      "highlight": "Creative",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "text": "KEEP CREATING",
+        "style": "stamp"
+      }
+    },
+    {
+      "template": "object_3d",
+      "say": "Templates keep visuals consistent.",
+      "highlight": "Templates",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "shape": "torus",
+        "label": "ANIMATED IDEAS"
+      }
+    },
+    {
+      "template": "compare",
+      "say": "Local tools preserve freedom.",
+      "highlight": "Local",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "left": {
+          "label": "Before",
+          "value": "Static"
+        },
+        "right": {
+          "label": "After",
+          "value": "Motion"
+        }
+      }
+    },
+    {
+      "template": "caption_screen",
+      "say": "Smooth motion guides attention.",
+      "highlight": "Smooth",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "big_text": "STORIES IN MOTION"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "Clear structure improves comprehension.",
+      "highlight": "Clear",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 100,
+        "suffix": "%",
+        "label": "PROGRESS"
+      }
+    },
+    {
+      "template": "app_screen",
+      "say": "Strong visuals support storytelling.",
+      "highlight": "Strong",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "app_name": "Local Studio",
+        "rows": [
+          {
+            "label": "Projects",
+            "value": "12"
+          },
+          {
+            "label": "Progress",
+            "value": "+20%"
+          }
+        ],
+        "highlight_row": 1
+      }
+    },
+    {
+      "template": "callout",
+      "say": "Captions synchronize with narration.",
+      "highlight": "Captions",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "text": "KEEP CREATING",
+        "style": "stamp"
+      }
+    },
+    {
+      "template": "object_3d",
+      "say": "Every scene needs timing.",
+      "highlight": "Every",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "shape": "torus",
+        "label": "ANIMATED IDEAS"
+      }
+    },
+    {
+      "template": "compare",
+      "say": "Reliable systems reduce errors.",
+      "highlight": "Reliable",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "left": {
+          "label": "Before",
+          "value": "Static"
+        },
+        "right": {
+          "label": "After",
+          "value": "Motion"
+        }
+      }
+    },
+    {
+      "template": "caption_screen",
+      "say": "Voices make stories memorable.",
+      "highlight": "Voices",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "big_text": "STORIES IN MOTION"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "Charts demonstrate real progress.",
+      "highlight": "Charts",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 100,
+        "suffix": "%",
+        "label": "PROGRESS"
+      }
+    },
+    {
+      "template": "app_screen",
+      "say": "Animated objects add depth.",
+      "highlight": "Animated",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "app_name": "Local Studio",
+        "rows": [
+          {
+            "label": "Projects",
+            "value": "12"
+          },
+          {
+            "label": "Progress",
+            "value": "+20%"
+          }
+        ],
+        "highlight_row": 1
+      }
+    },
+    {
+      "template": "callout",
+      "say": "Comparisons expose meaningful differences.",
+      "highlight": "Comparisons",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "text": "KEEP CREATING",
+        "style": "stamp"
+      }
+    },
+    {
+      "template": "object_3d",
+      "say": "Feedback improves every frame.",
+      "highlight": "Feedback",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "shape": "torus",
+        "label": "ANIMATED IDEAS"
+      }
+    },
+    {
+      "template": "compare",
+      "say": "Transitions maintain visual continuity.",
+      "highlight": "Transitions",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "left": {
+          "label": "Before",
+          "value": "Static"
+        },
+        "right": {
+          "label": "After",
+          "value": "Motion"
+        }
+      }
+    },
+    {
+      "template": "caption_screen",
+      "say": "Short scenes sustain attention.",
+      "highlight": "Short",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "big_text": "STORIES IN MOTION"
+      }
+    },
+    {
+      "template": "counter",
+      "say": "Repeatability empowers creative teams.",
+      "highlight": "Repeatability",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "from": 0,
+        "to": 100,
+        "suffix": "%",
+        "label": "PROGRESS"
+      }
+    },
+    {
+      "template": "app_screen",
+      "say": "Automated tests catch defects.",
+      "highlight": "Automated",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "app_name": "Local Studio",
+        "rows": [
+          {
+            "label": "Projects",
+            "value": "12"
+          },
+          {
+            "label": "Progress",
+            "value": "+20%"
+          }
+        ],
+        "highlight_row": 1
+      }
+    },
+    {
+      "template": "callout",
+      "say": "Offline rendering preserves independence.",
+      "highlight": "Offline",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "text": "KEEP CREATING",
+        "style": "stamp"
+      }
+    },
+    {
+      "template": "object_3d",
+      "say": "Accurate timing helps understanding.",
+      "highlight": "Accurate",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "shape": "torus",
+        "label": "ANIMATED IDEAS"
+      }
+    },
+    {
+      "template": "compare",
+      "say": "These tools empower storytelling.",
+      "highlight": "These",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "left": {
+          "label": "Before",
+          "value": "Static"
+        },
+        "right": {
+          "label": "After",
+          "value": "Motion"
+        }
+      }
+    }
+  ]
+}

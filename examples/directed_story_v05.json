@@ -1,0 +1,1238 @@
+{
+  "title": "A City Comes Alive",
+  "handle": "@claudecreate",
+  "voice": "af_heart",
+  "accent": "#FFD782",
+  "caption": "An illustrated community story with moving characters, choreographed gestures and clip-safe scene transitions.",
+  "hashtags": [
+    "#animation",
+    "#motiondesign",
+    "#storytelling"
+  ],
+  "scenes": [
+    {
+      "template": "directed_scene",
+      "say": "The explorer walks through the city.",
+      "highlight": "explorer",
+      "illustrative": false,
+      "sfx": "pop",
+      "props": {
+        "background": "#111F37",
+        "objects": [
+          {
+            "id": "nightSky",
+            "type": "ellipse",
+            "x": 450,
+            "y": 280,
+            "rx": 430,
+            "ry": 360,
+            "fill": "#223D6A",
+            "layer": -10,
+            "gradient": {
+              "start": "#12284D",
+              "end": "#325B7A",
+              "direction": "vertical"
+            }
+          },
+          {
+            "id": "sun",
+            "type": "ellipse",
+            "x": 450,
+            "y": 450,
+            "rx": 125,
+            "ry": 125,
+            "fill": "#FFDC91",
+            "layer": -4,
+            "gradient": {
+              "start": "#FFF1AD",
+              "end": "#F0A76F",
+              "direction": "diagonal"
+            },
+            "shadow": {
+              "color": "#FFB86D",
+              "blur": 22,
+              "dx": 0,
+              "dy": 0,
+              "opacity": 0.62
+            }
+          },
+          {
+            "id": "clouds",
+            "type": "group",
+            "x": 450,
+            "y": 400,
+            "layer": -2
+          },
+          {
+            "id": "cloudLeft",
+            "type": "ellipse",
+            "x": -240,
+            "y": -100,
+            "rx": 140,
+            "ry": 45,
+            "fill": "#D4E2EE",
+            "layer": 0,
+            "parent": "clouds"
+          },
+          {
+            "id": "cloudRight",
+            "type": "ellipse",
+            "x": 235,
+            "y": -135,
+            "rx": 130,
+            "ry": 40,
+            "fill": "#B8CEE3",
+            "layer": 0,
+            "parent": "clouds"
+          },
+          {
+            "id": "street",
+            "type": "group",
+            "x": 450,
+            "y": 660,
+            "layer": 4,
+            "shadow": {
+              "color": "#0D1E36",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "house1",
+            "type": "rect",
+            "x": -210,
+            "y": 15,
+            "width": 235,
+            "height": 220,
+            "radius": 15,
+            "fill": "#3D7890",
+            "parent": "street",
+            "layer": 2,
+            "shadow": {
+              "color": "#183C52",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "roof1",
+            "type": "polygon",
+            "x": -210,
+            "y": -130,
+            "points": [
+              {
+                "x": -140,
+                "y": 60
+              },
+              {
+                "x": 0,
+                "y": -60
+              },
+              {
+                "x": 140,
+                "y": 60
+              }
+            ],
+            "fill": "#B65C63",
+            "parent": "street",
+            "layer": 3
+          },
+          {
+            "id": "window1",
+            "type": "rect",
+            "x": -260,
+            "y": -5,
+            "width": 55,
+            "height": 55,
+            "radius": 5,
+            "fill": "#FCE4B2",
+            "parent": "street",
+            "layer": 5
+          },
+          {
+            "id": "door1",
+            "type": "rect",
+            "x": -150,
+            "y": 72,
+            "width": 55,
+            "height": 105,
+            "radius": 5,
+            "fill": "#1F455B",
+            "parent": "street",
+            "layer": 5
+          },
+          {
+            "id": "house2",
+            "type": "rect",
+            "x": 140,
+            "y": 35,
+            "width": 255,
+            "height": 250,
+            "radius": 15,
+            "fill": "#D9A16E",
+            "parent": "street",
+            "layer": 2,
+            "shadow": {
+              "color": "#1E3C55",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "roof2",
+            "type": "polygon",
+            "x": 140,
+            "y": -120,
+            "points": [
+              {
+                "x": -150,
+                "y": 75
+              },
+              {
+                "x": 0,
+                "y": -75
+              },
+              {
+                "x": 150,
+                "y": 75
+              }
+            ],
+            "fill": "#81445D",
+            "parent": "street",
+            "layer": 3
+          },
+          {
+            "id": "window2",
+            "type": "rect",
+            "x": 100,
+            "y": 0,
+            "width": 65,
+            "height": 60,
+            "radius": 5,
+            "fill": "#FFDB8C",
+            "parent": "street",
+            "layer": 5
+          },
+          {
+            "id": "door2",
+            "type": "rect",
+            "x": 210,
+            "y": 105,
+            "width": 60,
+            "height": 110,
+            "radius": 5,
+            "fill": "#735561",
+            "parent": "street",
+            "layer": 5
+          },
+          {
+            "id": "title",
+            "type": "text",
+            "x": 450,
+            "y": 115,
+            "text": "MORNING LIGHT",
+            "fontSize": 56,
+            "fill": "#F4F4F2",
+            "layer": 10
+          },
+          {
+            "id": "explorer",
+            "type": "character",
+            "x": 455,
+            "y": 665,
+            "size": 240,
+            "skin": "#F5B38A",
+            "shirt": "#E9AA54",
+            "pants": "#334E68",
+            "hair": "#473348",
+            "layer": 11
+          }
+        ],
+        "animations": [
+          {
+            "target": "street",
+            "property": "y",
+            "at": 0,
+            "duration": 0.48,
+            "from": 190,
+            "to": 0,
+            "ease": "power2.out"
+          },
+          {
+            "target": "sun",
+            "property": "y",
+            "at": 0,
+            "duration": 0.64,
+            "from": 210,
+            "to": -35,
+            "ease": "power2.inOut"
+          },
+          {
+            "target": "clouds",
+            "property": "x",
+            "at": 0,
+            "duration": 1,
+            "from": -80,
+            "to": 95,
+            "ease": "none"
+          },
+          {
+            "target": "title",
+            "property": "opacity",
+            "at": 0.4,
+            "duration": 0.25,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.12,
+            "to": 0.98,
+            "ease": "power2.inOut"
+          },
+          {
+            "target": "explorer",
+            "property": "x",
+            "at": 0.17,
+            "duration": 0.64,
+            "from": -110,
+            "to": 90,
+            "ease": "power2.inOut"
+          }
+        ],
+        "environment": {
+          "sky": {
+            "top": "#0A1931",
+            "bottom": "#C58687"
+          },
+          "particles": {
+            "type": "mist",
+            "count": 26,
+            "seed": 31415,
+            "color": "#D6E0EE",
+            "opacity": 0.44,
+            "driftX": 85,
+            "driftY": -24
+          }
+        },
+        "performances": [
+          {
+            "actor": "explorer",
+            "action": "walk",
+            "at": 0.17,
+            "duration": 0.64
+          }
+        ]
+      }
+    },
+    {
+      "template": "directed_scene",
+      "say": "The engineer waves as energy flows.",
+      "highlight": "engineer",
+      "illustrative": false,
+      "sfx": "swipe",
+      "props": {
+        "background": "#162D39",
+        "objects": [
+          {
+            "id": "backlight",
+            "type": "ellipse",
+            "x": 450,
+            "y": 470,
+            "rx": 380,
+            "ry": 320,
+            "fill": "#284C5E",
+            "layer": -5,
+            "gradient": {
+              "start": "#285D63",
+              "end": "#172B3C",
+              "direction": "diagonal"
+            }
+          },
+          {
+            "id": "solar",
+            "type": "group",
+            "x": 450,
+            "y": 535,
+            "layer": 1,
+            "shadow": {
+              "color": "#051E2B",
+              "blur": 15,
+              "dx": 0,
+              "dy": 0,
+              "opacity": 0.62
+            }
+          },
+          {
+            "id": "base",
+            "type": "rect",
+            "x": 0,
+            "y": 45,
+            "width": 680,
+            "height": 300,
+            "radius": 32,
+            "fill": "#244D5E",
+            "parent": "solar",
+            "layer": 0,
+            "shadow": {
+              "color": "#06384A",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "roof",
+            "type": "polygon",
+            "x": 0,
+            "y": -80,
+            "points": [
+              {
+                "x": -350,
+                "y": 0
+              },
+              {
+                "x": 0,
+                "y": -205
+              },
+              {
+                "x": 350,
+                "y": 0
+              }
+            ],
+            "fill": "#4D7486",
+            "parent": "solar",
+            "layer": 1
+          },
+          {
+            "id": "panel",
+            "type": "rect",
+            "x": -125,
+            "y": -135,
+            "width": 175,
+            "height": 95,
+            "radius": 12,
+            "fill": "#2C8DA1",
+            "parent": "solar",
+            "layer": 3,
+            "shadow": {
+              "color": "#75CEE0",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "panelTwo",
+            "type": "rect",
+            "x": 100,
+            "y": -135,
+            "width": 175,
+            "height": 95,
+            "radius": 12,
+            "fill": "#205F78",
+            "parent": "solar",
+            "layer": 3,
+            "shadow": {
+              "color": "#72BAD7",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "sunIcon",
+            "type": "icon",
+            "x": -280,
+            "y": -190,
+            "name": "lightbulb",
+            "size": 125,
+            "stroke": "#FFDA85",
+            "layer": 5,
+            "parent": "solar"
+          },
+          {
+            "id": "houseIcon",
+            "type": "icon",
+            "x": 235,
+            "y": 85,
+            "name": "computer",
+            "size": 140,
+            "stroke": "#C9E8F6",
+            "layer": 5,
+            "parent": "solar"
+          },
+          {
+            "id": "powerPath",
+            "type": "path",
+            "x": 0,
+            "y": 0,
+            "commands": [
+              {
+                "op": "M",
+                "x": -300,
+                "y": -175
+              },
+              {
+                "op": "C",
+                "c1x": -150,
+                "c1y": -265,
+                "c2x": -50,
+                "c2y": -15,
+                "x": 40,
+                "y": -35
+              },
+              {
+                "op": "C",
+                "c1x": 135,
+                "c1y": 20,
+                "c2x": 195,
+                "c2y": -140,
+                "x": 295,
+                "y": 85
+              }
+            ],
+            "fill": "none",
+            "stroke": "#FFE497",
+            "strokeWidth": 7,
+            "layer": 8,
+            "parent": "solar"
+          },
+          {
+            "id": "spark",
+            "type": "circle",
+            "x": -300,
+            "y": -175,
+            "radius": 25,
+            "fill": "#FFF2B0",
+            "parent": "solar",
+            "layer": 10,
+            "shadow": {
+              "color": "#FCE896",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "headline",
+            "type": "text",
+            "x": 450,
+            "y": 145,
+            "text": "ENERGY IN MOTION",
+            "fontSize": 51,
+            "fill": "#F4F4F2",
+            "layer": 10
+          },
+          {
+            "id": "engineer",
+            "type": "character",
+            "x": 210,
+            "y": 680,
+            "size": 248,
+            "skin": "#C8895F",
+            "shirt": "#F9B85F",
+            "pants": "#405C77",
+            "hair": "#243B52",
+            "layer": 11
+          }
+        ],
+        "animations": [
+          {
+            "target": "solar",
+            "property": "scale",
+            "at": 0,
+            "duration": 0.28,
+            "from": 0.82,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "powerPath",
+            "property": "draw",
+            "at": 0.12,
+            "duration": 0.75,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "spark",
+            "path": "powerPath",
+            "property": "pathProgress",
+            "at": 0.12,
+            "duration": 0.76,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.inOut"
+          },
+          {
+            "target": "spark",
+            "property": "opacity",
+            "at": 0,
+            "duration": 0.16,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "headline",
+            "property": "opacity",
+            "at": 0.45,
+            "duration": 0.2,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.12,
+            "to": 0.97,
+            "ease": "power2.inOut"
+          },
+          {
+            "target": "engineer",
+            "property": "scale",
+            "at": 0.05,
+            "duration": 0.28,
+            "from": 0.72,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          }
+        ],
+        "environment": {
+          "sky": {
+            "top": "#113B43",
+            "bottom": "#477F84"
+          },
+          "particles": {
+            "type": "fireflies",
+            "count": 28,
+            "seed": 65537,
+            "color": "#FDE5A1",
+            "opacity": 0.62,
+            "driftX": 42,
+            "driftY": -105
+          }
+        },
+        "performances": [
+          {
+            "actor": "engineer",
+            "action": "wave",
+            "at": 0.24,
+            "duration": 0.65
+          }
+        ]
+      },
+      "transition": {
+        "kind": "fade",
+        "color": "#102338",
+        "duration": 0.5
+      }
+    },
+    {
+      "template": "directed_scene",
+      "say": "Neighbors celebrate their new connections.",
+      "highlight": "Neighbors celebrate",
+      "illustrative": false,
+      "sfx": "none",
+      "props": {
+        "background": "#153C3E",
+        "objects": [
+          {
+            "id": "mapBack",
+            "type": "ellipse",
+            "x": 450,
+            "y": 460,
+            "rx": 430,
+            "ry": 360,
+            "fill": "#24535A",
+            "layer": -8,
+            "gradient": {
+              "start": "#29715D",
+              "end": "#163B4B",
+              "direction": "vertical"
+            }
+          },
+          {
+            "id": "district",
+            "type": "group",
+            "x": 450,
+            "y": 500,
+            "layer": 1,
+            "shadow": {
+              "color": "#020C18",
+              "blur": 15,
+              "dx": 0,
+              "dy": 0,
+              "opacity": 0.62
+            }
+          },
+          {
+            "id": "hub",
+            "type": "circle",
+            "x": 0,
+            "y": 0,
+            "radius": 68,
+            "fill": "#FFDC82",
+            "parent": "district",
+            "layer": 5,
+            "shadow": {
+              "color": "#FFDA87",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "leftNode",
+            "type": "circle",
+            "x": -245,
+            "y": -165,
+            "radius": 40,
+            "fill": "#9DE5CF",
+            "parent": "district",
+            "layer": 4
+          },
+          {
+            "id": "rightNode",
+            "type": "circle",
+            "x": 245,
+            "y": -130,
+            "radius": 40,
+            "fill": "#A9E5DE",
+            "parent": "district",
+            "layer": 4
+          },
+          {
+            "id": "bottomNode",
+            "type": "circle",
+            "x": 0,
+            "y": 240,
+            "radius": 40,
+            "fill": "#A3E6DF",
+            "parent": "district",
+            "layer": 4
+          },
+          {
+            "id": "edgeLeft",
+            "type": "line",
+            "from": "hub",
+            "to": "leftNode",
+            "parent": "district",
+            "stroke": "#9DE7CA",
+            "strokeWidth": 7,
+            "layer": -2
+          },
+          {
+            "id": "edgeRight",
+            "type": "line",
+            "from": "hub",
+            "to": "rightNode",
+            "parent": "district",
+            "stroke": "#9DE7CA",
+            "strokeWidth": 7,
+            "layer": -2
+          },
+          {
+            "id": "edgeBottom",
+            "type": "line",
+            "from": "hub",
+            "to": "bottomNode",
+            "parent": "district",
+            "stroke": "#9DE7CA",
+            "strokeWidth": 7,
+            "layer": -2
+          },
+          {
+            "id": "homeLeft",
+            "type": "icon",
+            "x": -245,
+            "y": -165,
+            "name": "person",
+            "size": 120,
+            "stroke": "#FBF8E9",
+            "layer": 6,
+            "parent": "district"
+          },
+          {
+            "id": "homeRight",
+            "type": "icon",
+            "x": 245,
+            "y": -130,
+            "name": "person",
+            "size": 120,
+            "stroke": "#FBF8E9",
+            "layer": 6,
+            "parent": "district"
+          },
+          {
+            "id": "homeBottom",
+            "type": "icon",
+            "x": 0,
+            "y": 240,
+            "name": "person",
+            "size": 120,
+            "stroke": "#FBF8E9",
+            "layer": 6,
+            "parent": "district"
+          },
+          {
+            "id": "core",
+            "type": "icon",
+            "x": 0,
+            "y": 0,
+            "name": "globe",
+            "size": 150,
+            "stroke": "#284C54",
+            "layer": 7,
+            "parent": "district",
+            "shadow": {
+              "color": "#7DDEF1",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "headline",
+            "type": "text",
+            "x": 450,
+            "y": 112,
+            "text": "A SHARED GRID",
+            "fontSize": 58,
+            "fill": "#F4F4F2",
+            "layer": 10
+          },
+          {
+            "id": "neighborLeft",
+            "type": "character",
+            "x": 260,
+            "y": 765,
+            "size": 211,
+            "skin": "#DCA27F",
+            "shirt": "#EA8B85",
+            "pants": "#354E72",
+            "hair": "#2D354A",
+            "layer": 11
+          },
+          {
+            "id": "neighborRight",
+            "type": "character",
+            "x": 660,
+            "y": 765,
+            "size": 216,
+            "skin": "#A66D51",
+            "shirt": "#81BCAA",
+            "pants": "#4B537B",
+            "hair": "#1F2E3A",
+            "layer": 11
+          }
+        ],
+        "animations": [
+          {
+            "target": "district",
+            "property": "scale",
+            "at": 0,
+            "duration": 0.3,
+            "from": 0.75,
+            "to": 1,
+            "ease": "back.out(1.4)"
+          },
+          {
+            "target": "edgeLeft",
+            "property": "draw",
+            "at": 0.18,
+            "duration": 0.35,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "edgeRight",
+            "property": "draw",
+            "at": 0.34,
+            "duration": 0.35,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "edgeBottom",
+            "property": "draw",
+            "at": 0.5,
+            "duration": 0.34,
+            "from": 0,
+            "to": 1,
+            "ease": "none"
+          },
+          {
+            "target": "homeLeft",
+            "property": "opacity",
+            "at": 0.25,
+            "duration": 0.15,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "homeRight",
+            "property": "opacity",
+            "at": 0.41,
+            "duration": 0.16,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "homeBottom",
+            "property": "opacity",
+            "at": 0.62,
+            "duration": 0.15,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "headline",
+            "property": "opacity",
+            "at": 0.63,
+            "duration": 0.18,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "rotation",
+            "at": 0,
+            "duration": 1,
+            "from": -5,
+            "to": 3,
+            "ease": "power2.inOut"
+          }
+        ],
+        "environment": {
+          "sky": {
+            "top": "#050E24",
+            "bottom": "#1B3F5E"
+          },
+          "particles": {
+            "type": "stars",
+            "count": 54,
+            "seed": 27182,
+            "color": "#DBEFFF",
+            "opacity": 0.72,
+            "driftX": -38,
+            "driftY": 18
+          }
+        },
+        "performances": [
+          {
+            "actor": "neighborLeft",
+            "action": "nod",
+            "at": 0.12,
+            "duration": 0.35
+          },
+          {
+            "actor": "neighborRight",
+            "action": "cheer",
+            "at": 0.18,
+            "duration": 0.76
+          }
+        ]
+      },
+      "transition": {
+        "kind": "wipe-left",
+        "color": "#122A3C",
+        "duration": 0.55
+      }
+    },
+    {
+      "template": "directed_scene",
+      "say": "Together, they welcome tomorrow.",
+      "highlight": "tomorrow",
+      "illustrative": false,
+      "sfx": "ding",
+      "props": {
+        "background": "#1D263F",
+        "objects": [
+          {
+            "id": "glow",
+            "type": "ellipse",
+            "x": 450,
+            "y": 425,
+            "rx": 400,
+            "ry": 345,
+            "fill": "#2E5870",
+            "layer": -7,
+            "gradient": {
+              "start": "#476F8F",
+              "end": "#17263F",
+              "direction": "diagonal"
+            }
+          },
+          {
+            "id": "horizonSun",
+            "type": "ellipse",
+            "x": 450,
+            "y": 430,
+            "rx": 180,
+            "ry": 180,
+            "fill": "#FBE6B3",
+            "layer": -4,
+            "gradient": {
+              "start": "#FFF2BF",
+              "end": "#FDBF77",
+              "direction": "vertical"
+            },
+            "shadow": {
+              "color": "#F8D9A6",
+              "blur": 22,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "future",
+            "type": "group",
+            "x": 450,
+            "y": 635,
+            "layer": 4,
+            "shadow": {
+              "color": "#030E25",
+              "blur": 15,
+              "dx": 0,
+              "dy": 0,
+              "opacity": 0.62
+            }
+          },
+          {
+            "id": "tower1",
+            "type": "rect",
+            "x": -195,
+            "y": -65,
+            "width": 180,
+            "height": 390,
+            "radius": 12,
+            "fill": "#3D7897",
+            "parent": "future",
+            "layer": 2,
+            "shadow": {
+              "color": "#102A49",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "tower2",
+            "type": "rect",
+            "x": 80,
+            "y": -110,
+            "width": 240,
+            "height": 465,
+            "radius": 12,
+            "fill": "#55869D",
+            "parent": "future",
+            "layer": 3,
+            "shadow": {
+              "color": "#173451",
+              "blur": 9,
+              "dx": 6,
+              "dy": 12,
+              "opacity": 0.32
+            }
+          },
+          {
+            "id": "skylineRoof",
+            "type": "polygon",
+            "x": 80,
+            "y": -345,
+            "points": [
+              {
+                "x": -135,
+                "y": 60
+              },
+              {
+                "x": 0,
+                "y": -50
+              },
+              {
+                "x": 135,
+                "y": 60
+              }
+            ],
+            "fill": "#C77C7B",
+            "parent": "future",
+            "layer": 4
+          },
+          {
+            "id": "window1",
+            "type": "rect",
+            "x": -195,
+            "y": -155,
+            "width": 70,
+            "height": 65,
+            "radius": 8,
+            "fill": "#FADE98",
+            "parent": "future",
+            "layer": 5
+          },
+          {
+            "id": "window2",
+            "type": "rect",
+            "x": 80,
+            "y": -180,
+            "width": 85,
+            "height": 70,
+            "radius": 8,
+            "fill": "#F9DC93",
+            "parent": "future",
+            "layer": 5
+          },
+          {
+            "id": "treeLeft",
+            "type": "icon",
+            "x": -355,
+            "y": 45,
+            "name": "leaf",
+            "size": 115,
+            "stroke": "#99DCB3",
+            "layer": 6,
+            "parent": "future"
+          },
+          {
+            "id": "treeRight",
+            "type": "icon",
+            "x": 325,
+            "y": 20,
+            "name": "leaf",
+            "size": 115,
+            "stroke": "#97D7B9",
+            "layer": 6,
+            "parent": "future"
+          },
+          {
+            "id": "headline",
+            "type": "text",
+            "x": 450,
+            "y": 115,
+            "text": "A BRIGHTER TOMORROW",
+            "fontSize": 48,
+            "fill": "#F4F4F2",
+            "layer": 10
+          },
+          {
+            "id": "narrator",
+            "type": "character",
+            "x": 450,
+            "y": 755,
+            "size": 236,
+            "skin": "#E2AE88",
+            "shirt": "#C586B2",
+            "pants": "#334E73",
+            "hair": "#403048",
+            "layer": 11
+          }
+        ],
+        "animations": [
+          {
+            "target": "future",
+            "property": "y",
+            "at": 0,
+            "duration": 0.5,
+            "from": 205,
+            "to": 0,
+            "ease": "power2.out"
+          },
+          {
+            "target": "horizonSun",
+            "property": "y",
+            "at": 0,
+            "duration": 0.74,
+            "from": 160,
+            "to": -42,
+            "ease": "power2.inOut"
+          },
+          {
+            "target": "glow",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 0.82,
+            "to": 1.12,
+            "ease": "power2.inOut"
+          },
+          {
+            "target": "headline",
+            "property": "opacity",
+            "at": 0.46,
+            "duration": 0.26,
+            "from": 0,
+            "to": 1,
+            "ease": "power2.out"
+          },
+          {
+            "target": "camera",
+            "property": "scale",
+            "at": 0,
+            "duration": 1,
+            "from": 1.13,
+            "to": 0.98,
+            "ease": "power2.inOut"
+          }
+        ],
+        "environment": {
+          "sky": {
+            "top": "#102338",
+            "bottom": "#495D70"
+          },
+          "particles": {
+            "type": "rain",
+            "count": 48,
+            "seed": 89077,
+            "color": "#B5DFF4",
+            "opacity": 0.49,
+            "driftX": -80,
+            "driftY": 145
+          }
+        },
+        "performances": [
+          {
+            "actor": "narrator",
+            "action": "cheer",
+            "at": 0.18,
+            "duration": 0.7
+          }
+        ]
+      },
+      "transition": {
+        "kind": "iris",
+        "color": "#111E38",
+        "duration": 0.55
+      }
+    }
+  ]
+}

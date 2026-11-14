@@ -1,0 +1,74 @@
+name: Genuine Kokoro Whisper and video verification
+on:
+  push:
+    branches:
+      - feature/production-verification
+    paths:
+      - '.github/workflows/real-e2e.yml'
+      - 'bin/**'
+      - 'src/**'
+      - 'tests/**'
+      - 'tools/**'
+      - 'examples/verification_short.json'
+      - 'package.json'
+  workflow_dispatch:
+
+concurrency:
+  group: claudecreate-genuine-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  genuine-local-pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install system render and phonemizer dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg python3 python3-venv espeak-ng
+      - name: Install required HyperFrames Kokoro Python runtime
+        run: |
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+          .venv/bin/python -c "import kokoro_onnx, soundfile; print('HyperFrames Kokoro runtime imports OK')"
+          echo "HYPERFRAMES_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+          .venv/bin/python -m pip freeze | grep -E 'kokoro|onnx|soundfile'
+      - name: Install pinned project dependencies
+        run: |
+          npm install --no-audit --no-fund
+          npm ls hyperframes gsap three --depth=0
+          node_modules/.bin/hyperframes tts --help
+          node_modules/.bin/hyperframes transcribe --help
+      - name: Static, simulated and genuine graphics checks
+        run: |
+          npm test
+          npm run test:integration
+          npm run test:hyperframes
+      - name: Genuine Kokoro + Whisper + animated MP4 twice
+        shell: bash
+        run: |
+          set -o pipefail
+          npm run test:real 2>&1 | tee real-test.log
+      - name: Preserve real evidence even if model download or render fails
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudecreate-real-verification
+          if-no-files-found: warn
+          include-hidden-files: true
+          retention-days: 7
+          path: |
+            real-test.log
+            reports/real-verification.json
+            out/claudecreate-real-pipeline-verification-draft/**
+            .cache/voices/**/script.txt
+            .cache/voices/**/narration.wav
+            .cache/voices/**/transcript.json
+            .cache/voices/**/timing.json
