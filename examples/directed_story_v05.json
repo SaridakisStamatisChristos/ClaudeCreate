@@ -12,8 +12,8 @@
   "scenes": [
     {
       "template": "directed_scene",
-      "say": "The city wakes, and its first explorer sets off.",
-      "highlight": "first explorer",
+      "say": "An explorer walks through the waking city.",
+      "highlight": "explorer",
       "illustrative": false,
       "sfx": "pop",
       "props": {
@@ -337,8 +337,8 @@
     },
     {
       "template": "directed_scene",
-      "say": "A friendly engineer waves while the energy flows.",
-      "highlight": "engineer waves",
+      "say": "An engineer waves as energy flows.",
+      "highlight": "engineer",
       "illustrative": false,
       "sfx": "swipe",
       "props": {
@@ -644,13 +644,13 @@
       "transition": {
         "kind": "fade",
         "color": "#102338",
-        "duration": 0.6
+        "duration": 0.5
       }
     },
     {
       "template": "directed_scene",
-      "say": "Two neighbors celebrate the new connections around them.",
-      "highlight": "neighbors celebrate",
+      "say": "Neighbors celebrate their new connections.",
+      "highlight": "Neighbors celebrate",
       "illustrative": false,
       "sfx": "none",
       "props": {
@@ -964,13 +964,13 @@
       "transition": {
         "kind": "wipe-left",
         "color": "#122A3C",
-        "duration": 0.7
+        "duration": 0.55
       }
     },
     {
       "template": "directed_scene",
-      "say": "Together, the neighbors welcome a brighter tomorrow.",
-      "highlight": "brighter tomorrow",
+      "say": "Together, they welcome tomorrow.",
+      "highlight": "tomorrow",
       "illustrative": false,
       "sfx": "ding",
       "props": {
@@ -1231,7 +1231,7 @@
       "transition": {
         "kind": "iris",
         "color": "#111E38",
-        "duration": 0.75
+        "duration": 0.55
       }
     }
   ]
