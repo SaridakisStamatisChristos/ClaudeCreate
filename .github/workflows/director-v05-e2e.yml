@@ -71,6 +71,10 @@ jobs:
           html=Path('.reel-work/a-city-comes-alive-draft/index.html').read_text()
           scenes=re.findall(r'<section id="scene-(\d+)"[^>]*data-start="([\d.]+)" data-duration="([\d.]+)"',html)
           if len(scenes)!=4:raise SystemExit('Expected four timed scenes')
+          final_end=float(scenes[-1][1])+float(scenes[-1][2])
+          if final_end>durations[0]+.05:
+              raise SystemExit(f'Draft truncates final scene: scene end {final_end:.3f}s versus video {durations[0]:.3f}s')
+          print('Verified complete four-scene storyboard inside actual MP4 duration',round(final_end,3))
           for i in range(4):
               if int(scenes[i][0])!=i:raise SystemExit('Scene ordering mismatch')
           for part in ['head','arm-left','arm-right','leg-left','leg-right']:
