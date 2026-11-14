@@ -1,0 +1,115 @@
+name: Real v0.5 characters and cinematic cuts
+on:
+  push:
+    branches: [feature/production-verification]
+    paths:
+      - '.github/workflows/director-v05-e2e.yml'
+      - 'src/director-v05.mjs'
+      - 'src/director-runtime.mjs'
+      - 'src/directed.mjs'
+      - 'src/composition.mjs'
+      - 'src/spec.mjs'
+      - 'examples/directed_story_v05.json'
+      - 'tests/director_v05.test.mjs'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: claudecreate-director-v05-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  render-story:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install real offline render dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq ffmpeg python3 python3-venv espeak-ng
+          python3 -m venv .venv
+          .venv/bin/python -m pip install --disable-pip-version-check kokoro-onnx soundfile
+          npm ci --no-audit --no-fund
+          echo "HYPERFRAMES_PYTHON=$GITHUB_WORKSPACE/.venv/bin/python" >> "$GITHUB_ENV"
+      - name: Validate rigging, safety and previous scene fixtures
+        run: |
+          node --check src/director-v05.mjs
+          node --check src/director-runtime.mjs
+          node --check src/composition.mjs
+          npm test
+          node bin/reel.mjs check examples/directed_story_v05.json --target 15
+      - name: Produce actual Kokoro Whisper and HyperFrames portrait and landscape videos
+        shell: bash
+        run: |
+          set -o pipefail
+          node bin/reel.mjs render examples/directed_story_v05.json --draft --target 15 2>&1 | tee director-v05-render.log
+      - name: Verify timed scene cuts, actors and real AV streams
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib,json,re,subprocess
+          from pathlib import Path
+          root=Path('out/a-city-comes-alive-draft')
+          durations=[]
+          for name,dims in [('instagram.mp4',(540,960)),('youtube.mp4',(960,540))]:
+              file=root/name
+              if not file.exists():raise SystemExit('Missing rendered MP4: '+str(file))
+              info=json.loads(subprocess.check_output(['ffprobe','-v','error','-show_streams','-show_format','-of','json',str(file)]))
+              video=next((s for s in info['streams'] if s['codec_type']=='video'),None)
+              audio=next((s for s in info['streams'] if s['codec_type']=='audio'),None)
+              if not video or not audio:raise SystemExit('Missing AV streams')
+              if (video['width'],video['height'])!=dims:raise SystemExit('Wrong frame dimensions')
+              if video['codec_name']!='h264' or audio['codec_name']!='aac':raise SystemExit('Unexpected codecs')
+              if audio.get('sample_rate')!='48000':raise SystemExit('Audio sample rate is not 48kHz')
+              duration=float(info['format']['duration']);durations.append(duration)
+              if not 6<duration<=10.1:raise SystemExit('Invalid demo length')
+              print('VERIFIED',name,round(duration,3),'seconds',video['codec_name'],audio['codec_name'])
+          if abs(durations[0]-durations[1])>.06:raise SystemExit('AV duration mismatch')
+          html=Path('.reel-work/a-city-comes-alive-draft/index.html').read_text()
+          scenes=re.findall(r'<section id="scene-(\d+)"[^>]*data-start="([\d.]+)" data-duration="([\d.]+)"',html)
+          if len(scenes)!=4:raise SystemExit('Expected four timed scenes')
+          for i in range(4):
+              if int(scenes[i][0])!=i:raise SystemExit('Scene ordering mismatch')
+          for part in ['head','arm-left','arm-right','leg-left','leg-right']:
+              if 'directed-0-explorer-'+part not in html:raise SystemExit('Missing articulated joint '+part)
+          for i in [1,2,3]:
+              if f'id="transition-out-{i-1}"' not in html or f'id="transition-in-{i}"' not in html:
+                  raise SystemExit('Unpaired transition at boundary '+str(i))
+          if 'setupSceneTransitions(tl,data.scenes,gsap)' not in html:raise SystemExit('No clip-safe transition runtime')
+          if 'setupPerformances(tl,s,i,start,dur,gsap)' not in html:raise SystemExit('No character choreography runtime')
+          print('Verified five rig joints and three paired transition cuts')
+          video=str(root/'instagram.mp4')
+          times=[.25,durations[0]*.2,durations[0]*.4,durations[0]*.6,durations[0]*.8]
+          hashes=[]
+          for t in times:
+              frame=subprocess.check_output(['ffmpeg','-v','error','-ss',str(t),'-i',video,
+                 '-frames:v','1','-vf','scale=160:160,format=rgb24','-f','rawvideo','pipe:1'])
+              if len(frame)!=160*160*3:raise SystemExit('Failed to decode video frame')
+              hashes.append(hashlib.sha256(frame).hexdigest())
+          if len(set(hashes))<4:raise SystemExit('Insufficient real visual variety')
+          print('Distinct sampled video frames',len(set(hashes)),'of',len(hashes))
+          # Clip edges must be present in both preceding and following portions of the video.
+          for i in [1,2,3]:
+              boundary=float(scenes[i][1])
+              if not .1<boundary<durations[0]-.1:raise SystemExit('Invalid scene boundary')
+              for delta in [-.05,.05]:
+                  frame=subprocess.check_output(['ffmpeg','-v','error','-ss',str(boundary+delta),
+                    '-i',video,'-vf','scale=40:40,format=rgb24','-frames:v','1','-f','rawvideo','pipe:1'])
+                  if len(frame)!=40*40*3:raise SystemExit('No frame around clip boundary')
+          print('Decoded real video on both sides of all three scene cuts')
+          PY
+      - name: Preserve verified story video and build logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: claudecreate-v05-character-story-video
+          retention-days: 7
+          include-hidden-files: true
+          if-no-files-found: warn
+          path: |
+            director-v05-render.log
+            out/a-city-comes-alive-draft/**
+            .reel-work/a-city-comes-alive-draft/index.html
