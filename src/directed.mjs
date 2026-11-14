@@ -2,7 +2,8 @@
 import { ART_TYPES, validateArtObject, validateGradient, renderArtObject, gradientDefs, artFill } from './directed-art.mjs';
 import { validateHierarchy, renderHierarchy } from './directed-layout.mjs';
 import { validateEnvironment, validateShadow, renderEnvironment, renderShadowDefs, shadowRef } from './directed-environment.mjs';
-export const DIRECTED_TYPES = Object.freeze(['circle','rect','text','line','group',...ART_TYPES]);
+import { validateCharacter, validatePerformances, renderCharacter } from './director-v05.mjs';
+export const DIRECTED_TYPES = Object.freeze(['circle','rect','text','line','group','character',...ART_TYPES]);
 export const DIRECTED_EASES = Object.freeze(['none','power1.out','power2.out','power2.inOut','back.out(1.4)']);
 const isObj = x => x !== null && typeof x === 'object' && !Array.isArray(x);
 const number = (x,min,max) => typeof x === 'number' && Number.isFinite(x) && x>=min && x<=max;
@@ -24,7 +25,7 @@ function state(s,p,errors,type) {
 export function validateDirectedProps(p,scenePath,errors){
  const root=scenePath+'.props';
  if(!isObj(p)){errors.push(root+': expected object');return;}
- keys(p,['background','objects','animations','camera','environment'],root,errors);
+ keys(p,['background','objects','animations','camera','environment','performances'],root,errors);
  validateEnvironment(p.environment,root+'.environment',errors);
  if(!hex(p.background))errors.push(root+'.background: expected #RRGGBB');
  if(!Array.isArray(p.objects)||p.objects.length<1||p.objects.length>64){errors.push(root+'.objects: expected 1–64 objects');return;}
@@ -37,6 +38,11 @@ export function validateDirectedProps(p,scenePath,errors){
   else objects.set(o.id,o);
   if(!DIRECTED_TYPES.includes(o.type)){errors.push(path+'.type: unknown primitive');return;}
   validateShadow(o.shadow,path,errors);
+  if(o.type==='character'){
+   validateCharacter(o,path,errors);
+   if(o.initial!==undefined)state(o.initial,path+'.initial',errors,o.type);
+   return;
+  }
   if(o.type==='group'){
    keys(o,['id','type','x','y','parent','layer','initial','shadow'],path,errors);
    if(o.initial!==undefined)state(o.initial,path+'.initial',errors,'group');
@@ -75,6 +81,7 @@ export function validateDirectedProps(p,scenePath,errors){
   if(o.from===o.to)errors.push(root+'.objects '+id+': self-edge');
  }
  validateHierarchy(p.objects,root,errors);
+ validatePerformances(p.performances,p.objects,root+'.performances',errors);
  if(p.camera!==undefined)state(p.camera,root+'.camera',errors,'camera');
  if(!Array.isArray(p.animations)||p.animations.length>128){errors.push(root+'.animations: expected up to 128 animations');return;}
  const occupied=new Map();
@@ -120,6 +127,7 @@ export function renderDirected(scene,index){
  const environment=renderEnvironment(p.environment,index);
  const shapes=renderHierarchy(p.objects,index,o=>{
   const name='directed-'+index+'-'+o.id,style='opacity:'+f(o.initial?.opacity??1);
+  if(o.type==='character')return renderCharacter(o,index,shadowRef(o,index));
   if(ART_TYPES.includes(o.type))return renderArtObject(o,index);
   if(o.type==='line'){
    const a=byId.get(o.from),b=byId.get(o.to),length=Math.hypot(a.x-b.x,a.y-b.y);
