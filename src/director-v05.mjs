@@ -48,8 +48,9 @@ export function validateTransition(t,where,errors,first=false){
  if(first)errors.push(where+': first scene cannot have incoming transition');
 }
 export function transitionColor(t){return hex(t?.color)?t.color:'#121722';}
-export function renderTransitionOverlay(i,color){
- return '<div class="scene-transition" id="transition-'+i+'" aria-hidden="true" style="background:'+transitionColor({color})+'"></div>';
+export function renderTransitionOverlay(i,role,color){
+ if(!['in','out'].includes(role))throw new Error('Invalid transition overlay role');
+ return '<div class="scene-transition" id="transition-'+role+'-'+i+'" aria-hidden="true" style="background:'+transitionColor({color})+'"></div>';
 }
 export function renderCharacter(o,index,shadow=''){
  const id='directed-'+index+'-'+o.id,part=name=>id+'-'+name;
