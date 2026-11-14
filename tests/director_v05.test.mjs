@@ -101,7 +101,7 @@ test('outgoing and incoming timelines meet at a full-colour cut for each transit
   assert.equal(tweens.length,6);
   assert.equal(tweens[0][0].id,'transition-out-0');
   assert.equal(tweens[1][0].id,'transition-in-1');
-  assert.equal(tweens[0][3],2.5-.3);
+  assert.equal(tweens[0][3],2.5-fixture.scenes[1].transition.duration/2);
   assert.equal(tweens[1][3],2.5);
   assert.deepEqual(tweens[0][2].opacity,1);
   assert.deepEqual(tweens[1][1].opacity,1);
