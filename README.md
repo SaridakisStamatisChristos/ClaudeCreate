@@ -642,3 +642,18 @@ node bin/reel.mjs render examples/directed_atmosphere_city.json --draft --target
 ```
 
 The complete [atmosphere and depth guide](docs/DIRECTED_ENVIRONMENTS.md), [four-environment city demo](examples/directed_atmosphere_city.json), and [v1.5 scene-writing prompt](prompts/CLAUDE_REEL_ATMOSPHERE_MASTER_v1.5.md) explain how to create layered authored scenes. This is improved editorial illustration and stylized motion graphics, **not** character acting or photorealism. The demo runs shorter than a calibrated 15-second reel.
+
+
+### Character-led stories and clip-safe transitions (v0.5)
+
+The `directed_scene` visual language now includes a reusable articulated `character` SVG primitive with independent head, arms and legs, configurable clothing and skin palettes, and semantic `props.performances` actions (`walk`, `wave`, `nod`, `cheer`). A walking gesture can be combined with a previous `x` or `pathProgress` tween to move the character through the drawing stage.
+
+To avoid HyperFrames clipping animations at scene boundaries, a scene may declare a bounded incoming `transition` (`fade`, `wipe-left`, `iris`). ClaudeCreate creates two matching, frame-seekable transition halves: the previous scene is covered as it ends; the next scene is revealed from the identical colour as it starts. Existing scripts without a transition continue to use hard cuts.
+
+```bash
+npm test
+node bin/reel.mjs check examples/directed_story_v05.json --target 15
+node bin/reel.mjs render examples/directed_story_v05.json --draft --target 15
+```
+
+See [the full acting and transition contract](docs/DIRECTOR_V05.md), [A City Comes Alive example](examples/directed_story_v05.json), and [v1.6 director prompt](prompts/CLAUDE_REEL_DIRECTOR_MASTER_v1.6.md). The real [v0.5 end-to-end workflow](.github/workflows/director-v05-e2e.yml) must complete successfully before this build is accepted as an actual narrated MP4. This is still stylized 2D animation, not realistic lip-synchronized actors.
