@@ -12,7 +12,7 @@
   "scenes": [
     {
       "template": "directed_scene",
-      "say": "An explorer walks through the waking city.",
+      "say": "The explorer walks through the city.",
       "highlight": "explorer",
       "illustrative": false,
       "sfx": "pop",
@@ -337,7 +337,7 @@
     },
     {
       "template": "directed_scene",
-      "say": "An engineer waves as energy flows.",
+      "say": "The engineer waves as energy flows.",
       "highlight": "engineer",
       "illustrative": false,
       "sfx": "swipe",
